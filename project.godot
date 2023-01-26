@@ -23,10 +23,6 @@ project/assembly_name="2D Shapes Addon"
 
 export/convert_text_resources_to_binary=true
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/2d_shapes/plugin.cfg")
-
 [rendering]
 
 renderer/rendering_method="mobile"

@@ -39,13 +39,16 @@ var offset_rotatation : float = 0:
 		queue_redraw()
 
 func _draw() -> void:
-	print(size)
 	if (vertice_count == 1):
 		draw_circle(Vector2.ZERO, size, color)
 		return
+	
 	if (vertice_count == 2):
-		#! need to add functionality of offset_rotation.
-		draw_line(Vector2.UP, Vector2.DOWN, color, size)
+		if offset_rotatation == 0:
+			draw_line(Vector2.UP * size, Vector2.DOWN * size, color)
+			return
+		var point1 := Vector2(sin(offset_rotatation), cos(offset_rotatation)) * size
+		draw_line(point1, -point1, color)
 		return
 	
 	if (vertice_count == 4 && offset_rotatation == 0):
@@ -56,8 +59,7 @@ func _draw() -> void:
 	var points := PackedVector2Array()
 	var rotation_spacing := TAU / vertice_count
 	# rotation is initalized pointing down and offset to the left so that the bottem is flat
-	var current_rotation := rotation_spacing / 2 + offset_rotatation
-	print(current_rotation)
+	var current_rotation := rotation_spacing / 2 - offset_rotatation
 	for i in vertice_count:
 		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
 		current_rotation += rotation_spacing
