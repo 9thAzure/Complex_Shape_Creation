@@ -1,6 +1,7 @@
 @tool
 extends Node2D
 
+# Todo: change the class description
 ## A node that simply draws a perfect shape
 
 ## The number of vertices in the perfect shape
@@ -38,6 +39,29 @@ var offset_rotatation : float = 0:
 		offset_rotatation = value
 		queue_redraw()
 
+# ? not sure if this is a good name, may be changed.
+@export_category("advanced")
+
+# ? not sure if this is the correct term for it or if it is a good name for it.
+# Todo: 
+## Creates a hole in the center of the shape, in the same shape. If "size" is set to 1 (circle), a 32
+## Produces a warning if it is set to a value smaller than 0 or greater than "size".
+@export var hole_size : float = 0:
+	set(value):
+		if (value < 0):
+			value = 0
+			push_warning("attempted to set variable \"hole_size\" to a value smaller than 0, value is set to 0")
+		if (value > size):
+			value = size
+			push_warning("attempted to set variable \"hole_size\" to a value greater than the variable \"size\", value set to \"size\": %s." % size)
+		hole_size = value
+		queue_redraw()
+
+# Todo:
+# this variable would cut out edges (eg: draw only have a hexagon, a trapezoid). To be implemented. Name is temporary.
+# Exact implementation/way of working TBD.
+# @export var shape_cut : int = 0
+
 func _draw() -> void:
 	if (vertice_count == 1):
 		draw_circle(Vector2.ZERO, size, color)
@@ -64,15 +88,3 @@ func _draw() -> void:
 		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
 		current_rotation += rotation_spacing
 	draw_colored_polygon(points, color)
-
-
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
