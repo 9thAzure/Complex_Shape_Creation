@@ -6,10 +6,10 @@ extends Node2D
 
 ## The number of vertices in the perfect shape
 ## a value of 1 creates a circle, a value of 2 creates a line
-@export_range(1,8,1,"or_greater") var vertice_count : int = 1:
+@export_range(1,8,1,"or_greater") var vertices_count : int = 1:
 	set(value):
-		assert(vertice_count >= 1)
-		vertice_count = value
+		assert(vertices_count >= 1)
+		vertices_count = value
 		queue_redraw()
 
 ## The length of each corner to the center.
@@ -29,14 +29,14 @@ extends Node2D
 ## The offset rotation of the shape, in degrees.
 @export_range(0, 360, 0.1, "or_greater", "or_less") var offset_rotation_degrees : float = 0:
 	set(value):
-		offset_rotatation = deg_to_rad(value)
+		offset_rotation = deg_to_rad(value)
 	get:
-		return rad_to_deg(offset_rotatation)
+		return rad_to_deg(offset_rotation)
 
 ## the offset rotation of the shape, in radians
-var offset_rotatation : float = 0:
+var offset_rotation : float = 0:
 	set(value):
-		offset_rotatation = value
+		offset_rotation = value
 		queue_redraw()
 
 # ? not sure if this is a good name, may be changed.
@@ -63,28 +63,28 @@ var offset_rotatation : float = 0:
 # @export var shape_cut : int = 0
 
 func _draw() -> void:
-	if (vertice_count == 1):
+	if (vertices_count == 1):
 		draw_circle(Vector2.ZERO, size, color)
 		return
 	
-	if (vertice_count == 2):
-		if offset_rotatation == 0:
+	if (vertices_count == 2):
+		if offset_rotation == 0:
 			draw_line(Vector2.UP * size, Vector2.DOWN * size, color)
 			return
-		var point1 := Vector2(sin(offset_rotatation), cos(offset_rotatation)) * size
+		var point1 := Vector2(sin(offset_rotation), cos(offset_rotation)) * size
 		draw_line(point1, -point1, color)
 		return
 	
-	if (vertice_count == 4 && offset_rotatation == 0):
+	if (vertices_count == 4 && offset_rotation == 0):
 		const sqrt_two_over_two := 0.707106781
 		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 	
 	var points := PackedVector2Array()
-	var rotation_spacing := TAU / vertice_count
-	# rotation is initalized pointing down and offset to the left so that the bottem is flat
-	var current_rotation := rotation_spacing / 2 - offset_rotatation
-	for i in vertice_count:
+	var rotation_spacing := TAU / vertices_count
+	# rotation is initialized pointing down and offset to the left so that the bottom is flat
+	var current_rotation := rotation_spacing / 2 - offset_rotation
+	for i in vertices_count:
 		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
 		current_rotation += rotation_spacing
 	draw_colored_polygon(points, color)
