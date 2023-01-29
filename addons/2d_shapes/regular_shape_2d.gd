@@ -43,8 +43,8 @@ var offset_rotation : float = 0:
 @export_category("advanced")
 
 # ? not sure if this is the correct term for it or if it is a good name for it.
-# Todo: 
-## Creates a hole in the center of the shape, in the same shape. If "size" is set to 1 (circle), a 32
+# Todo: implement effects
+## Creates a hole in the center of the shape, in the same shape. If "size" is set to 1 (circle), a 32 sized shape in its place.
 ## Produces a warning if it is set to a value smaller than 0 or greater than "size".
 @export var hole_size : float = 0:
 	set(value):
@@ -87,4 +87,31 @@ func _draw() -> void:
 	for i in vertices_count:
 		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
 		current_rotation += rotation_spacing
+	# ! draw_colored_polygon doesn't take into account holes unlike Polygon2D, so this will have to be redone.
+	if !is_zero_approx(hole_size):
+		add_hole_to_points(points, hole_size / size)
 	draw_colored_polygon(points, color)
+
+# <section> helper functions for _draw()
+
+## Returns a PackedVector2Array with the points needed for a regular shape with [b]vertices_count[/b] vertices.
+## [b]size[/b] determines the distance the points are from the center of the shapes,
+## and [b]offset_rotation[/b] offsets the points in radians.
+static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rotation : float = 0.0) -> PackedVector2Array:
+	assert(vertices_count > 0)
+
+	var points := PackedVector2Array()
+	var rotation_spacing := TAU / vertices_count
+	# rotation is initialized pointing down and offset to the left so that the bottom is flat
+	var current_rotation := rotation_spacing / 2 - offset_rotation
+	for i in vertices_count:
+		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
+		current_rotation += rotation_spacing
+	return points
+
+## 
+static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float) -> void:
+	points.append(points[0])
+	var original_size := points.size()
+	for i in original_size:
+		points.append(points[i] * hole_scaler)
