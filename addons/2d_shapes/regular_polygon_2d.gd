@@ -1,5 +1,5 @@
 @tool
-extends Node2D
+extends Polygon2D
 
 # Todo: change the class description
 ## A node that simply draws a perfect shape
@@ -8,23 +8,15 @@ extends Node2D
 ## a value of 1 creates a circle, a value of 2 creates a line
 @export_range(1,8,1,"or_greater") var vertices_count : int = 1:
 	set(value):
-		if value < 1:
-			value = 1
+		assert(vertices_count >= 1)
 		vertices_count = value
 		queue_redraw()
 
 ## The length of each corner to the center.
 @export var size : float = 10:
 	set(value):
-		if value <= 0:
-			value = 0.00000001
+		assert(size >= 0)
 		size = value
-		queue_redraw()
-
-## The color of the shape
-@export var color : Color = Color.WHITE:
-	set(value):
-		color = value
 		queue_redraw()
 
 # unfortunately, negative values are not working for export range
@@ -35,22 +27,35 @@ extends Node2D
 	get:
 		return rad_to_deg(offset_rotation)
 
+# ? debating whether the offset_* properties should have their own export_category.
 ## the offset rotation of the shape, in radians
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
 		queue_redraw()
 
+# Todo: implement effects
+## The offset position of the shape.
+@export var offset_position := Vector2.ZERO:
+	set(value):
+		offset_position = value
+		queue_redraw()
+
 # ? not sure if this is a good name, may be changed.
 @export_category("advanced")
 
 # ? not sure if this is the correct term for it or if it is a good name for it.
-## Creates a hole in the center of the shape, in the same shape.
-## Does nothing when "vertices_count" is 1 or 2.
+# Todo: implement effects
+## Creates a hole in the center of the shape, in the same shape. If "size" is set to 1 (circle), a 32 sized shape in its place.
+## Produces a warning if it is set to a value smaller than 0 or greater than "size".
 @export var hole_size : float = 0:
 	set(value):
 		if (value < 0):
 			value = 0
+			push_warning("attempted to set variable \"hole_size\" to a value smaller than 0, value is set to 0")
+		if (value > size):
+			value = size
+			push_warning("attempted to set variable \"hole_size\" to a value greater than the variable \"size\", value set to \"size\": %s." % size)
 		hole_size = value
 		queue_redraw()
 
@@ -59,12 +64,12 @@ var offset_rotation : float = 0:
 # Exact implementation/way of working TBD.
 # @export var shape_cut : int = 0
 
+# Todo: change _draw to use Polygon2D's Polygon property
+# ? will this cause a infinite loop with Polygon being set, queue_redraw being called, _draw being called, etc?
 func _draw() -> void:
 	if (vertices_count == 1):
-		if is_zero_approx(hole_size):
-			draw_circle(Vector2.ZERO, size, color)
-			return
-		_draw_holed_shape(32)
+		draw_circle(Vector2.ZERO, size, color)
+		return
 	
 	if (vertices_count == 2):
 		if offset_rotation == 0:
@@ -74,21 +79,11 @@ func _draw() -> void:
 		draw_line(point1, -point1, color)
 		return
 	
-	if (vertices_count == 4 && offset_rotation == 0 && is_zero_approx(hole_size)):
+	if (vertices_count == 4 && offset_rotation == 0):
 		const sqrt_two_over_two := 0.707106781
 		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 	
-	if is_zero_approx(hole_size):
-		_draw_regular_shape(vertices_count)
-		return
-	
-	_draw_holed_shape(vertices_count)
-
-
-# <section> helper functions for _draw()
-
-func _draw_regular_shape(vertices_count : int) -> void:
 	var points := PackedVector2Array()
 	var rotation_spacing := TAU / vertices_count
 	# rotation is initialized pointing down and offset to the left so that the bottom is flat
@@ -96,31 +91,31 @@ func _draw_regular_shape(vertices_count : int) -> void:
 	for i in vertices_count:
 		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
 		current_rotation += rotation_spacing
+	# ! draw_colored_polygon doesn't take into account holes unlike Polygon2D, so this will have to be redone.
+	if !is_zero_approx(hole_size):
+		add_hole_to_points(points, hole_size / size)
 	draw_colored_polygon(points, color)
 
-func _draw_holed_shape(vertices_count : int) -> void:
+# <section> helper functions for _draw()
+
+## Returns a PackedVector2Array with the points needed for a regular shape with [b]vertices_count[/b] vertices.
+## [b]size[/b] determines the distance the points are from the center of the shapes,
+## and [b]offset_rotation[/b] offsets the points in radians.
+static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rotation : float = 0.0) -> PackedVector2Array:
+	assert(vertices_count > 0)
+
 	var points := PackedVector2Array()
-	points.resize(4)
 	var rotation_spacing := TAU / vertices_count
 	# rotation is initialized pointing down and offset to the left so that the bottom is flat
 	var current_rotation := rotation_spacing / 2 - offset_rotation
-	var scaler := hole_size / size
-
-	var first_point := Vector2(sin(current_rotation), cos(current_rotation)) * size
-	points[1] = first_point
-	points[2] = first_point * scaler
-
-	for i in vertices_count - 1:
-		points[0] = points[1]
-		points[3] = points[2] 
+	for i in vertices_count:
+		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
 		current_rotation += rotation_spacing
-		points[1] = Vector2(sin(current_rotation), cos(current_rotation)) * size
-		points[2] = points[1] * scaler
-		draw_colored_polygon(points, color)
-	
-	points[0] = points[1]
-	points[3] = points[2] 
-	points[1] = first_point
-	points[2] = first_point * scaler
-	draw_colored_polygon(points, color)
-	
+	return points
+
+## 
+static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float) -> void:
+	points.append(points[0])
+	var original_size := points.size()
+	for i in original_size:
+		points.append(points[i] * hole_scaler)
