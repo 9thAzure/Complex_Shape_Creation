@@ -2,7 +2,8 @@
 extends Node2D
 
 # Todo: change the class description
-## A node that simply draws a perfect shape
+# ## A node that simply draws a perfect shape
+## A node that draws regular shapes, with some additional modifiers. 
 
 ## The number of vertices in the perfect shape
 ## a value of 1 creates a circle, a value of 2 creates a line
