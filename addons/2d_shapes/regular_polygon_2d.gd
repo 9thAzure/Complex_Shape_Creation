@@ -65,12 +65,21 @@ var offset_rotation : float = 0:
 		corner_smoothness = value
 		pre_redraw()
 
+# used to signal when _draw should be used.
+var _use_draw := false
+
 func _ready():
 	pre_redraw()
 
-# Todo: _draw will have to be changed as "polygon" is drawn before _draw() is called.
+## called when shape properties are updated, before "_draw".
 func pre_redraw() -> void:
-	pass
+	
+	if width > 0:
+		# set polygon here.
+		return
+	# using draw_* methods instead (else:).
+	_use_draw = true
+	polygon = PackedVector2Array()
 	# var points = get_shape_vertices(vertices_count, size, offset_rotation)
 	# if !is_zero_approx(hole_size):
 	# 	add_hole_to_points(points, hole_size / size)
@@ -79,6 +88,9 @@ func pre_redraw() -> void:
 	# super.queue_redraw()
 
 func _draw():
+	if not _use_draw:
+		return
+	_use_draw = false
 	pass
 
 # <section> helper functions for _draw()
