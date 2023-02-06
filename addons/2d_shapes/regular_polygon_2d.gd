@@ -91,9 +91,37 @@ func _draw():
 	if not _use_draw:
 		return
 	_use_draw = false
-	pass
+	
+	# at this point, hole_size <= 0
+	if vertices_count == 1:
+		draw_circle(Vector2.ZERO, size, color)
+		return
+	
+	if vertices_count == 2:
+		var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
+		draw_line(point, -point, color)
+		return
+	
+	if vertices_count == 4 and is_zero_approx(offset_rotation) and not is_zero_approx(width):
+		const sqrt_two_over_two := 0.707106781
+		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+		return
+
+	var points = get_shape_vertices(vertices_count, size, offset_rotation)
+
+	if is_zero_approx(width):
+		for i in vertices_count:
+			draw_line(points[vertices_count - i - 1], points[vertices_count - i - 2], color)
+		return
+	
+	draw_colored_polygon(points, color)
 
 # <section> helper functions for _draw()
+
+func _draw_shape_outline(points : PackedVector2Array) -> void:
+	var size = points.size()
+	for i in size:
+		draw_line(points[size - i - 1], points[size - i - 2], color)
 
 ## Returns a PackedVector2Array with the points needed for a regular shape with [b]vertices_count[/b] vertices.
 ## [b]size[/b] determines the distance the points are from the center of the shapes,
