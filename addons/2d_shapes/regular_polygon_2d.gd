@@ -66,14 +66,14 @@ var offset_rotation : float = 0:
 		pre_redraw()
 
 # used to signal when _draw should be used.
-var _use_draw := false
+var _use_draw := true
 
 func _ready():
 	pre_redraw()
 
 ## called when shape properties are updated, before "_draw".
 func pre_redraw() -> void:
-	
+	_use_draw
 	if width > 0:
 		# set polygon here.
 		return
@@ -90,7 +90,6 @@ func pre_redraw() -> void:
 func _draw():
 	if not _use_draw:
 		return
-	_use_draw = false
 	
 	# at this point, hole_size <= 0
 	if vertices_count == 1:
