@@ -36,18 +36,11 @@ var offset_rotation : float = 0:
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
 @export_category("advanced")
 
-# Todo: implement effects, convert to "width"
-## Creates a hole in the center of the shape, in the same shape. If "size" is set to 1 (circle), a 32 sized shape in its place.
-## Produces a warning if it is set to a value smaller than 0 or greater than "size".
-@export var hole_size : float = 0:
+# Todo: implement effects
+## Determines the width of the shape. A value of 0 creates an outline of the shape, and a value smaller than 0 ignores this effect.
+@export var width : float = -1:
 	set(value):
-		if (value < 0):
-			value = 0
-			push_warning("attempted to set variable \"hole_size\" to a value smaller than 0, value is set to 0")
-		if (value > size):
-			value = size
-			push_warning("attempted to set variable \"hole_size\" to a value greater than the variable \"size\", value set to \"size\": %s." % size)
-		hole_size = value
+		width = value
 		pre_redraw()
 
 # Todo: implement effects
@@ -86,8 +79,7 @@ func pre_redraw() -> void:
 	# super.queue_redraw()
 
 func _draw():
-	var points = get_shape_vertices(vertices_count, size, offset_rotation)
-	draw_colored_polygon(points, color)
+	pass
 
 # <section> helper functions for _draw()
 
