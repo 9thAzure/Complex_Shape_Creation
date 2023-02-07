@@ -73,7 +73,7 @@ func _ready():
 
 ## called when shape properties are updated, before "_draw".
 func pre_redraw() -> void:
-	_use_draw
+	_use_draw = false
 	if width > 0:
 		# set polygon here.
 		return
