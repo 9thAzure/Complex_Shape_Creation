@@ -73,19 +73,16 @@ func _ready():
 
 ## called when shape properties are updated, before "_draw".
 func pre_redraw() -> void:
-	_use_draw = false
-	if width > 0:
-		# set polygon here.
+	if width <= 0 || vertices_count == 2:
+		_use_draw = true
+		polygon = PackedVector2Array()
 		return
-	# using draw_* methods instead (else:).
-	_use_draw = true
-	polygon = PackedVector2Array()
-	# var points = get_shape_vertices(vertices_count, size, offset_rotation)
-	# if !is_zero_approx(hole_size):
-	# 	add_hole_to_points(points, hole_size / size)
 
-	# polygon = points
-	# super.queue_redraw()
+	# shape has hole here.
+	_use_draw = false
+	var points = get_shape_vertices(36 if vertices_count == 1 else vertices_count, size, offset_rotation)
+	add_hole_to_points(points, 1 - width / size)
+	polygon = points
 
 func _draw():
 	if not _use_draw:
