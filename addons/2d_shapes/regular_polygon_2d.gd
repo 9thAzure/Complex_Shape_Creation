@@ -36,7 +36,6 @@ var offset_rotation : float = 0:
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
 @export_category("advanced")
 
-# Todo: implement effects
 ## Determines the width of the shape. A value of 0 creates an outline of the shape, and a value smaller than 0 ignores this effect.
 @export var width : float = -1:
 	set(value):
@@ -133,6 +132,43 @@ static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rota
 		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
 		current_rotation += rotation_spacing
 	return points
+
+static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
+	var new_points := PackedVector2Array()
+	var index_factor := corner_smoothness + 1
+	new_points.resize(points.size() * index_factor)
+
+	var last_point := points[-1]
+	var current_point := points[0]
+	var next_point : Vector2
+	for i in points.size():
+		next_point = points[(i + 1) % points.size()]
+		
+		# get starting & ending points of corner.
+		var starting_slope := (current_point - last_point).normalized()
+		var ending_slope := (current_point - next_point).normalized()
+		var starting_point = current_point - starting_slope * corner_size
+		var ending_point = current_point - ending_slope * corner_size
+
+		new_points[i * index_factor] = starting_point
+		new_points[i * index_factor + index_factor - 1] = ending_point
+
+		# Quadratic Bezier curves are use because we have all three required points already. It isn't perfect though.
+		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no between points.
+		var sub_i := 1
+		while sub_i < corner_smoothness:
+			var t_value := sub_i / corner_smoothness
+			new_points[i * index_factor + sub_i] = quadratic_bezier_interpolate(starting_point, points[i], ending_point, t_value)
+			sub_i += 1
+		
+		# end, prep for next loop.
+		last_point = current_point
+		current_point = next_point
+
+	return new_points
+
+static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
+	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 
 ## 
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float) -> void:
