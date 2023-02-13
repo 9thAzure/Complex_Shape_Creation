@@ -10,6 +10,9 @@ extends Polygon2D
 	set(value):
 		assert(vertices_count >= 1)
 		vertices_count = value
+		if corner_size != 0:
+			corner_size = corner_size
+			return
 		pre_redraw()
 
 ## The length from each corner to the center.
@@ -55,11 +58,13 @@ var offset_rotation : float = 0:
 # Todo: implement check, effects
 @export_range(0, 5, 0.01, "or_greater") var corner_size : float = 0.0:
 	set(value):
-		corner_size = value
+		corner_size = get_side_length(vertices_count) * size / 2
+		if value < corner_size:
+			corner_size = value
 		pre_redraw()
 
 # Todo: implement effects
-@export_range(1, 8, 1, "or_greater") var corner_smoothness : int = 1:
+@export_range(0, 8, 1, "or_greater") var corner_smoothness : int = 0:
 	set(value):
 		corner_smoothness = value
 		pre_redraw()
@@ -89,20 +94,19 @@ func _draw():
 	
 	# at this point, width <= 0
 	# if there is no advanced features, check for other draw calls.
-	if not is_zero_approx(corner_size):
-		if vertices_count == 1:
-			draw_circle(Vector2.ZERO, size, color)
-			return
+	if vertices_count == 1:
+		draw_circle(Vector2.ZERO, size, color)
+		return
+	
+	if vertices_count == 2:
+		var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
+		draw_line(point, -point, color)
+		return
 		
-		if vertices_count == 2:
-			var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
-			draw_line(point, -point, color)
-			return
-		
-		if vertices_count == 4 and is_zero_approx(offset_rotation) and not is_zero_approx(width):
-			const sqrt_two_over_two := 0.707106781
-			draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
-			return
+	if vertices_count == 4 and is_zero_approx(offset_rotation) and not is_zero_approx(width) and is_zero_approx(corner_size):
+		const sqrt_two_over_two := 0.707106781
+		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+		return
 		# no matches, using default drawing.
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation)
@@ -124,6 +128,11 @@ func _draw_shape_outline(points : PackedVector2Array) -> void:
 	for i in size:
 		draw_line(points[size - i - 1], points[size - i - 2], color)
 
+static func get_side_length(vertices_count : int):
+	if vertices_count <= 1: return PI
+	if vertices_count == 2: return 1
+	return 2 * sin(TAU / vertices_count / 2)
+
 ## Returns a PackedVector2Array with the points needed for a regular shape with [b]vertices_count[/b] vertices.
 ## [b]size[/b] determines the distance the points are from the center of the shapes,
 ## and [b]offset_rotation[/b] offsets the points in radians.
@@ -140,6 +149,8 @@ static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rota
 	return points
 
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
+	if corner_smoothness == 0:
+		corner_smoothness = 36 / points.size()
 	var new_points := PackedVector2Array()
 	var index_factor := corner_smoothness + 1
 	new_points.resize(points.size() * index_factor)
@@ -163,7 +174,7 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no between points.
 		var sub_i := 1
 		while sub_i < corner_smoothness:
-			var t_value := sub_i / corner_smoothness
+			var t_value := sub_i / (corner_smoothness as float)
 			new_points[i * index_factor + sub_i] = quadratic_bezier_interpolate(starting_point, points[i], ending_point, t_value)
 			sub_i += 1
 		
