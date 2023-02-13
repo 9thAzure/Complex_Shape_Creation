@@ -87,22 +87,28 @@ func _draw():
 	if not _use_draw:
 		return
 	
-	# at this point, hole_size <= 0
-	if vertices_count == 1:
-		draw_circle(Vector2.ZERO, size, color)
-		return
-	
-	if vertices_count == 2:
-		var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
-		draw_line(point, -point, color)
-		return
-	
-	if vertices_count == 4 and is_zero_approx(offset_rotation) and not is_zero_approx(width):
-		const sqrt_two_over_two := 0.707106781
-		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
-		return
+	# at this point, width <= 0
+	# if there is no advanced features, check for other draw calls.
+	if not is_zero_approx(corner_size):
+		if vertices_count == 1:
+			draw_circle(Vector2.ZERO, size, color)
+			return
+		
+		if vertices_count == 2:
+			var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
+			draw_line(point, -point, color)
+			return
+		
+		if vertices_count == 4 and is_zero_approx(offset_rotation) and not is_zero_approx(width):
+			const sqrt_two_over_two := 0.707106781
+			draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+			return
+		# no matches, using default drawing.
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation)
+
+	if not is_zero_approx(corner_size):
+		points = get_rounded_corners(points, corner_size, corner_smoothness)
 
 	if is_zero_approx(width):
 		for i in vertices_count:
