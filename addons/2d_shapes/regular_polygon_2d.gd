@@ -13,14 +13,14 @@ extends Polygon2D
 		if corner_size != 0:
 			corner_size = corner_size
 			return
-		pre_redraw()
+		_pre_redraw()
 
 ## The length from each corner to the center.
 @export var size : float = 10:
 	set(value):
 		assert(size >= 0)
 		size = value
-		pre_redraw()
+		_pre_redraw()
 
 # negative values are not working for export range
 ## The offset rotation of the shape, in degrees.
@@ -34,7 +34,7 @@ extends Polygon2D
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
-		pre_redraw()
+		_pre_redraw()
 
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
 @export_category("advanced")
@@ -43,7 +43,7 @@ var offset_rotation : float = 0:
 @export var width : float = -1:
 	set(value):
 		width = value
-		pre_redraw()
+		_pre_redraw()
 
 # Todo: implement effects
 # this variable would cut out edges (eg: draw only have a hexagon, a trapezoid). To be implemented. Name is temporary.
@@ -53,7 +53,7 @@ var offset_rotation : float = 0:
 	set(value):
 		shape_cut_percentage = value
 		self.queue_redraw()
-		pre_redraw()
+		_pre_redraw()
 
 # Todo: implement check, effects
 @export_range(0, 5, 0.01, "or_greater") var corner_size : float = 0.0:
@@ -61,22 +61,22 @@ var offset_rotation : float = 0:
 		corner_size = get_side_length(vertices_count) * size / 2
 		if value < corner_size:
 			corner_size = value
-		pre_redraw()
+		_pre_redraw()
 
 # Todo: implement effects
 @export_range(0, 8, 1, "or_greater") var corner_smoothness : int = 0:
 	set(value):
 		corner_smoothness = value
-		pre_redraw()
+		_pre_redraw()
 
 # used to signal when _draw should be used.
 var _use_draw := true
 
 func _ready():
-	pre_redraw()
+	_pre_redraw()
 
-## called when shape properties are updated, before "_draw".
-func pre_redraw() -> void:
+## called when shape properties are updated, before [i]_draw[/i]/[i]queue_redraw[/i]. Calls [i]queue_redraw[/i] automatically.
+func _pre_redraw() -> void:
 	if width <= 0 || vertices_count == 2:
 		_use_draw = true
 		polygon = PackedVector2Array()
