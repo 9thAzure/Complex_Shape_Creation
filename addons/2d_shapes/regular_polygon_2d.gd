@@ -2,45 +2,54 @@
 extends Polygon2D
 
 # Todo: change the class description
-## A node that simply draws a perfect shape
+## A node that draws regular shapes, with some advanced properties. 
+##
+## A node that draws regular shapes, with some advanced properties.
+## It mainly uses draw_* methods, but may use the [member polygon] property, specifically with [member width].
+## With advanced properties, circles use a 36-sided shape, and lines are unaffected.
 
-## The number of vertices in the perfect shape
-## a value of 1 creates a circle, a value of 2 creates a line
+## The number of vertices in the perfect shape. A value of 1 creates a circle, a value of 2 creates a line.
+## Values are clamped to a value greater than or equal to 1.[br]
+## Note: With advanced properties, circles use a 36-sided shape, and lines are unaffected.
 @export_range(1,8,1,"or_greater") var vertices_count : int = 1:
 	set(value):
-		assert(vertices_count >= 1)
+		assert(value >= 1)
 		vertices_count = value
+		if value < 1:
+			vertices_count = 1
 		if corner_size != 0:
 			corner_size = corner_size
 			return
 		_pre_redraw()
 
 ## The length from each corner to the center.
+## Values are clamped to a value greater than 0.
 @export var size : float = 10:
 	set(value):
-		assert(size >= 0)
 		size = value
+		if value <= 0:
+			size = 0.000001	
 		_pre_redraw()
 
-# negative values are not working for export range
 ## The offset rotation of the shape, in degrees.
-@export_range(0, 360, 0.1, "or_greater", "or_less") var offset_rotation_degrees : float = 0:
+@export_range(-360, 360, 0.1, "or_greater", "or_less") var offset_rotation_degrees : float = 0:
 	set(value):
 		offset_rotation = deg_to_rad(value)
 	get:
 		return rad_to_deg(offset_rotation)
 
-## the offset rotation of the shape, in radians
+## the offset rotation of the shape, in radians.
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
 		_pre_redraw()
 
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
-@export_category("advanced")
+@export_group("advanced")
 
-## Determines the width of the shape. A value of 0 creates an outline of the shape, and a value smaller than 0 ignores this effect.
-@export var width : float = -1:
+# The default value is -0.001 so that dragging it into positive values is quick.
+## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
+@export var width : float = -0.001:
 	set(value):
 		width = value
 		_pre_redraw()
@@ -55,18 +64,24 @@ var offset_rotation : float = 0:
 		self.queue_redraw()
 		_pre_redraw()
 
-# Todo: implement check, effects
+## The length cut off from each end to form the corner.
+## Values are clamped to 0 and half of the side length.
 @export_range(0, 5, 0.01, "or_greater") var corner_size : float = 0.0:
 	set(value):
 		corner_size = get_side_length(vertices_count) * size / 2
 		if value < corner_size:
 			corner_size = value
+			if value < 0:
+				corner_size = 0
 		_pre_redraw()
 
-# Todo: implement effects
+## How many lines make up the corner. A value of 0 will use a value of 36 divided by [member vertices_count].
+## Values are clamped to a value greater than 0.
 @export_range(0, 8, 1, "or_greater") var corner_smoothness : int = 0:
 	set(value):
 		corner_smoothness = value
+		if value < 0:
+			corner_smoothness = 0
 		_pre_redraw()
 
 # used to signal when _draw should be used.
@@ -75,7 +90,7 @@ var _use_draw := true
 func _ready():
 	_pre_redraw()
 
-## called when shape properties are updated, before [i]_draw[/i]/[i]queue_redraw[/i]. Calls [i]queue_redraw[/i] automatically.
+# Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 func _pre_redraw() -> void:
 	if width <= 0 || vertices_count == 2:
 		_use_draw = true
@@ -123,19 +138,22 @@ func _draw():
 
 # <section> helper functions for _draw()
 
+# Todo: add asserts
+# Takes a of points and draws a line from one to the other.
 func _draw_shape_outline(points : PackedVector2Array) -> void:
 	var size = points.size()
 	for i in size:
 		draw_line(points[size - i - 1], points[size - i - 2], color)
 
+# Todo: add asserts
+## Gets the side length of a shape with the specified vertices amount, each being 1 away from the center.
+## If [param vertices_count] is 1, PI is returned. If it is 2, 1 is returned.
 static func get_side_length(vertices_count : int):
 	if vertices_count <= 1: return PI
 	if vertices_count == 2: return 1
 	return 2 * sin(TAU / vertices_count / 2)
 
-## Returns a PackedVector2Array with the points needed for a regular shape with [b]vertices_count[/b] vertices.
-## [b]size[/b] determines the distance the points are from the center of the shapes,
-## and [b]offset_rotation[/b] offsets the points in radians.
+## Returns a [PackedVector2Array] with the points for drawing the specified shape with [method CanvasItem.draw_colored_polygon].
 static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rotation : float = 0.0) -> PackedVector2Array:
 	assert(vertices_count > 0)
 
@@ -148,6 +166,9 @@ static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rota
 		current_rotation += rotation_spacing
 	return points
 
+# Todo: add asserts
+## Returns a new [PackedVector2Array] with the points for drawing the rounded shape with [method CanvasItem.draw_colored_polygon].
+## [param corner_size] dictates the amount of lines used to draw the corner, and a value of 0 will instead use a value of 36 divided by the size of [param points].
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
 	if corner_smoothness == 0:
 		corner_smoothness = 36 / points.size()
@@ -184,10 +205,12 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 
 	return new_points
 
+## Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and singular [param control] point.
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 
-## 
+# Todo: change method to instead create a new array instead.
+## [b]Appends[/b] points on [param points] to give it a hole for [member Polygon2D.polygon].
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float) -> void:
 	points.append(points[0])
 	var original_size := points.size()
