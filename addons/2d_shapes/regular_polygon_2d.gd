@@ -1,7 +1,6 @@
 @tool
 extends Polygon2D
 
-# Todo: change the class description
 ## A node that draws regular shapes, with some advanced properties. 
 ##
 ## A node that draws regular shapes, with some advanced properties.
@@ -49,9 +48,12 @@ var offset_rotation : float = 0:
 
 # The default value is -0.001 so that dragging it into positive values is quick.
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
+## Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
 @export var width : float = -0.001:
 	set(value):
 		width = value
+		if width > 0 and width < 0.01:
+			width = 0
 		_pre_redraw()
 
 # Todo: implement effects
@@ -90,9 +92,12 @@ var _use_draw := true
 func _ready():
 	_pre_redraw()
 
+# Todo: implement changes from _draw.
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 func _pre_redraw() -> void:
-	if width <= 0 || vertices_count == 2:
+	if (width <= 0
+		or vertices_count == 2
+	):
 		_use_draw = true
 		polygon = PackedVector2Array()
 		return
@@ -118,7 +123,11 @@ func _draw():
 		draw_line(point, -point, color)
 		return
 		
-	if vertices_count == 4 and is_zero_approx(offset_rotation) and not is_zero_approx(width) and is_zero_approx(corner_size):
+	if (vertices_count == 4 
+		and is_zero_approx(offset_rotation)
+		and not is_zero_approx(width)
+		and is_zero_approx(corner_size)
+	):
 		const sqrt_two_over_two := 0.707106781
 		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size + offset, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
@@ -130,19 +139,13 @@ func _draw():
 		points = get_rounded_corners(points, corner_size, corner_smoothness)
 
 	if is_zero_approx(width):
-		for i in vertices_count:
-			draw_line(points[vertices_count - i - 1], points[vertices_count - i - 2], color)
+		points.append(points[0])
+		draw_polyline(points, color)
 		return
 	
 	draw_colored_polygon(points, color)
 
 # <section> helper functions for _draw()
-
-# Takes a of points and draws a line from one to the other.
-func _draw_shape_outline(points : PackedVector2Array) -> void:
-	var size = points.size()
-	for i in size:
-		draw_line(points[size - i - 1], points[size - i - 2], color)
 
 ## Gets the side length of a shape with the specified vertices amount, each being 1 away from the center.
 ## If [param vertices_count] is 1, PI is returned. If it is 2, 1 is returned.
