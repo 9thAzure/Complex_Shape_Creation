@@ -120,11 +120,11 @@ func _draw():
 		
 	if vertices_count == 4 and is_zero_approx(offset_rotation) and not is_zero_approx(width) and is_zero_approx(corner_size):
 		const sqrt_two_over_two := 0.707106781
-		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size + offset, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 		# no matches, using default drawing.
 
-	var points = get_shape_vertices(vertices_count, size, offset_rotation)
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset)
 
 	if not is_zero_approx(corner_size):
 		points = get_rounded_corners(points, corner_size, corner_smoothness)
@@ -153,7 +153,7 @@ static func get_side_length(vertices_count : int):
 	return 2 * sin(TAU / vertices_count / 2)
 
 ## Returns a [PackedVector2Array] with the points for drawing the specified shape with [method CanvasItem.draw_colored_polygon].
-static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rotation : float = 0.0) -> PackedVector2Array:
+static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
 	assert(vertices_count > 0)
 	assert(size > 0)
 
@@ -162,7 +162,7 @@ static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rota
 	# rotation is initialized pointing down and offset to the left so that the bottom is flat
 	var current_rotation := rotation_spacing / 2 - offset_rotation
 	for i in vertices_count:
-		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
+		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size + offset_position) 
 		current_rotation += rotation_spacing
 	return points
 
