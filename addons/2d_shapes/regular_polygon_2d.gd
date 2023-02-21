@@ -48,6 +48,7 @@ var offset_rotation : float = 0:
 
 # The default value is -0.001 so that dragging it into positive values is quick.
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
+## A value greater than [member size] also ignores this effect while using [member polygon].[br]
 ## Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
 @export var width : float = -0.001:
 	set(value):
@@ -105,9 +106,11 @@ func _pre_redraw() -> void:
 	# shape has hole here.
 	_use_draw = false
 	var points = get_shape_vertices(36 if vertices_count == 1 else vertices_count, size, offset_rotation)
-	add_hole_to_points(points, 1 - width / size)
+	if width < size:
+		add_hole_to_points(points, 1 - width / size)
 	polygon = points
 
+# ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
 	if not _use_draw:
 		return
@@ -143,7 +146,24 @@ func _draw():
 		draw_polyline(points, color)
 		return
 	
-	draw_colored_polygon(points, color)
+	var uv_points := uv
+	if uv_points.is_empty():
+		uv_points = points.duplicate()
+	else:
+		uv_points.resize(points.size())
+	
+	var uv_scale_x := 1.0 / texture.get_width()
+	var uv_scale_y := 1.0 / texture.get_height()
+	# The scale doesn't need to be reversed, for some reason.
+	var transform := Transform2D(-texture_rotation, texture_scale, 0, -texture_offset)
+	uv_points *= transform
+	for i in uv_points.size():
+		var uv_point := uv_points[i]
+		uv_point.x *= uv_scale_x
+		uv_point.y *= uv_scale_y
+		uv_points[i] = uv_point
+	
+	draw_colored_polygon(points, color, uv_points, texture)
 
 # <section> helper functions for _draw()
 
@@ -156,7 +176,7 @@ static func get_side_length(vertices_count : int):
 	return 2 * sin(TAU / vertices_count / 2)
 
 ## Returns a [PackedVector2Array] with the points for drawing the specified shape with [method CanvasItem.draw_colored_polygon].
-static func get_shape_vertices(vertices_count : int, size : int = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
+static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
 	assert(vertices_count > 0)
 	assert(size > 0)
 
