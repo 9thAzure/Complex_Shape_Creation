@@ -134,18 +134,19 @@ func _draw():
 	# at this point, width <= 0
 	# if there is no advanced features, check for other draw calls.
 	if vertices_count == 1:
-		draw_circle(Vector2.ZERO, size, color)
+		draw_circle(offset, size, color)
 		return
 	
 	if vertices_count == 2:
 		var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
-		draw_line(point, -point, color)
+		draw_line(point + offset, -point + offset, color)
 		return
 		
 	if (vertices_count == 4 
 		and is_zero_approx(offset_rotation)
 		and not is_zero_approx(width)
 		and is_zero_approx(corner_size)
+		and (drawn_arc >= TAU or drawn_arc <= -TAU)
 	):
 		const sqrt_two_over_two := 0.707106781
 		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size + offset, Vector2.ONE * sqrt_two_over_two * size * 2), color)
@@ -209,7 +210,7 @@ func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation 
 	# If drawing a full shape
 	if drawn_arc >= TAU or drawn_arc <= -TAU:
 		# rotation is initialized pointing down and offset to the left so that the bottom is flat
-		var current_rotation := rotation_spacing / 2 - offset_rotation
+		var current_rotation := rotation_spacing / 2 + offset_rotation
 		for i in vertices_count:
 			points.append(_get_vertices(current_rotation, size, offset_position))
 			current_rotation += rotation_spacing
