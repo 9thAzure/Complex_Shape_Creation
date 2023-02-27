@@ -197,7 +197,7 @@ static func get_side_length(vertices_count : int):
 	if vertices_count == 2: return 1
 	return 2 * sin(TAU / vertices_count / 2)
 
-# ! Note: this func should be static, it was removed for debug purposes and should be re-added when done.
+# ! Note: this func should be static, it was removed for debug purposes and should be re-added when debugging is not needed.
 ## Returns a [PackedVector2Array] with the points for drawing the specified shape with [method CanvasItem.draw_colored_polygon].
 func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
 	assert(vertices_count > 0)
@@ -217,16 +217,19 @@ func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation 
 		return points
 			
 	# Drawing a partial shape.
-	var current_rotation := -rotation_spacing / 2 
-	# draw_circle(_get_vertices(current_rotation, size, offset_position), 0.5, Color.GRAY)
-	var limit := sign * drawn_arc
+	var current_rotation := -rotation_spacing / 2 + offset_rotation
+	var limit := sign * (drawn_arc + offset_rotation)
 	var fail_safe := 0
+	# print(limit)
 	while sign * current_rotation < limit:
 		fail_safe += 1
-		assert(fail_safe < 100, "fail_safe: infinite loop!")
+		assert(fail_safe < vertices_count + 5, "fail_safe: infinite loop!")
 		var point := _get_vertices(current_rotation, size, offset_position)
 		points.append(point)
 		current_rotation += rotation_spacing
+		# print(current_rotation)
+	# draw_circle(_get_vertices(current_rotation, size, offset_position), 0.5, Color.GRAY)
+	# print("loop ran: ", fail_safe)
 	
 	# Setting center point.
 	var first_point := points[0]
@@ -242,12 +245,13 @@ func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation 
 		var last_point := points[-1]
 		var next_point := _get_vertices(current_rotation, size, offset_position)
 		var edge_slope := next_point - last_point 
-		var ending_slope := Vector2(sin(-drawn_arc), cos(-drawn_arc))
+		var ending_slope := _get_vertices(drawn_arc + offset_rotation)
+		# var ending_slope := Vector2(sin(-drawn_arc - offset_rotation), cos(-drawn_arc - offset_rotation))
 		# formula variables: P, Q, S, R
 		var scaler := _find_intersection(last_point, edge_slope, offset_position, ending_slope)
 		var edge_point := last_point + scaler * edge_slope
-		# draw_line(last_point, last_point + edge_slope, Color.ORANGE)
-		# draw_line(offset_position, offset_position + ending_slope * size, Color.GREEN)
+		draw_line(last_point, last_point + edge_slope, Color.ORANGE)
+		draw_line(offset_position, offset_position + ending_slope * size, Color.GREEN)
 		points.append(edge_point)
 	
 	if not is_equal_approx(drawn_arc, PI):
@@ -255,7 +259,7 @@ func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation 
 			
 	return points
 
-static func _get_vertices(rotation : float, size : float, offset : Vector2) -> Vector2:
+static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
 	return Vector2(-sin(rotation), cos(rotation)) * size + offset
 
 # finds the intersection between 2 points and their slopes. The value returned is not the point itself, but a scaler.
