@@ -4,12 +4,12 @@ extends Polygon2D
 ## A node that draws regular shapes, with some advanced properties. 
 ##
 ## A node that draws regular shapes, with some advanced properties.
-## It mainly uses draw_* methods, but may use the [member polygon] property, specifically with [member width].
-## With advanced properties, circles use a 36-sided shape, and lines are unaffected.
+## It mainly uses draw_* methods, but may use the [member polygon] property, like with [member width].
+## With advanced properties, circles use a 32-sided shape, and lines are unaffected.
 
 ## The number of vertices in the perfect shape. A value of 1 creates a circle, a value of 2 creates a line.
 ## Values are clamped to a value greater than or equal to 1.[br]
-## Note: With advanced properties, circles use a 36-sided shape, and lines are unaffected.
+## Note: With certain advanced properties, circles use a 32-sided shape, and lines are unaffected.
 @export_range(1,8,1,"or_greater") var vertices_count : int = 1:
 	set(value):
 		assert(value >= 1)
@@ -57,17 +57,9 @@ var offset_rotation : float = 0:
 			width = 0
 		_pre_redraw()
 
-# Todo: implement effects
-# this variable would cut out edges (eg: draw only have a hexagon, a trapezoid). To be implemented. Name is temporary.
-# Exact implementation/way of working TBD.
-## Cuts out vertices of the shape, as a percentage. Cuts are only made at the corners.
-@export_range(0, 1, 0.0001) var shape_cut_percentage : float = 0.0:
-	set(value):
-		shape_cut_percentage = value
-		self.queue_redraw()
-		_pre_redraw()
-
-## How much of the shape is drawn.
+## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
+## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape.
+## It starts at the bottom of the shape, before any transformations. [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 @export_range(-360, 360) 
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -75,6 +67,9 @@ var drawn_arc_degrees : float = 360:
 	get:
 		return rad_to_deg(drawn_arc)
 
+## The arc of the drawn shape, in radians, cutting off beyond that arc. 
+## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape.
+## It starts at the bottom of the shape, before any transformations. [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
@@ -91,7 +86,7 @@ var drawn_arc : float = TAU:
 				corner_size = 0
 		_pre_redraw()
 
-## How many lines make up the corner. A value of 0 will use a value of 36 divided by [member vertices_count].
+## How many lines make up the corner. A value of 0 will use a value of 32 divided by [member vertices_count].
 ## Values are clamped to a value greater than 0.
 @export_range(0, 8, 1, "or_greater") var corner_smoothness : int = 0:
 	set(value):
@@ -108,6 +103,7 @@ func _ready():
 	_pre_redraw()
 
 # Todo: implement changes from _draw.
+# ? Perhaps have it be queued when 'polygon' property is used, like 'queue_redraw'.
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 func _pre_redraw() -> void:
 	if (width <= 0
@@ -121,7 +117,7 @@ func _pre_redraw() -> void:
 
 	# shape has hole here.
 	_use_draw = false
-	var points = get_shape_vertices(36 if vertices_count == 1 else vertices_count, size, offset_rotation)
+	var points = get_shape_vertices(32 if vertices_count == 1 else vertices_count, size, offset_rotation)
 	if width < size:
 		add_hole_to_points(points, 1 - width / size)
 	polygon = points
@@ -134,6 +130,9 @@ func _draw():
 	# at this point, width <= 0
 	# if there is no advanced features, check for other draw calls.
 	if vertices_count == 1:
+		if drawn_arc < TAU or drawn_arc > -TAU:
+			draw_colored_polygon(get_shape_vertices(32, size, offset_rotation, offset, drawn_arc), color)
+			return
 		draw_circle(offset, size, color)
 		return
 	
@@ -144,12 +143,18 @@ func _draw():
 		
 	if (vertices_count == 4 
 		and is_zero_approx(offset_rotation)
-		and not is_zero_approx(width)
+		# and not is_zero_approx(width)
 		and is_zero_approx(corner_size)
 		and (drawn_arc >= TAU or drawn_arc <= -TAU)
+		and texture == null
 	):
 		const sqrt_two_over_two := 0.707106781
-		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size + offset, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+		var rect = Rect2(-Vector2.ONE * sqrt_two_over_two * size + offset, Vector2.ONE * sqrt_two_over_two * size * 2)
+		if is_zero_approx(width):
+			draw_rect(rect, color, false)
+			return
+		# Using the width param would require having all the checks here also be in the pre_redraw function as well.
+		draw_rect(rect, color)
 		return
 		# no matches, using default drawing.
 
@@ -250,8 +255,8 @@ func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation 
 		# formula variables: P, Q, S, R
 		var scaler := _find_intersection(last_point, edge_slope, offset_position, ending_slope)
 		var edge_point := last_point + scaler * edge_slope
-		draw_line(last_point, last_point + edge_slope, Color.ORANGE)
-		draw_line(offset_position, offset_position + ending_slope * size, Color.GREEN)
+		# draw_line(last_point, last_point + edge_slope, Color.ORANGE)
+		# draw_line(offset_position, offset_position + ending_slope * size, Color.GREEN)
 		points.append(edge_point)
 	
 	if not is_equal_approx(drawn_arc, PI):
@@ -272,13 +277,13 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 
 # Todo: Check what happens when corner_size is greater then halve the side lengths (corners are bigger than the shape).
 ## Returns a new [PackedVector2Array] with the points for drawing the rounded shape with [method CanvasItem.draw_colored_polygon].
-## [param corner_size] dictates the amount of lines used to draw the corner, and a value of 0 will instead use a value of 36 divided by the size of [param points].
+## [param corner_size] dictates the amount of lines used to draw the corner, and a value of 0 will instead use a value of 32 divided by the size of [param points].
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
 	assert(not points.is_empty(), "points must not be empty")
 	assert(corner_smoothness >= 0, "corners must draw some lines")
 	
 	if corner_smoothness == 0:
-		corner_smoothness = 36 / points.size()
+		corner_smoothness = 32 / points.size()
 	var new_points := PackedVector2Array()
 	var index_factor := corner_smoothness + 1
 	new_points.resize(points.size() * index_factor)
