@@ -282,6 +282,7 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	assert(not points.is_empty(), "points must not be empty")
 	assert(corner_smoothness >= 0, "corners must draw some lines")
 	
+	var corner_size_squared = corner_size ** 2
 	if corner_smoothness == 0:
 		corner_smoothness = 32 / points.size()
 	var new_points := PackedVector2Array()
@@ -295,10 +296,19 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 		next_point = points[(i + 1) % points.size()]
 		
 		# get starting & ending points of corner.
-		var starting_slope := (current_point - last_point).normalized()
-		var ending_slope := (current_point - next_point).normalized()
-		var starting_point = current_point - starting_slope * corner_size
-		var ending_point = current_point - ending_slope * corner_size
+		var starting_slope := (current_point - last_point)
+		var ending_slope := (current_point - next_point)
+
+		var starting_point : Vector2
+		var ending_point : Vector2
+		if starting_slope.length_squared() / 4 < corner_size_squared:
+			starting_point = current_point - starting_slope / 2
+		else:
+			starting_point = current_point - starting_slope.normalized() * corner_size
+		if ending_slope.length_squared() / 4 < corner_size_squared:
+			ending_point = current_point - ending_slope / 2
+		else:
+			ending_point = current_point - ending_slope.normalized() * corner_size
 
 		new_points[i * index_factor] = starting_point
 		new_points[i * index_factor + index_factor - 1] = ending_point
