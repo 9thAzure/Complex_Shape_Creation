@@ -275,6 +275,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	return numerator / devisor 
 	
 
+# test
 # Todo: Check what happens when corner_size is greater then halve the side lengths (corners are bigger than the shape).
 ## Returns a new [PackedVector2Array] with the points for drawing the rounded shape with [method CanvasItem.draw_colored_polygon].
 ## [param corner_size] dictates the amount of lines used to draw the corner, and a value of 0 will instead use a value of 32 divided by the size of [param points].
