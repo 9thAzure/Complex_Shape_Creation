@@ -124,7 +124,7 @@ func _pre_redraw() -> void:
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
-	if not _use_draw:
+	if not _use_draw or drawn_arc == 0:
 		return
 	
 	# at this point, width <= 0
@@ -202,12 +202,17 @@ static func get_side_length(vertices_count : int):
 	if vertices_count == 2: return 1
 	return 2 * sin(TAU / vertices_count / 2)
 
-# ! Note: this func should be static, it was removed for debug purposes and should be re-added when debugging is not needed.
-## Returns a [PackedVector2Array] with the points for drawing the specified shape with [method CanvasItem.draw_colored_polygon].
-func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
-	assert(vertices_count > 0)
-	assert(size > 0)
+## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
+## If [param vertices_count] is 0, a value of 32 is used instead.
+## [param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
+## It starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
+static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
+	assert(vertices_count >= 0, "param 'vertices_count' must be 0 or greater.")
+	assert(size > 0, "param 'size' must be positive.")
+	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
 
+	if vertices_count == 0:
+		vertices_count = 32
 	var points := PackedVector2Array()
 	var sign := signf(drawn_arc)
 	var rotation_spacing := TAU / vertices_count * sign
@@ -264,6 +269,7 @@ func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation 
 			
 	return points
 
+# gets the vertices for a particular rotation and size, with a positional offset.
 static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
 	return Vector2(-sin(rotation), cos(rotation)) * size + offset
 
@@ -272,6 +278,7 @@ static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 =
 static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vector2, slope2: Vector2) -> float:
 	var numerator := slope2.y * (point2.x - point1.x) - slope2.x * (point2.y - point1.y)
 	var devisor := (slope1.x * slope2.y) - (slope1.y * slope2.x)
+	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor 
 	
 
