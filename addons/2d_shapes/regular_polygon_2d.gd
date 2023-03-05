@@ -275,12 +275,15 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	return numerator / devisor 
 	
 
-# Todo: Check what happens when corner_size is greater then halve the side lengths (corners are bigger than the shape).
-## Returns a new [PackedVector2Array] with the points for drawing the rounded shape with [method CanvasItem.draw_colored_polygon].
-## [param corner_size] dictates the amount of lines used to draw the corner, and a value of 0 will instead use a value of 32 divided by the size of [param points].
+## Returns a new [PackedVector2Array] with the points for drawing the rounded shape with [method CanvasItem.draw_colored_polygon], using quadratic Bézier curves. 
+## [br][br][param corner_size] is the distance from a vertex to the point where the rounded corner starts. 
+## If the this distance is over half the edge length, the halfway point of the edge is used instead.
+## [br][param corner_smoothness] dictates the amount of lines used to draw the corner. 
+## A value of 0 will instead use a value of [code]32[/code] divided by the size of [param points].
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
-	assert(not points.is_empty(), "points must not be empty")
-	assert(corner_smoothness >= 0, "corners must draw some lines")
+	assert(points.size() >= 3, "param 'points' must have at least 3 points")
+	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
+	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
 	
 	var corner_size_squared = corner_size ** 2
 	if corner_smoothness == 0:
@@ -327,10 +330,11 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 
 	return new_points
 
-## Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and singular [param control] point.
+## Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 
+# Todo: investigate performance of doing this.
 # Todo: change method to instead create a new array instead.
 ## [b]Appends[/b] points, which are [param hole_scaler] of the original points, on [param points] to give it a hole for [member Polygon2D.polygon].
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float) -> void:
