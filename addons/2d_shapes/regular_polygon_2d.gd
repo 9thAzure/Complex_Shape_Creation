@@ -48,8 +48,8 @@ var offset_rotation : float = 0:
 
 # The default value is -0.001 so that dragging it into positive values is quick.
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
-## A value greater than [member size] also ignores this effect while using [member polygon].[br]
-## Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
+## A value greater than [member size] also ignores this effect while using [member polygon].
+## [br]Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
 @export var width : float = -0.001:
 	set(value):
 		width = value
@@ -58,8 +58,8 @@ var offset_rotation : float = 0:
 		_pre_redraw()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
-## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape.
-## It starts at the bottom of the shape, before any transformations. [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
+## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 @export_range(-360, 360) 
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -68,15 +68,15 @@ var drawn_arc_degrees : float = 360:
 		return rad_to_deg(drawn_arc)
 
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
-## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape.
-## It starts at the bottom of the shape, before any transformations. [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
+## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
 		_pre_redraw()
 
-## The length cut off from each end to form the corner.
-## Values are clamped to 0 and half of the side length.
+## The distance from each vertex to the point where the rounded corner starts. Values are clamped to 0 and half of the side length.
+## [br]If this value is over half of the edge length, the mid-point is used instead.
 @export_range(0, 5, 0.01, "or_greater") var corner_size : float = 0.0:
 	set(value):
 		corner_size = get_side_length(vertices_count) * size / 2
@@ -192,6 +192,7 @@ func _draw():
 	
 	draw_colored_polygon(points, color, uv_points, texture)
 
+# Todo: remove the code that has been commented out.
 # <section> helper functions for _draw()
 
 ## Gets the side length of a shape with the specified vertices amount, each being 1 away from the center.
