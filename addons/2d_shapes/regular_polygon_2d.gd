@@ -10,9 +10,10 @@ extends Polygon2D
 ## The number of vertices in the perfect shape. A value of 1 creates a circle, a value of 2 creates a line.
 ## Values are clamped to a value greater than or equal to 1.[br]
 ## Note: With certain advanced properties, circles use a 32-sided shape, and lines are unaffected.
-@export_range(1,8,1,"or_greater") var vertices_count : int = 1:
+@export_range(1,8,1,"or_greater") 
+var vertices_count : int = 1:
 	set(value):
-		assert(value >= 1)
+		assert(value < 2000, "Large vertices counts should not be necessary.")
 		vertices_count = value
 		if value < 1:
 			vertices_count = 1
@@ -23,7 +24,8 @@ extends Polygon2D
 
 ## The length from each corner to the center.
 ## Values are clamped to a value greater than 0.
-@export var size : float = 10:
+@export 
+var size : float = 10:
 	set(value):
 		size = value
 		if value <= 0:
@@ -31,7 +33,8 @@ extends Polygon2D
 		_pre_redraw()
 
 ## The offset rotation of the shape, in degrees.
-@export_range(-360, 360, 0.1, "or_greater", "or_less") var offset_rotation_degrees : float = 0:
+@export_range(-360, 360, 0.1, "or_greater", "or_less") 
+var offset_rotation_degrees : float = 0:
 	set(value):
 		offset_rotation = deg_to_rad(value)
 	get:
@@ -50,7 +53,8 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
 ## A value greater than [member size] also ignores this effect while using [member polygon].
 ## [br]Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
-@export var width : float = -0.001:
+@export 
+var width : float = -0.001:
 	set(value):
 		width = value
 		if width > 0 and width < 0.01:
@@ -77,7 +81,8 @@ var drawn_arc : float = TAU:
 
 ## The distance from each vertex to the point where the rounded corner starts. Values are clamped to 0 and half of the side length.
 ## [br]If this value is over half of the edge length, the mid-point is used instead.
-@export_range(0, 5, 0.01, "or_greater") var corner_size : float = 0.0:
+@export 
+var corner_size : float = 0.0:
 	set(value):
 		corner_size = get_side_length(vertices_count) * size / 2
 		if value < corner_size:
@@ -88,7 +93,8 @@ var drawn_arc : float = TAU:
 
 ## How many lines make up the corner. A value of 0 will use a value of 32 divided by [member vertices_count].
 ## Values are clamped to a value greater than 0.
-@export_range(0, 8, 1, "or_greater") var corner_smoothness : int = 0:
+@export_range(0, 8, 1, "or_greater") 
+var corner_smoothness : int = 0:
 	set(value):
 		corner_smoothness = value
 		if value < 0:
