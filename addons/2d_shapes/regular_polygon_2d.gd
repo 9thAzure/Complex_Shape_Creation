@@ -101,28 +101,22 @@ var corner_smoothness : int = 0:
 			corner_smoothness = 0
 		_pre_redraw()
 
-# used to signal when _draw should be used.
-var _use_draw := true
 
-func _ready():
-	# ? Is this necessary for all cases? eg: does this run when 'polygon' is used?
-	_pre_redraw()
+# Because the default values don't use the 'polygon' member, calling it in _ready is not needed.
+# Changing the properties to use the polygon member will have _pre_redraw called anyways.
 
 # Todo: implement changes from _draw.
 # ? Perhaps have it be queued when 'polygon' property is used, like 'queue_redraw'.
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 func _pre_redraw() -> void:
-	if (width <= 0
-		or vertices_count == 2
-	):
+	if not _uses_polygon_member():
 		# ? Have it so that it uses polygon property when in editor and texture is available so that editing uv is easier.
 		# ? The drawback is that the polygon data is still stored when it isn't needed.
-		_use_draw = true
+		# the setting the 'polygon' property already calls queue_redraw
 		polygon = PackedVector2Array()
 		return
 
 	# shape has hole here.
-	_use_draw = false
 	var points = get_shape_vertices(32 if vertices_count == 1 else vertices_count, size, offset_rotation)
 	if width < size:
 		add_hole_to_points(points, 1 - width / size)
@@ -130,7 +124,7 @@ func _pre_redraw() -> void:
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
-	if not _use_draw or drawn_arc == 0:
+	if _uses_polygon_member() or drawn_arc == 0:
 		return
 	
 	# at this point, width <= 0
@@ -197,6 +191,12 @@ func _draw():
 			uv_points[i] = uv_point
 	
 	draw_colored_polygon(points, color, uv_points, texture)
+
+func _uses_polygon_member() -> bool:
+	return (
+		width > 0
+		and vertices_count != 2
+	)
 
 # Todo: remove the code that has been commented out.
 # <section> helper functions for _draw()
