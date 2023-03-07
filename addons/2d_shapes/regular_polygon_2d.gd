@@ -190,10 +190,17 @@ func _draw():
 
 func _draw_using_polygon():
 
-	# shape has hole here.
-	var points = get_shape_vertices(vertices_count, size, offset_rotation)
+	if drawn_arc == 0:
+		polygon = PackedVector2Array()
+		return
+
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if width < size:
 		add_hole_to_points(points, 1 - width / size)
+	
+	if not is_zero_approx(corner_size):
+		points = get_rounded_corners(points, corner_size, corner_smoothness)
+	
 	polygon = points
 
 func _uses_polygon_member() -> bool:
