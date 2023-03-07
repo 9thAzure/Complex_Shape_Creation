@@ -4,12 +4,12 @@ extends Polygon2D
 ## A node that draws regular shapes, with some advanced properties. 
 ##
 ## A node that draws regular shapes, with some advanced properties.
-## It mainly uses draw_* methods, but may use the [member polygon] property, like with [member width].
-## With advanced properties, circles use a 32-sided shape, and lines are unaffected.
+## It mainly uses draw_* methods, but may use the [member polygon] property when using [member width].
+## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 
-## The number of vertices in the perfect shape. A value of 1 creates a circle, a value of 2 creates a line.
-## Values are clamped to a value greater than or equal to 1.[br]
-## Note: With certain advanced properties, circles use a 32-sided shape, and lines are unaffected.
+## The number of vertices in the perfect shape. A value of 1 creates a circle, and a value of 2 creates a line.
+## [br]Values are clamped to a value greater than or equal to 1.
+## [br][br]Note: Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 @export_range(1,8,1,"or_greater") 
 var vertices_count : int = 1:
 	set(value):
@@ -23,7 +23,7 @@ var vertices_count : int = 1:
 		_pre_redraw()
 
 ## The length from each corner to the center.
-## Values are clamped to a value greater than 0.
+## [br]Values are clamped to a value greater than 0.
 @export 
 var size : float = 10:
 	set(value):
@@ -51,8 +51,9 @@ var offset_rotation : float = 0:
 
 # The default value is -0.001 so that dragging it into positive values is quick.
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
-## A value greater than [member size] also ignores this effect while using [member polygon].
-## [br]Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
+## Values greater than 0 will have [member polygon] used,
+## and value greater than [member size] also ignores this effect still while using [member polygon].
+## [br][br]Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
 @export 
 var width : float = -0.001:
 	set(value):
@@ -64,6 +65,7 @@ var width : float = -0.001:
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
 ## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]Note: a value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360) 
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -74,13 +76,15 @@ var drawn_arc_degrees : float = 360:
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
 ## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]Note: a value of [code]0[/code] makes the node not draw anything.
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
 		_pre_redraw()
 
 ## The distance from each vertex to the point where the rounded corner starts. Values are clamped to 0 and half of the side length.
-## [br]If this value is over half of the edge length, the mid-point is used instead.
+## If this value is over half of the edge length, the mid-point of the edge is used instead.
+## [br]Values are clamped to a value of [code]0[/code] or greater.
 @export 
 var corner_size : float = 0.0:
 	set(value):
@@ -92,7 +96,7 @@ var corner_size : float = 0.0:
 		_pre_redraw()
 
 ## How many lines make up the corner. A value of 0 will use a value of 32 divided by [member vertices_count].
-## Values are clamped to a value greater than 0.
+## [br]Values are clamped to a value of [code]0[/code] or greater.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
