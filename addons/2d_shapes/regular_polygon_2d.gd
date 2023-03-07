@@ -116,11 +116,7 @@ func _pre_redraw() -> void:
 		polygon = PackedVector2Array()
 		return
 
-	# shape has hole here.
-	var points = get_shape_vertices(32 if vertices_count == 1 else vertices_count, size, offset_rotation)
-	if width < size:
-		add_hole_to_points(points, 1 - width / size)
-	polygon = points
+	_draw_using_polygon()
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
@@ -192,6 +188,14 @@ func _draw():
 	
 	draw_colored_polygon(points, color, uv_points, texture)
 
+func _draw_using_polygon():
+
+	# shape has hole here.
+	var points = get_shape_vertices(vertices_count, size, offset_rotation)
+	if width < size:
+		add_hole_to_points(points, 1 - width / size)
+	polygon = points
+
 func _uses_polygon_member() -> bool:
 	return (
 		width > 0
@@ -214,11 +218,11 @@ static func get_side_length(vertices_count : int):
 ## [param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
 ## It starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
-	assert(vertices_count >= 0, "param 'vertices_count' must be 0 or greater.")
+	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
 
-	if vertices_count == 0:
+	if vertices_count == 1:
 		vertices_count = 32
 	var points := PackedVector2Array()
 	var sign := signf(drawn_arc)
