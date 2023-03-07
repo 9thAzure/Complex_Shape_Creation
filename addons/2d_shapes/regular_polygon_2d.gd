@@ -105,10 +105,26 @@ var corner_smoothness : int = 0:
 # Because the default values don't use the 'polygon' member, calling it in _ready is not needed.
 # Changing the properties to use the polygon member will have _pre_redraw called anyways.
 
+var _is_queued := false
+
 # Todo: implement changes from _draw.
 # ? Perhaps have it be queued when 'polygon' property is used, like 'queue_redraw'.
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 func _pre_redraw() -> void:
+	if _is_queued:
+		return
+	_is_queued = true
+	print("entered queue")
+	# await RenderingServer.frame_pre_draw
+	# var tree = get_tree()
+	# if tree != null:
+	# 	await tree.process_frame
+	# call_deferred("_pre_redraw_deferred")
+
+# func _pre_redraw_deferred():
+	_is_queued = false
+	print("exited queue")
+
 	if not _uses_polygon_member():
 		# ? Have it so that it uses polygon property when in editor and texture is available so that editing uv is easier.
 		# ? The drawback is that the polygon data is still stored when it isn't needed.
