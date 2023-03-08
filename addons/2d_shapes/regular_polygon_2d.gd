@@ -17,9 +17,11 @@ var vertices_count : int = 1:
 		vertices_count = value
 		if value < 1:
 			vertices_count = 1
+		
 		if corner_size != 0:
 			corner_size = corner_size
 			return
+		
 		_pre_redraw()
 
 ## The length from each corner to the center.
@@ -30,6 +32,7 @@ var size : float = 10:
 		size = value
 		if value <= 0:
 			size = 0.000001	
+		
 		_pre_redraw()
 
 ## The offset rotation of the shape, in degrees.
@@ -60,6 +63,7 @@ var width : float = -0.001:
 		width = value
 		if width > 0 and width < 0.01:
 			width = 0
+		
 		_pre_redraw()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
@@ -93,6 +97,7 @@ var corner_size : float = 0.0:
 			corner_size = value
 			if value < 0:
 				corner_size = 0
+		
 		_pre_redraw()
 
 ## How many lines make up the corner. A value of 0 will use a value of 32 divided by [member vertices_count].
@@ -103,6 +108,7 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		if value < 0:
 			corner_smoothness = 0
+		
 		_pre_redraw()
 
 
@@ -119,7 +125,7 @@ func _pre_redraw() -> void:
 		# the setting the 'polygon' property already calls queue_redraw
 		polygon = PackedVector2Array()
 		return
-
+	
 	_draw_using_polygon()
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
@@ -159,7 +165,6 @@ func _draw():
 		# no matches, using default drawing.
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
-
 	if not is_zero_approx(corner_size):
 		points = get_rounded_corners(points, corner_size, corner_smoothness)
 
@@ -193,13 +198,11 @@ func _draw():
 	draw_colored_polygon(points, color, uv_points, texture)
 
 func _draw_using_polygon():
-
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
 	
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
-
 	if not is_zero_approx(corner_size):
 		points = get_rounded_corners(points, corner_size, corner_smoothness, width < size and uses_drawn_arc())
 	elif uses_drawn_arc():
@@ -209,7 +212,6 @@ func _draw_using_polygon():
 		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc())
 	
 	polygon = points
-	return
 
 func _uses_polygon_member() -> bool:
 	return (
@@ -242,6 +244,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 
 	if vertices_count == 1:
 		vertices_count = 32
+	
 	var points := PackedVector2Array()
 	var sign := signf(drawn_arc)
 	var rotation_spacing := TAU / vertices_count * sign
@@ -266,15 +269,10 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		var point := _get_vertices(current_rotation, size, offset_position)
 		points.append(point)
 		current_rotation += rotation_spacing
-		# print(current_rotation)
-	# draw_circle(_get_vertices(current_rotation, size, offset_position), 0.5, Color.GRAY)
-	# print("loop ran: ", fail_safe)
 	
 	# Setting center point.
 	var first_point := points[0]
 	var vector_to_second := (points[1] if points.size() != 1 else _get_vertices(current_rotation, size, offset_position)) - first_point
-	# draw_line(first_point, first_point + vector_to_second, Color.BLACK)
-	# draw_circle(first_point, 0.1, Color.GRAY)
 	points[0] = first_point + vector_to_second / 2
 
 	if is_equal_approx(current_rotation, drawn_arc):
@@ -285,12 +283,9 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		var next_point := _get_vertices(current_rotation, size, offset_position)
 		var edge_slope := next_point - last_point 
 		var ending_slope := _get_vertices(drawn_arc + offset_rotation)
-		# var ending_slope := Vector2(sin(-drawn_arc - offset_rotation), cos(-drawn_arc - offset_rotation))
 		# formula variables: P, Q, S, R
 		var scaler := _find_intersection(last_point, edge_slope, offset_position, ending_slope)
 		var edge_point := last_point + scaler * edge_slope
-		# draw_line(last_point, last_point + edge_slope, Color.ORANGE)
-		# draw_line(offset_position, offset_position + ending_slope * size, Color.GREEN)
 		points.append(edge_point)
 	
 	if not is_equal_approx(drawn_arc, PI):
@@ -322,13 +317,14 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
 	
 	var corner_size_squared = corner_size ** 2
-	if corner_smoothness == 0:
-		corner_smoothness = 32 / points.size()
 	var array_size := points.size()
-	if remove_last_point:
-		array_size -= 1
 	var new_points := PackedVector2Array()
 	var index_factor := corner_smoothness + 1
+	if corner_smoothness == 0:
+		corner_smoothness = 32 / points.size()
+	if remove_last_point:
+		array_size -= 1
+	
 	new_points.resize(array_size * index_factor)
 
 	var last_point := points[-1]
@@ -336,17 +332,16 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	var next_point : Vector2
 	for i in array_size:
 		next_point = points[(i + 1) % points.size()]
-		
 		# get starting & ending points of corner.
 		var starting_slope := (current_point - last_point)
 		var ending_slope := (current_point - next_point)
-
 		var starting_point : Vector2
 		var ending_point : Vector2
 		if starting_slope.length_squared() / 4 < corner_size_squared:
 			starting_point = current_point - starting_slope / 2
 		else:
 			starting_point = current_point - starting_slope.normalized() * corner_size
+		
 		if ending_slope.length_squared() / 4 < corner_size_squared:
 			ending_point = current_point - ending_slope / 2
 		else:
@@ -354,7 +349,6 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 
 		new_points[i * index_factor] = starting_point
 		new_points[i * index_factor + index_factor - 1] = ending_point
-
 		# Quadratic Bezier curves are use because we have all three required points already. It isn't a perfect circle, but good enough.
 		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no between points.
 		var sub_i := 1
@@ -380,6 +374,7 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	if close_shape:
 		points.append(points[0])
+
 	var original_size := points.size()
 	for i in original_size:
 		points.append(points[original_size - i - 1] * hole_scaler)
