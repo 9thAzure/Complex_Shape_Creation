@@ -197,21 +197,28 @@ func _draw_using_polygon():
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
-
-	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
-	if width < size:
-		add_hole_to_points(points, 1 - width / size)
 	
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+
 	if not is_zero_approx(corner_size):
-		points = get_rounded_corners(points, corner_size, corner_smoothness)
+		points = get_rounded_corners(points, corner_size, corner_smoothness, width < size and uses_drawn_arc())
+	elif uses_drawn_arc():
+		points.resize(points.size() - 1)
+
+	if width < size:
+		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc())
 	
 	polygon = points
+	return
 
 func _uses_polygon_member() -> bool:
 	return (
 		width > 0
 		and vertices_count != 2
 	)
+
+func uses_drawn_arc():
+	return -TAU < drawn_arc and drawn_arc < TAU
 
 # Todo: remove the code that has been commented out.
 # <section> helper functions for _draw()
@@ -309,7 +316,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
 ## [br][param corner_smoothness] dictates the amount of lines used to draw the corner. 
 ## A value of 0 will instead use a value of [code]32[/code] divided by the size of [param points].
-static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
+static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int, exclude_center : bool = false) -> PackedVector2Array:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
 	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
@@ -317,14 +324,17 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	var corner_size_squared = corner_size ** 2
 	if corner_smoothness == 0:
 		corner_smoothness = 32 / points.size()
+	var array_size := points.size()
+	if exclude_center:
+		array_size -= 1
 	var new_points := PackedVector2Array()
 	var index_factor := corner_smoothness + 1
-	new_points.resize(points.size() * index_factor)
+	new_points.resize(array_size * index_factor)
 
 	var last_point := points[-1]
 	var current_point := points[0]
 	var next_point : Vector2
-	for i in points.size():
+	for i in array_size:
 		next_point = points[(i + 1) % points.size()]
 		
 		# get starting & ending points of corner.
@@ -366,8 +376,9 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 # Todo: investigate performance of doing this.
 # Todo: change method to instead create a new array instead.
 ## [b]Appends[/b] points, which are [param hole_scaler] of the original points, on [param points] to give it a hole for [member Polygon2D.polygon].
-static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float) -> void:
-	points.append(points[0])
+static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
+	if close_shape:
+		points.append(points[0])
 	var original_size := points.size()
 	for i in original_size:
 		points.append(points[original_size - i - 1] * hole_scaler)
