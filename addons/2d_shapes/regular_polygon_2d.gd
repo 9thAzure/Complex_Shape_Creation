@@ -158,7 +158,7 @@ func _draw():
 		return
 		# no matches, using default drawing.
 
-	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc, uses_drawn_arc())
 
 	if not is_zero_approx(corner_size):
 		points = get_rounded_corners(points, corner_size, corner_smoothness)
@@ -198,13 +198,13 @@ func _draw_using_polygon():
 		polygon = PackedVector2Array()
 		return
 
-	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
-	if width < size:
-		add_hole_to_points(points, 1 - width / size)
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, uses_drawn_arc() and width >= size)
 	
 	if not is_zero_approx(corner_size):
 		points = get_rounded_corners(points, corner_size, corner_smoothness)
-	
+		
+	if width < size:
+		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc())
 	polygon = points
 
 func _uses_polygon_member() -> bool:
@@ -212,6 +212,9 @@ func _uses_polygon_member() -> bool:
 		width > 0
 		and vertices_count != 2
 	)
+
+func uses_drawn_arc() -> bool:
+	return -TAU < drawn_arc and drawn_arc < TAU
 
 # Todo: remove the code that has been commented out.
 # <section> helper functions for _draw()
@@ -228,7 +231,7 @@ static func get_side_length(vertices_count : int):
 ## If [param vertices_count] is 1, a value of 32 is used instead.
 ## [param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
 ## It starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
-static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
+static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU, add_central_point = false) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
@@ -246,6 +249,8 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		for i in vertices_count:
 			points.append(_get_vertices(current_rotation, size, offset_position))
 			current_rotation += rotation_spacing
+		if add_central_point:
+			points.append(offset_position)
 		return points
 			
 	# Drawing a partial shape.
@@ -286,7 +291,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		# draw_line(offset_position, offset_position + ending_slope * size, Color.GREEN)
 		points.append(edge_point)
 	
-	if not is_equal_approx(drawn_arc, PI):
+	if add_central_point:
 		points.append(offset_position)
 			
 	return points
@@ -366,8 +371,9 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 # Todo: investigate performance of doing this.
 # Todo: change method to instead create a new array instead.
 ## [b]Appends[/b] points, which are [param hole_scaler] of the original points, on [param points] to give it a hole for [member Polygon2D.polygon].
-static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float) -> void:
-	points.append(points[0])
+static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
+	if close_shape:
+		points.append(points[0])
 	var original_size := points.size()
 	for i in original_size:
 		points.append(points[original_size - i - 1] * hole_scaler)
