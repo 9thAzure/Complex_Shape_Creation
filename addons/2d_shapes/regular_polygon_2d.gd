@@ -205,7 +205,7 @@ func _draw_using_polygon():
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if not is_zero_approx(corner_size):
 		points = get_rounded_corners(points, corner_size, corner_smoothness, width < size and uses_drawn_arc())
-	elif uses_drawn_arc():
+	elif width < size and uses_drawn_arc():
 		points.resize(points.size() - 1)
 
 	if width < size:
@@ -320,7 +320,7 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	var new_points := PackedVector2Array()
 	if corner_smoothness == 0:
 		corner_smoothness = 32 / points.size()
-		
+
 	var index_factor := corner_smoothness + 1
 	if remove_last_point:
 		array_size -= 1
