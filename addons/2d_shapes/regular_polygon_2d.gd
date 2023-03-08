@@ -222,7 +222,6 @@ func _uses_polygon_member() -> bool:
 func uses_drawn_arc():
 	return -TAU < drawn_arc and drawn_arc < TAU
 
-# Todo: remove the code that has been commented out.
 # <section> helper functions for _draw()
 
 ## Gets the side length of a shape with the specified vertices amount, each being a distance of 1 away from the center.
