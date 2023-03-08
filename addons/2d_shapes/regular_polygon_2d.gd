@@ -318,9 +318,10 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	var corner_size_squared = corner_size ** 2
 	var array_size := points.size()
 	var new_points := PackedVector2Array()
-	var index_factor := corner_smoothness + 1
 	if corner_smoothness == 0:
 		corner_smoothness = 32 / points.size()
+		
+	var index_factor := corner_smoothness + 1
 	if remove_last_point:
 		array_size -= 1
 	
