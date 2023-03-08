@@ -232,8 +232,8 @@ static func get_side_length(vertices_count : int):
 	return 2 * sin(TAU / vertices_count / 2)
 
 ## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
-## If [param vertices_count] is 1, a value of 32 is used instead.
-## [param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
+## [br][br]If [param vertices_count] is 1, a value of 32 is used instead.
+## [br][param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
 ## It starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
@@ -316,7 +316,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
 ## [br][param corner_smoothness] dictates the amount of lines used to draw the corner. 
 ## A value of 0 will instead use a value of [code]32[/code] divided by the size of [param points].
-static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int, exclude_center : bool = false) -> PackedVector2Array:
+static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int, remove_last_point : bool = false) -> PackedVector2Array:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
 	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
@@ -325,7 +325,7 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	if corner_smoothness == 0:
 		corner_smoothness = 32 / points.size()
 	var array_size := points.size()
-	if exclude_center:
+	if remove_last_point:
 		array_size -= 1
 	var new_points := PackedVector2Array()
 	var index_factor := corner_smoothness + 1
@@ -376,6 +376,7 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 # Todo: investigate performance of doing this.
 # Todo: change method to instead create a new array instead.
 ## [b]Appends[/b] points, which are [param hole_scaler] of the original points, on [param points] to give it a hole for [member Polygon2D.polygon].
+## [param close_shape] adds the first point to the end before adding the other points.
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	if close_shape:
 		points.append(points[0])
