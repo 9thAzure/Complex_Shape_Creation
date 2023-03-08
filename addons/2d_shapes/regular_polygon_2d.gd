@@ -166,7 +166,7 @@ func _draw():
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
 	if not is_zero_approx(corner_size):
-		points = get_rounded_corners(points, corner_size, corner_smoothness)
+		points = get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 	if is_zero_approx(width):
 		points.append(points[0])
@@ -204,7 +204,7 @@ func _draw_using_polygon():
 	
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if not is_zero_approx(corner_size):
-		points = get_rounded_corners(points, corner_size, corner_smoothness, width < size and uses_drawn_arc())
+		points = get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count, width < size and uses_drawn_arc())
 	elif width < size and uses_drawn_arc():
 		points.resize(points.size() - 1)
 
