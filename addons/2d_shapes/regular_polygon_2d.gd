@@ -209,12 +209,18 @@ func _draw_using_polygon():
 		return
 	
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
-	if not is_zero_approx(corner_size):
-		points = get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count, width < size and _uses_drawn_arc())
-	elif width < size and _uses_drawn_arc():
-		points.resize(points.size() - 1)
+	var uses_width := width < size
+	var uses_drawn_arc := _uses_drawn_arc()
+	if uses_width and uses_drawn_arc:
+		points.remove_at(points.size() - 1)
+	
+	if uses_width and uses_drawn_arc:
+		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 
-	if width < size:
+	if not is_zero_approx(corner_size):
+		points = get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		
+	if uses_width and not uses_drawn_arc:
 		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 	
 	polygon = points
@@ -225,7 +231,7 @@ func _uses_polygon_member() -> bool:
 		and vertices_count != 2
 	)
 
-func _uses_drawn_arc():
+func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
 # <section> helper functions for _draw()
