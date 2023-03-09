@@ -150,7 +150,7 @@ func _draw():
 	
 	if vertices_count == 2:
 		var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
-		draw_line(point + offset, -point + offset, color)
+		draw_line(point + offset, -point + offset, color, -1.0, antialiased)
 		return
 		
 	if (vertices_count == 4 
@@ -176,6 +176,7 @@ func _draw():
 
 	if is_zero_approx(width):
 		points.append(points[0])
+		# antialiased is used here because it only works when width > 0
 		draw_polyline(points, color)
 		return
 	
@@ -219,7 +220,7 @@ func _draw_using_polygon():
 
 	if not is_zero_approx(corner_size):
 		points = get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
-		
+
 	if uses_width and not uses_drawn_arc:
 		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 	
