@@ -214,8 +214,6 @@ func _draw_using_polygon():
 	var uses_drawn_arc := _uses_drawn_arc()
 	if uses_width and uses_drawn_arc:
 		points.remove_at(points.size() - 1)
-	
-	if uses_width and uses_drawn_arc:
 		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 
 	if not is_zero_approx(corner_size):
