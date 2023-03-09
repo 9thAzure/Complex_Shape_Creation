@@ -127,7 +127,6 @@ func _pre_redraw() -> void:
 
 func _pre_redraw_deferred():
 	_is_queued = false
-
 	if not _uses_polygon_member():
 		# the setting the 'polygon' property already calls queue_redraw
 		polygon = PackedVector2Array()
