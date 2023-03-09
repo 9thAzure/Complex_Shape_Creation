@@ -15,6 +15,13 @@ run/main_scene="res://testing/main.tscn"
 config/features=PackedStringArray("4.0", "Mobile")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=150
+window/size/viewport_height=150
+window/size/mode=2
+window/stretch/mode="viewport"
+
 [dotnet]
 
 project/assembly_name="2D Shapes Addon"
