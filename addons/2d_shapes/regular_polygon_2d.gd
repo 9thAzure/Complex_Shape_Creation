@@ -114,16 +114,10 @@ func _pre_redraw() -> void:
 	if _is_queued:
 		return
 	_is_queued = true
-	print("entered queue")
-	# await RenderingServer.frame_pre_draw
-	# var tree = get_tree()
-	# if tree != null:
-	# 	await tree.process_frame
-	# call_deferred("_pre_redraw_deferred")
+	call_deferred("_pre_redraw_deferred")
 
-# func _pre_redraw_deferred():
+func _pre_redraw_deferred():
 	_is_queued = false
-	print("exited queue")
 
 	if not _uses_polygon_member():
 		# ? Have it so that it uses polygon property when in editor and texture is available so that editing uv is easier.
