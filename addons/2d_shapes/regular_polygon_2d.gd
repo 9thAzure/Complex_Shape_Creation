@@ -323,7 +323,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
 ## [br][param corner_smoothness] dictates the amount of lines used to draw the corner. 
 ## A value of 0 will instead use a value of [code]32[/code] divided by the size of [param points].
-static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int, remove_last_point : bool = false) -> PackedVector2Array:
+static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
 	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
@@ -335,8 +335,6 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 		corner_smoothness = 32 / points.size()
 
 	var index_factor := corner_smoothness + 1
-	if remove_last_point:
-		array_size -= 1
 	
 	new_points.resize(array_size * index_factor)
 
