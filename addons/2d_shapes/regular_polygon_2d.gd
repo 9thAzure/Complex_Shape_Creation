@@ -117,9 +117,8 @@ var corner_smoothness : int = 0:
 
 var _is_queued := false
 
-# Todo: implement changes from _draw.
-# ? Perhaps have it be queued when 'polygon' property is used, like 'queue_redraw'.
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
+# queue-like functionality - pauses, and only 1 call.
 func _pre_redraw() -> void:
 	if _is_queued:
 		return
@@ -130,8 +129,6 @@ func _pre_redraw_deferred():
 	_is_queued = false
 
 	if not _uses_polygon_member():
-		# ? Have it so that it uses polygon property when in editor and texture is available so that editing uv is easier.
-		# ? The drawback is that the polygon data is still stored when it isn't needed.
 		# the setting the 'polygon' property already calls queue_redraw
 		polygon = PackedVector2Array()
 		return
