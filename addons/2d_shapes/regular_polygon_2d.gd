@@ -180,16 +180,10 @@ func _draw():
 		draw_polyline(points, color)
 		return
 	
-	## Add null checks and branching so that uv isn't used in draw_colored_polygon.
-	var uv_points := uv
 	if texture != null:
-		# The check if uv is smaller imitates the behaviour of Polygon2D; If uv size doesn't match polygon size, it is treated as empty.
-		# Greater values aren't checked for the cases of transitioning between width values from >0 to <0.
-		# ? Perhaps change this default way this works, inconsistent behaviour.
-		if uv_points.is_empty() or uv_points.size() < vertices_count:
+		var uv_points := uv
+		if uv_points.size() != points.size():
 			uv_points = points.duplicate()
-		else:
-			uv_points.resize(points.size())
 		
 		var uv_scale_x := 1.0 / texture.get_width()
 		var uv_scale_y := 1.0 / texture.get_height()
@@ -201,8 +195,11 @@ func _draw():
 			uv_point.x *= uv_scale_x
 			uv_point.y *= uv_scale_y
 			uv_points[i] = uv_point
+		
+		draw_colored_polygon(points, color, uv_points, texture)
+		return
 	
-	draw_colored_polygon(points, color, uv_points, texture)
+	draw_colored_polygon(points, color)
 
 func _draw_using_polygon():
 	if drawn_arc == 0:
