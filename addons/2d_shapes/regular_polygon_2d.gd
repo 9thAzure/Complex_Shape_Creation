@@ -58,11 +58,13 @@ var offset_position : Vector2 = Vector2.ZERO:
 func _draw() -> void:
 	if (vertices_count == 1):
 		draw_circle(Vector2.ZERO, size, color)
+		return
 	
 	if (vertices_count == 2):
 		if offset_rotation == 0:
 			draw_line(Vector2.UP * size, Vector2.DOWN * size, color)
 			return
+		
 		var point1 := Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
 		draw_line(point1, -point1, color)
 		return
