@@ -362,15 +362,15 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 		else:
 			ending_point = current_point - ending_slope.normalized() * corner_size
 
-		# Done in array 'points'.
-		new_points[i * corner_index_size] = starting_point
-		new_points[i * corner_index_size + corner_index_size - 1] = ending_point
+		# _Done in array 'points'.
+		points[i * corner_index_size] = starting_point
+		points[i * corner_index_size + corner_index_size - 1] = ending_point
 		# Quadratic Bezier curves are use because we have all three required points already. It isn't a perfect circle, but good enough.
 		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no between points.
 		var sub_i := 1
 		while sub_i < corner_smoothness:
 			var t_value := sub_i / (corner_smoothness as float)
-			new_points[i * corner_index_size + sub_i] = quadratic_bezier_interpolate(starting_point, points[i], ending_point, t_value)
+			points[i * corner_index_size + sub_i] = quadratic_bezier_interpolate(starting_point, current_point, ending_point, t_value)
 			sub_i += 1
 		
 		# end, prep for next loop.
