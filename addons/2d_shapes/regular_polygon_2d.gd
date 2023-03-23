@@ -78,10 +78,15 @@ func _draw() -> void:
 
 # <section> helper functions for _draw()
 
+## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
+## [br][br]If [param vertices_count] is 1, a value of 32 is used instead.
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	
+	if vertices_count == 0:
+		vertices_count = 32
+
 	var points := PackedVector2Array()
 	points.resize(vertices_count)
 	var rotation_spacing := TAU / vertices_count
