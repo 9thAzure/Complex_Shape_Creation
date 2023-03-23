@@ -50,7 +50,7 @@ func _draw() -> void:
 		if offset_rotation == 0:
 			draw_line(Vector2.UP * size, Vector2.DOWN * size, color)
 			return
-		var point1 := Vector2(sin(offset_rotation), cos(offset_rotation)) * size
+		var point1 := Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
 		draw_line(point1, -point1, color)
 		return
 	

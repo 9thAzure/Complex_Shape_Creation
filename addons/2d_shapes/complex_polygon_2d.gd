@@ -149,7 +149,7 @@ func _draw():
 		return
 	
 	if vertices_count == 2:
-		var point = Vector2(sin(-offset_rotation), cos (-offset_rotation)) * size
+		var point = Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
 		draw_line(point + offset, -point + offset, color, -1.0, antialiased)
 		return
 		
