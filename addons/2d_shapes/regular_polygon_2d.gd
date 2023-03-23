@@ -27,13 +27,6 @@ var size : float = 10:
 		
 		queue_redraw()
 
-## The color of the shape.
-@export
-var color : Color = Color.WHITE:
-	set(value):
-		color = value
-		queue_redraw()
-
 ## The offset rotation of the shape, in degrees.
 @export_range(-360, 360, 0.1, "or_greater", "or_less")
 var offset_rotation_degrees : float = 0:
@@ -46,6 +39,13 @@ var offset_rotation_degrees : float = 0:
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
+		queue_redraw()
+
+## The color of the shape.
+@export
+var color : Color = Color.WHITE:
+	set(value):
+		color = value
 		queue_redraw()
 
 ## The offset position of each shape.
