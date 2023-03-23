@@ -59,9 +59,24 @@ func _draw() -> void:
 		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 		
+	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation), color)
 
 # <section> helper functions for _draw()
 
+static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
+	var points := PackedVector2Array()
+	points.resize(vertices_count)
+	var rotation_spacing := TAU / vertices_count
+	var current_rotation := rotation_spacing / 2 + offset_rotation
+	for i in vertices_count:
+		points[i] = Vector2(-sin(current_rotation), cos(current_rotation)) * size + offset_position
+		current_rotation += rotation_spacing
+
+	return points
+
+static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
+	return Vector2(-sin(rotation), cos(rotation)) * size + offset
+	
 # func _draw_regular_shape(vertices_count : int) -> void:
 # 	var points := PackedVector2Array()
 # 	var rotation_spacing := TAU / vertices_count
