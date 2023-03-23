@@ -259,9 +259,10 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	# If drawing a full shape
 	if drawn_arc >= TAU or drawn_arc <= -TAU:
 		# rotation is initialized pointing down and offset to the left so that the bottom is flat
+		points.resize(vertices_count)
 		var current_rotation := rotation_spacing / 2 + offset_rotation
 		for i in vertices_count:
-			points.append(_get_vertices(current_rotation, size, offset_position))
+			points[i] = _get_vertices(current_rotation, size, offset_position)
 			current_rotation += rotation_spacing
 		return points
 			
