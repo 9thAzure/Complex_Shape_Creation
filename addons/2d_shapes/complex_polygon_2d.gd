@@ -269,11 +269,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	# Drawing a partial shape.
 	var current_rotation := -rotation_spacing / 2 + offset_rotation
 	var limit := sign * (drawn_arc + offset_rotation)
-	var fail_safe := 0
-	# print(limit)
 	while sign * current_rotation < limit:
-		fail_safe += 1
-		assert(fail_safe < vertices_count + 5, "fail_safe: infinite loop!")
 		var point := _get_vertices(current_rotation, size, offset_position)
 		points.append(point)
 		current_rotation += rotation_spacing
