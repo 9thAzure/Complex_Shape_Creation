@@ -1,13 +1,14 @@
 @tool
 extends Node2D
 
-# Todo: change the class description
-# ## A node that simply draws a perfect shape
-## A node that draws regular shapes, with some additional modifiers. 
+## A node that draws a regular shape
+##
+## A node that draws a regular shape. If more complex features are needed, use [ComplexPolygon2D].
 
-## The number of vertices in the perfect shape
+## The number of vertices in the regular shape
 ## a value of 1 creates a circle, a value of 2 creates a line
-@export_range(1,8,1,"or_greater") var vertices_count : int = 1:
+@export_range(1,8,1,"or_greater")
+var vertices_count : int = 1:
 	set(value):
 		if value < 1:
 			value = 1
@@ -15,7 +16,8 @@ extends Node2D
 		queue_redraw()
 
 ## The length of each corner to the center.
-@export var size : float = 10:
+@export
+var size : float = 10:
 	set(value):
 		if value <= 0:
 			value = 0.00000001
@@ -23,14 +25,16 @@ extends Node2D
 		queue_redraw()
 
 ## The color of the shape
-@export var color : Color = Color.WHITE:
+@export
+var color : Color = Color.WHITE:
 	set(value):
 		color = value
 		queue_redraw()
 
 # unfortunately, negative values are not working for export range
 ## The offset rotation of the shape, in degrees.
-@export_range(0, 360, 0.1, "or_greater", "or_less") var offset_rotation_degrees : float = 0:
+@export_range(0, 360, 0.1, "or_greater", "or_less")
+var offset_rotation_degrees : float = 0:
 	set(value):
 		offset_rotation = deg_to_rad(value)
 	get:
