@@ -10,18 +10,21 @@ extends Node2D
 @export_range(1,8,1,"or_greater")
 var vertices_count : int = 1:
 	set(value):
-		if value < 1:
-			value = 1
+		assert(value < 2000, "Large vertices counts should not be necessary.")
 		vertices_count = value
+		if value < 1:
+			vertices_count = 1
+
 		queue_redraw()
 
 ## The length of each corner to the center.
 @export
 var size : float = 10:
 	set(value):
-		if value <= 0:
-			value = 0.00000001
 		size = value
+		if value <= 0:
+			size = 0.00000001
+		
 		queue_redraw()
 
 ## The color of the shape
@@ -31,9 +34,8 @@ var color : Color = Color.WHITE:
 		color = value
 		queue_redraw()
 
-# unfortunately, negative values are not working for export range
 ## The offset rotation of the shape, in degrees.
-@export_range(0, 360, 0.1, "or_greater", "or_less")
+@export_range(-360, 360, 0.1, "or_greater", "or_less")
 var offset_rotation_degrees : float = 0:
 	set(value):
 		offset_rotation = deg_to_rad(value)
