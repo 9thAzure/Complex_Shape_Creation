@@ -312,7 +312,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor 
 	
-## Returns a new [PackedVector2Array] with the points for drawing the rounded shape with [method CanvasItem.draw_colored_polygon], using quadratic Bézier curves. 
+## Modifies [param points] so that the shape it draws have rounded corners. The method uses quadratic Bézier curves for the corners.
 ## [br][br][param corner_size] is the distance from a vertex to the point where the rounded corner starts. 
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
 ## [br][param corner_smoothness] dictates the amount of lines used to draw the corner. 
