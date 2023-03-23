@@ -77,39 +77,3 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
 	return Vector2(-sin(rotation), cos(rotation)) * size + offset
 	
-# func _draw_regular_shape(vertices_count : int) -> void:
-# 	var points := PackedVector2Array()
-# 	var rotation_spacing := TAU / vertices_count
-# 	# rotation is initialized pointing down and offset to the left so that the bottom is flat
-# 	var current_rotation := rotation_spacing / 2 - offset_rotation
-# 	for i in vertices_count:
-# 		points.append(Vector2(sin(current_rotation), cos(current_rotation)) * size) 
-# 		current_rotation += rotation_spacing
-# 	draw_colored_polygon(points, color)
-
-# func _draw_holed_shape(vertices_count : int) -> void:
-# 	var points := PackedVector2Array()
-# 	points.resize(4)
-# 	var rotation_spacing := TAU / vertices_count
-# 	# rotation is initialized pointing down and offset to the left so that the bottom is flat
-# 	var current_rotation := rotation_spacing / 2 - offset_rotation
-# 	var scaler := hole_size / size
-
-# 	var first_point := Vector2(sin(current_rotation), cos(current_rotation)) * size
-# 	points[1] = first_point
-# 	points[2] = first_point * scaler
-
-# 	for i in vertices_count - 1:
-# 		points[0] = points[1]
-# 		points[3] = points[2] 
-# 		current_rotation += rotation_spacing
-# 		points[1] = Vector2(sin(current_rotation), cos(current_rotation)) * size
-# 		points[2] = points[1] * scaler
-# 		draw_colored_polygon(points, color)
-	
-# 	points[0] = points[1]
-# 	points[3] = points[2] 
-# 	points[1] = first_point
-# 	points[2] = first_point * scaler
-# 	draw_colored_polygon(points, color)
-	
