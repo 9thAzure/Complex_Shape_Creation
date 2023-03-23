@@ -172,7 +172,7 @@ func _draw():
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
 	if not is_zero_approx(corner_size):
-		points = get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 	if is_zero_approx(width):
 		points.append(points[0])
@@ -214,7 +214,7 @@ func _draw_using_polygon():
 		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 
 	if not is_zero_approx(corner_size):
-		points = get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 	if uses_width and not uses_drawn_arc:
 		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
@@ -318,14 +318,14 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
 ## [br][param corner_smoothness] dictates the amount of lines used to draw the corner. 
 ## A value of 0 will instead use a value of [code]32[/code] divided by the size of [param points].
-static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
+static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
 	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
 	
 	var corner_size_squared = corner_size ** 2
 	var array_size := points.size()
-	var new_points := PackedVector2Array()
+	# var new_points := PackedVector2Array()
 	if corner_smoothness == 0:
 		corner_smoothness = 32 / points.size()
 
@@ -377,7 +377,7 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 		last_point = current_point
 		current_point = next_point
 
-	return new_points
+	# return new_points
 
 ## Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
