@@ -7,6 +7,7 @@ extends Node2D
 
 ## The number of vertices in the regular shape.
 ## a value of 1 creates a circle, a value of 2 creates a line.
+## [br]Values are clamped to a value greater than or equal to 1.
 @export_range(1,8,1,"or_greater")
 var vertices_count : int = 1:
 	set(value):
@@ -18,6 +19,7 @@ var vertices_count : int = 1:
 		queue_redraw()
 
 ## The length of each corner to the center.
+## Values are clamped to a value greater than 0.
 @export
 var size : float = 10:
 	set(value):
