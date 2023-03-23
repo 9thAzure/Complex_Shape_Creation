@@ -334,18 +334,19 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	
 	# _resize the current one instead.
 	points.resize(array_size * corner_index_size)
-	# spread the old points throughout the array. They would be at the start of each "corner".
+	# _spread the old points throughout the array. They would be at the start of each "corner".
 	for pre_i in array_size:
 		var i := array_size - 1 - pre_i
 		points[i * corner_index_size] = points[i]
 
-	# -corner_index_size
-	var last_point := points[-1]
+	# _-corner_index_size
+	var last_point := points[-corner_index_size]
 	var current_point := points[0]
 	var next_point : Vector2
 	for i in array_size:
-		# (i + 1) * corner_index_size % points.size()
-		next_point = points[(i + 1) % points.size()]
+		# _(i + 1) * corner_index_size % points.size()
+		next_point = points[(i + 1) * corner_index_size % points.size()]
+		# next_point = points[(i + 1) % points.size()]
 		# get starting & ending points of corner.
 		var starting_slope := (current_point - last_point)
 		var ending_slope := (current_point - next_point)
