@@ -1,12 +1,12 @@
 @tool
 extends Node2D
 
-## A node that draws a regular shape
+## A node that draws a regular shape.
 ##
 ## A node that draws a regular shape. If more complex features are needed, use [ComplexPolygon2D].
 
-## The number of vertices in the regular shape
-## a value of 1 creates a circle, a value of 2 creates a line
+## The number of vertices in the regular shape.
+## a value of 1 creates a circle, a value of 2 creates a line.
 @export_range(1,8,1,"or_greater")
 var vertices_count : int = 1:
 	set(value):
@@ -27,7 +27,7 @@ var size : float = 10:
 		
 		queue_redraw()
 
-## The color of the shape
+## The color of the shape.
 @export
 var color : Color = Color.WHITE:
 	set(value):
@@ -42,10 +42,17 @@ var offset_rotation_degrees : float = 0:
 	get:
 		return rad_to_deg(offset_rotation)
 
-## the offset rotation of the shape, in radians
+## The offset rotation of the shape, in radians.
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
+		queue_redraw()
+
+## The offset position of each shape.
+@export
+var offset_position : Vector2 = Vector2.ZERO:
+	set(value):
+		offset_position = value
 		queue_redraw()
 
 func _draw() -> void:
@@ -65,7 +72,7 @@ func _draw() -> void:
 		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 		
-	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation), color)
+	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation, offset_position), color)
 
 # <section> helper functions for _draw()
 
