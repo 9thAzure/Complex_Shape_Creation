@@ -312,7 +312,6 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor 
 	
-# Todo: change implementation to do the changes in array. This makes it more consistent with other static methods.
 ## Returns a new [PackedVector2Array] with the points for drawing the rounded shape with [method CanvasItem.draw_colored_polygon], using quadratic Bézier curves. 
 ## [br][br][param corner_size] is the distance from a vertex to the point where the rounded corner starts. 
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
@@ -325,28 +324,21 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 	
 	var corner_size_squared = corner_size ** 2
 	var array_size := points.size()
-	# var new_points := PackedVector2Array()
 	if corner_smoothness == 0:
 		corner_smoothness = 32 / points.size()
 
-	# _Rename to corner_index_size
 	var corner_index_size := corner_smoothness + 1
 	
-	# _resize the current one instead.
 	points.resize(array_size * corner_index_size)
-	# _spread the old points throughout the array. They would be at the start of each "corner".
 	for pre_i in array_size:
 		var i := array_size - 1 - pre_i
 		points[i * corner_index_size] = points[i]
 
-	# _-corner_index_size
 	var last_point := points[-corner_index_size]
 	var current_point := points[0]
 	var next_point : Vector2
 	for i in array_size:
-		# _(i + 1) * corner_index_size % points.size()
 		next_point = points[(i + 1) * corner_index_size % points.size()]
-		# next_point = points[(i + 1) % points.size()]
 		# get starting & ending points of corner.
 		var starting_slope := (current_point - last_point)
 		var ending_slope := (current_point - next_point)
@@ -362,7 +354,6 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 		else:
 			ending_point = current_point - ending_slope.normalized() * corner_size
 
-		# _Done in array 'points'.
 		points[i * corner_index_size] = starting_point
 		points[i * corner_index_size + corner_index_size - 1] = ending_point
 		# Quadratic Bezier curves are use because we have all three required points already. It isn't a perfect circle, but good enough.
@@ -376,8 +367,6 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 		# end, prep for next loop.
 		last_point = current_point
 		current_point = next_point
-
-	# return new_points
 
 ## Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
