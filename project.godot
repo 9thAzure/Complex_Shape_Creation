@@ -26,6 +26,10 @@ window/stretch/mode="viewport"
 
 project/assembly_name="2D Shapes Addon"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/2d_shapes/plugin.cfg")
+
 [rendering]
 
 renderer/rendering_method="mobile"
