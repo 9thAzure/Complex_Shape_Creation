@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/2d_shapes/complex_shape_2d.svg")
+@icon("res://addons/2d_regular_polygons/complex_shape_2d.svg")
 class_name ComplexPolygon2D
 extends Polygon2D
 
