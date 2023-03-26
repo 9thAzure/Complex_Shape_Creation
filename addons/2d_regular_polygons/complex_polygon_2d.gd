@@ -133,7 +133,6 @@ func _pre_redraw_deferred():
 		# the setting the 'polygon' property already calls queue_redraw
 		polygon = PackedVector2Array()
 		return
-	
 	_draw_using_polygon()
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
@@ -204,6 +203,7 @@ func _draw():
 	draw_colored_polygon(points, color)
 
 func _draw_using_polygon():
+	print("setting polygon")
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
