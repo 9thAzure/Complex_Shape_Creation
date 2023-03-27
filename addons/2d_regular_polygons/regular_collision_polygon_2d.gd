@@ -40,6 +40,43 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_queue_recreate()
 
+@export_group("advanced")
+
+# The default value is -0.001 so that dragging it into positive values is quick.
+## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
+## Values greater than 0 will have [member polygon] used,
+## and value greater than [member size] also ignores this effect still while using [member polygon].
+## [br][br]A value between 0 and 0.01 is converted to 0, to make it easier to select it in the inspector.
+## [br][br]Note: If this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
+@export 
+var width : float = -0.001:
+	set(value):
+		if value > 0 and value < 0.01:
+			value = 0
+
+		width = value
+		_queue_recreate()
+
+## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
+## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
+## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]A value of [code]0[/code] makes the node not draw anything.
+@export_range(-360, 360) 
+var drawn_arc_degrees : float = 360:
+	set(value):
+		drawn_arc = deg_to_rad(value)
+	get:
+		return rad_to_deg(drawn_arc)
+
+## The arc of the drawn shape, in radians, cutting off beyond that arc. 
+## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
+## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]A value of [code]0[/code] makes the node not draw anything.
+var drawn_arc : float = TAU:
+	set(value):
+		drawn_arc = value
+		_queue_recreate()
+
 var is_queued := false
 
 func _queue_recreate() -> void:
