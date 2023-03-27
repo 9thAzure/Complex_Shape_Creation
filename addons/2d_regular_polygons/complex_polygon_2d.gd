@@ -20,6 +20,10 @@ var vertices_count : int = 1:
 		if value < 1:
 			vertices_count = 1
 		
+		if vertices_count == 2 and width > 0:
+			polygon = PackedVector2Array()
+			return
+		
 		if corner_size != 0:
 			corner_size = corner_size
 			return
@@ -62,10 +66,15 @@ var offset_rotation : float = 0:
 @export 
 var width : float = -0.001:
 	set(value):
-		width = value
-		if width > 0 and width < 0.01:
-			width = 0
+		if value > 0 and value < 0.01:
+			value = 0
 		
+		if width > 0 and value <= 0:
+			width = value
+			polygon = PackedVector2Array()
+			return
+
+		width = value
 		_pre_redraw()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
@@ -124,7 +133,7 @@ var _is_queued := false
 func _pre_redraw() -> void:
 	if not _uses_polygon_member():
 		# the setting the 'polygon' property already calls queue_redraw
-		polygon = PackedVector2Array()
+		queue_redraw()
 		return
 	
 	if _is_queued or not is_inside_tree():
