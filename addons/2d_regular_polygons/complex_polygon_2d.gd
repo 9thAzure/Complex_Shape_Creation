@@ -221,7 +221,6 @@ func _draw():
 	draw_colored_polygon(points, color)
 
 func _draw_using_polygon():
-	print("setting polygon")
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
