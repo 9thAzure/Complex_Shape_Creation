@@ -68,12 +68,17 @@ func _create() -> void:
 	
 	if vertices_count == 2:
 		var line := SegmentShape2D.new()
-		line.a = Vector2.UP if is_zero_approx(offset_rotation) else Vector2(sin(offset_rotation), -cos(offset_rotation))
+		line.a = size * (Vector2.UP if is_zero_approx(offset_rotation) else Vector2(sin(offset_rotation), -cos(offset_rotation)))
 		line.b = -line.a
 		shape = line
 		return
 	
-	# There is no check for squares because RectangleShape2D has inconsistent size.
+	if vertices_count == 4 and is_zero_approx(offset_rotation):
+		const sqrt_two_over_two := 0.707106781
+		var square := RectangleShape2D.new()
+		square.size = size / sqrt_two_over_two * Vector2.ONE
+		shape = square
+		return
 	
 	var polygon := ConvexPolygonShape2D.new()
 	polygon.points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation)
