@@ -136,12 +136,21 @@ func _pre_redraw() -> void:
 		queue_redraw()
 		return
 	
-	if _is_queued or not is_inside_tree():
+	if _is_queued:
 		return
+	
 	_is_queued = true
+	if not is_inside_tree():
+		return
+	
 	await get_tree().process_frame
 	_is_queued = false
 	_draw_using_polygon()
+
+func _enter_tree() -> void:
+	if _is_queued and polygon.is_empty():
+		_draw_using_polygon()
+	_is_queued = false
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
