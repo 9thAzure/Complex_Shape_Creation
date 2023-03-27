@@ -11,7 +11,7 @@ extends Polygon2D
 
 ## The number of vertices in the perfect shape. A value of 1 creates a circle, and a value of 2 creates a line.
 ## [br]Values are clamped to a value greater than or equal to 1.
-## [br][br]Note: Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
+## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 @export_range(1,8,1,"or_greater") 
 var vertices_count : int = 1:
 	set(value):
@@ -62,8 +62,8 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
 ## Values greater than 0 will have [member polygon] used,
 ## and value greater than [member size] also ignores this effect still while using [member polygon].
-## [br][br]A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
-## [br][br]Note: if this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
+## [br][br]A value between 0 and 0.01 is converted to 0, to make it easier to select it in the inspector.
+## [br][br]Note: If this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
 @export 
 var width : float = -0.001:
 	set(value):
@@ -81,7 +81,7 @@ var width : float = -0.001:
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
 ## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
-## [br][br]Note: a value of [code]0[/code] makes the node not draw anything.
+## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360) 
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -92,23 +92,21 @@ var drawn_arc_degrees : float = 360:
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
 ## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
-## [br][br]Note: a value of [code]0[/code] makes the node not draw anything.
+## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
 		_pre_redraw()
 
-## The distance from each vertex to the point where the rounded corner starts. Values are clamped to 0 and half of the side length.
+## The distance from each vertex to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
 ## [br]Values are clamped to a value of [code]0[/code] or greater.
 @export 
 var corner_size : float = 0.0:
 	set(value):
-		corner_size = get_side_length(vertices_count) * size / 2
-		if value < corner_size:
-			corner_size = value
-			if value < 0:
-				corner_size = 0
+		corner_size = value
+		if value < 0:
+			corner_size = 0
 		
 		_pre_redraw()
 
