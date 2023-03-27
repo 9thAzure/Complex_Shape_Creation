@@ -97,17 +97,17 @@ func _enter_tree():
 	is_queued = false
 
 func _create() -> void:
-	if vertices_count == 1:
-		var circle := CircleShape2D.new()
-		circle.radius = size
-		shape = circle
-		return
-	
 	if vertices_count == 2:
 		var line := SegmentShape2D.new()
 		line.a = size * (Vector2.UP if is_zero_approx(offset_rotation) else Vector2(sin(offset_rotation), -cos(offset_rotation)))
 		line.b = -line.a
 		shape = line
+		return
+	
+	if vertices_count == 1:
+		var circle := CircleShape2D.new()
+		circle.radius = size
+		shape = circle
 		return
 	
 	if vertices_count == 4 and is_zero_approx(offset_rotation):
