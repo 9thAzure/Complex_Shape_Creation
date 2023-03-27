@@ -62,7 +62,8 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
 ## Values greater than 0 will have [member polygon] used,
 ## and value greater than [member size] also ignores this effect still while using [member polygon].
-## [br][br]Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
+## [br][br]A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
+## [br][br]Note: if this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
 @export 
 var width : float = -0.001:
 	set(value):
