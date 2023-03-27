@@ -122,6 +122,11 @@ var _is_queued := false
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 # queue-like functionality - pauses, and only 1 call.
 func _pre_redraw() -> void:
+	if not _uses_polygon_member():
+		# the setting the 'polygon' property already calls queue_redraw
+		polygon = PackedVector2Array()
+		return
+	
 	if _is_queued:
 		return
 	_is_queued = true
@@ -129,10 +134,8 @@ func _pre_redraw() -> void:
 
 func _pre_redraw_deferred():
 	_is_queued = false
-	if not _uses_polygon_member():
-		# the setting the 'polygon' property already calls queue_redraw
-		polygon = PackedVector2Array()
-		return
+	
+	
 	_draw_using_polygon()
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
