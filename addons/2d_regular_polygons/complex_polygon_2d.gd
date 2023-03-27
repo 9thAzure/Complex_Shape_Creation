@@ -127,15 +127,11 @@ func _pre_redraw() -> void:
 		polygon = PackedVector2Array()
 		return
 	
-	if _is_queued:
+	if _is_queued or not is_inside_tree():
 		return
 	_is_queued = true
-	call_deferred("_pre_redraw_deferred")
-
-func _pre_redraw_deferred():
+	await get_tree().process_frame
 	_is_queued = false
-	
-	
 	_draw_using_polygon()
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
