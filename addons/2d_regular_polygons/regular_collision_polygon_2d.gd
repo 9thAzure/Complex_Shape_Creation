@@ -40,13 +40,6 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_queue_recreate()
 
-## The offset position of each shape.
-@export
-var offset_position : Vector2 = Vector2.ZERO:
-	set(value):
-		offset_position = value
-		_queue_recreate()
-
 var is_queued := false
 
 func _queue_recreate() -> void:
@@ -80,6 +73,8 @@ func _create() -> void:
 		shape = line
 		return
 	
+	# There is no check for squares because RectangleShape2D has inconsistent size.
+	
 	var polygon := ConvexPolygonShape2D.new()
-	polygon.points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
+	polygon.points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation)
 	shape = polygon
