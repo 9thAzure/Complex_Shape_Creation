@@ -20,6 +20,10 @@ var vertices_count : int = 1:
 		if value < 1:
 			vertices_count = 1
 		
+		if vertices_count == 2 and width > 0:
+			polygon = PackedVector2Array()
+			return
+		
 		if corner_size != 0:
 			corner_size = corner_size
 			return
@@ -58,14 +62,20 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
 ## Values greater than 0 will have [member polygon] used,
 ## and value greater than [member size] also ignores this effect still while using [member polygon].
-## [br][br]Note: A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
+## [br][br]A value between 0 and 0.01 is converted to 0, to make it easier to select it in the editor.
+## [br][br]Note: if this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
 @export 
 var width : float = -0.001:
 	set(value):
-		width = value
-		if width > 0 and width < 0.01:
-			width = 0
+		if value > 0 and value < 0.01:
+			value = 0
 		
+		if width > 0 and value <= 0:
+			width = value
+			polygon = PackedVector2Array()
+			return
+
+		width = value
 		_pre_redraw()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
@@ -122,19 +132,26 @@ var _is_queued := false
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 # queue-like functionality - pauses, and only 1 call.
 func _pre_redraw() -> void:
-	if _is_queued:
-		return
-	_is_queued = true
-	call_deferred("_pre_redraw_deferred")
-
-func _pre_redraw_deferred():
-	_is_queued = false
 	if not _uses_polygon_member():
 		# the setting the 'polygon' property already calls queue_redraw
-		polygon = PackedVector2Array()
+		queue_redraw()
 		return
 	
+	if _is_queued:
+		return
+	
+	_is_queued = true
+	if not is_inside_tree():
+		return
+	
+	await get_tree().process_frame
+	_is_queued = false
 	_draw_using_polygon()
+
+func _enter_tree() -> void:
+	if _is_queued and polygon.is_empty():
+		_draw_using_polygon()
+	_is_queued = false
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
