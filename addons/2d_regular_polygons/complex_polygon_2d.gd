@@ -258,8 +258,10 @@ static func get_side_length(vertices_count : int):
 
 ## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
 ## [br][br]If [param vertices_count] is 1, a value of 32 is used instead.
-## [br][param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
-## It starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
+## [br][param drawn_arc] only returns the vertices up to the specified angle, in radians. 
+## The first point starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
+## [br][param add_central_point] adds [param offset_rotation] at the end of the array. It only works if [param drawn_arc] is used.
+## It should be set to false when using [method add_hole_to_points].
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
 	drawn_arc : float = TAU, add_central_point := true) -> PackedVector2Array:
 
