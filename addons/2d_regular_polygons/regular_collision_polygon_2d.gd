@@ -104,6 +104,22 @@ func _create() -> void:
 		shape = line
 		return
 	
+	if drawn_arc == 0:
+		return
+	
+	if (-TAU < drawn_arc and drawn_arc < TAU
+		or width > 0
+	):
+		var polygon := ConvexPolygonShape2D.new()
+		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+		points.remove_at(points.size() - 1)
+		if width > 0:
+			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
+		
+		polygon.points = points
+		shape = polygon
+		return
+	
 	if vertices_count == 1:
 		var circle := CircleShape2D.new()
 		circle.radius = size
@@ -120,3 +136,6 @@ func _create() -> void:
 	var polygon := ConvexPolygonShape2D.new()
 	polygon.points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation)
 	shape = polygon
+
+func _uses_drawn_arc():
+	return -TAU < drawn_arc and drawn_arc < TAU
