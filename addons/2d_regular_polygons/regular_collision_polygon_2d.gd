@@ -42,17 +42,14 @@ var offset_rotation : float = 0:
 
 @export_group("advanced")
 
-# The default value is -0.001 so that dragging it into positive values is quick.
-## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
-## Values greater than 0 will have [member polygon] used,
-## and value greater than [member size] also ignores this effect still while using [member polygon].
-## [br][br]A value between 0 and 0.01 is converted to 0, to make it easier to select it in the inspector.
+## Determines the width of the shape. A value of 0 ignores this effect.
+## This value is clamped between 0 and [member size].
 ## [br][br]Note: If this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
 @export 
-var width : float = -0.001:
+var width : float = 0:
 	set(value):
-		if value > 0 and value < 0.01:
-			value = 0
+		if value > size:
+			value = size 
 
 		width = value
 		_queue_recreate()
