@@ -107,12 +107,13 @@ func _create() -> void:
 	if drawn_arc == 0:
 		return
 	
-	if (-TAU < drawn_arc and drawn_arc < TAU
-		or width > 0
+	var uses_width := width > 0
+	if (uses_width
+		or -TAU < drawn_arc and drawn_arc < TAU
 	):
 		var polygon := ConvexPolygonShape2D.new()
-		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, false)
-		if width > 0:
+		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		if uses_width:
 			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 		
 		polygon.points = points
