@@ -261,7 +261,9 @@ static func get_side_length(vertices_count : int):
 ## [br][br]If [param vertices_count] is 1, a value of 32 is used instead.
 ## [br][param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
 ## It starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
-static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
+static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
+	drawn_arc : float = TAU, add_central_point := true) -> PackedVector2Array:
+
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
@@ -309,7 +311,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		var edge_point := last_point + scaler * edge_slope
 		points.append(edge_point)
 	
-	if not is_equal_approx(drawn_arc, PI):
+	if add_central_point and not is_equal_approx(drawn_arc, PI):
 		points.append(offset_position)
 			
 	return points

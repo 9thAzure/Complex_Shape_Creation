@@ -111,8 +111,7 @@ func _create() -> void:
 		or width > 0
 	):
 		var polygon := ConvexPolygonShape2D.new()
-		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
-		points.remove_at(points.size() - 1)
+		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, false)
 		if width > 0:
 			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 		
