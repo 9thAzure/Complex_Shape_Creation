@@ -42,15 +42,11 @@ var offset_rotation : float = 0:
 
 @export_group("advanced")
 
-## Determines the width of the shape. A value of 0 ignores this effect.
-## This value is clamped between 0 and [member size].
+## Determines the width of the shape. A value of 0 or a value greater than or equal to [member size] ignores this effect.
 ## [br][br]Note: If this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
 @export 
 var width : float = 0:
 	set(value):
-		if value > size:
-			value = size 
-
 		width = value
 		_queue_recreate()
 
@@ -110,7 +106,7 @@ func _create() -> void:
 	):
 		var polygon := ConvexPolygonShape2D.new()
 		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
-		if uses_width:
+		if uses_width and width < size:
 			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
 		
 		polygon.points = points
