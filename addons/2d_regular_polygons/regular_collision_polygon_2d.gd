@@ -51,7 +51,6 @@ var offset_rotation : float = 0:
 
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
 ## [br]Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
-## [br][br]Note: If this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
 @export 
 var width : float = 0:
 	set(value):
@@ -60,7 +59,7 @@ var width : float = 0:
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
-## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not change anything.
 @export_range(-360, 360) 
 var drawn_arc_degrees : float = 360:
@@ -71,7 +70,7 @@ var drawn_arc_degrees : float = 360:
 
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
-## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not change anything.
 var drawn_arc : float = TAU:
 	set(value):
