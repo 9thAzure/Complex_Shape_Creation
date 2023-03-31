@@ -11,7 +11,7 @@ extends CollisionShape2D
 
 ## The number of vertices in the regular shape.
 ## a value of 1 creates a circle, a value of 2 creates a line.
-## [br]Values are clamped to a value greater than or equal to 1.
+## Values are clamped to a value greater than or equal to 1.
 @export_range(1,8,1,"or_greater")
 var vertices_count : int = 1:
 	set(value):
@@ -50,7 +50,7 @@ var offset_rotation : float = 0:
 @export_group("advanced")
 
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
-## [br]Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
+## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
 @export 
 var width : float = 0:
 	set(value):
