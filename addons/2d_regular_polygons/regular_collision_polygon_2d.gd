@@ -6,10 +6,12 @@ extends CollisionShape2D
 ##
 ## A node with variables for generating 2d regular shapes for collision.
 ## It creates various shape inheriting [Shape2D] based on the values of its variables and sets it to [member CollisionShape2D.shape].
-## [br][br]Note: If these properties are set when the node is outside a [SceneTree], its effects are delayed to when it enters one.
-## If [member CollisionShape2D.shape] is modified directly before then (including the editor), it won't be regenerated when the node enters the tree (project runs).
+## [br][br]Note: If these properties are set when the node is outside a [SceneTree], its effects are delayed to when it enters one,
+## and if [member CollisionShape2D.shape] is modified directly before then (including the editor), it won't be regenerated.
+## [method regenerate] can be used to force regeneration.
+## If [member CollisionShape2D.shape] is null, the shape is regenerated.
 
-## The number of vertices in the regular shape.
+## The number of vertices in the regular shape
 ## a value of 1 creates a circle, a value of 2 creates a line.
 ## Values are clamped to a value greater than or equal to 1.
 @export_range(1,8,1,"or_greater")
@@ -77,22 +79,19 @@ var drawn_arc : float = TAU:
 		drawn_arc = value
 		queue_regenerate()
 
-var _is_queued := false
+var _is_queued := true
 
 func queue_regenerate() -> void:
 	if _is_queued:
 		return
 	
 	_is_queued = true
-	if not is_inside_tree():
-		return
-	
 	await get_tree().process_frame
 	_is_queued = false
 	generate()
 
 func _enter_tree():
-	if _is_queued and shape == null:
+	if shape == null and not Engine.is_editor_hint():
 		generate()
 	_is_queued = false
 
