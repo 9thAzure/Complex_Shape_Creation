@@ -20,7 +20,7 @@ var vertices_count : int = 1:
 		if value < 1:
 			vertices_count = 1
 
-		_queue_recreate()
+		queue_regenerate()
 
 ## The length of each corner to the center.
 ## Values are clamped to a value greater than 0.
@@ -31,7 +31,7 @@ var size : float = 10:
 		if value <= 0:
 			size = 0.00000001
 		
-		_queue_recreate()
+		queue_regenerate()
 
 ## The offset rotation of the shape, in degrees.
 @export_range(-360, 360, 0.1, "or_greater", "or_less")
@@ -45,7 +45,7 @@ var offset_rotation_degrees : float = 0:
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
-		_queue_recreate()
+		queue_regenerate()
 
 @export_group("advanced")
 
@@ -55,7 +55,7 @@ var offset_rotation : float = 0:
 var width : float = 0:
 	set(value):
 		width = value
-		_queue_recreate()
+		queue_regenerate()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
@@ -75,11 +75,11 @@ var drawn_arc_degrees : float = 360:
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
-		_queue_recreate()
+		queue_regenerate()
 
 var _is_queued := false
 
-func _queue_recreate() -> void:
+func queue_regenerate() -> void:
 	if _is_queued:
 		return
 	
@@ -89,14 +89,14 @@ func _queue_recreate() -> void:
 	
 	await get_tree().process_frame
 	_is_queued = false
-	_create()
+	generate()
 
 func _enter_tree():
 	if _is_queued and shape == null:
-		_create()
+		generate()
 	_is_queued = false
 
-func _create() -> void:
+func generate() -> void:
 	if vertices_count == 2:
 		var line := SegmentShape2D.new()
 		line.a = size * (Vector2.UP if is_zero_approx(offset_rotation) else Vector2(sin(offset_rotation), -cos(offset_rotation)))
