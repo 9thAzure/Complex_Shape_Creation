@@ -78,24 +78,24 @@ var drawn_arc : float = TAU:
 		drawn_arc = value
 		_queue_recreate()
 
-var is_queued := false
+var _is_queued := false
 
 func _queue_recreate() -> void:
-	if is_queued:
+	if _is_queued:
 		return
 	
-	is_queued = true
+	_is_queued = true
 	if not is_inside_tree():
 		return
 	
 	await get_tree().process_frame
-	is_queued = false
+	_is_queued = false
 	_create()
 
 func _enter_tree():
-	if is_queued and shape == null:
+	if _is_queued and shape == null:
 		_create()
-	is_queued = false
+	_is_queued = false
 
 func _create() -> void:
 	if vertices_count == 2:
