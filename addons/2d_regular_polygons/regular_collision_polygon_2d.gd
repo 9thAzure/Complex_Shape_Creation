@@ -81,6 +81,8 @@ var drawn_arc : float = TAU:
 
 var _is_queued := true
 
+## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
+##[br][br]This method does nothing if the node is outside the [SceneTree]. Use [method regenerate] instead.
 func queue_regenerate() -> void:
 	if _is_queued:
 		return
@@ -88,14 +90,16 @@ func queue_regenerate() -> void:
 	_is_queued = true
 	await get_tree().process_frame
 	_is_queued = false
-	generate()
+	regenerate()
 
 func _enter_tree():
 	if shape == null and not Engine.is_editor_hint():
-		generate()
+		regenerate()
 	_is_queued = false
 
-func generate() -> void:
+## Regenerates the [member CollisionShape2D.shape] using the set properties.
+## [br][br]See also: [method queue_regenerate].
+func regenerate() -> void:
 	if vertices_count == 2:
 		var line := SegmentShape2D.new()
 		line.a = size * (Vector2.UP if is_zero_approx(offset_rotation) else Vector2(sin(offset_rotation), -cos(offset_rotation)))
