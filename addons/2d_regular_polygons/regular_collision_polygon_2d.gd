@@ -97,6 +97,9 @@ func _enter_tree():
 		regenerate()
 	_is_queued = false
 
+func _exit_tree():
+	_is_queued = true
+
 ## Regenerates the [member CollisionShape2D.shape] using the set properties.
 ## [br][br]See also: [method queue_regenerate].
 func regenerate() -> void:
