@@ -223,18 +223,17 @@ func _draw_using_polygon():
 		polygon = PackedVector2Array()
 		return
 	
-	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	var uses_width := width < size
 	var uses_drawn_arc := _uses_drawn_arc()
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_drawn_arc)
 	if uses_width and uses_drawn_arc:
-		points.remove_at(points.size() - 1)
-		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
+		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc)
 
 	if not is_zero_approx(corner_size):
 		get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 	if uses_width and not uses_drawn_arc:
-		add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
+		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc)
 	
 	polygon = points
 
@@ -259,9 +258,13 @@ static func get_side_length(vertices_count : int):
 
 ## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
 ## [br][br]If [param vertices_count] is 1, a value of 32 is used instead.
-## [br][param drawn_arc] only returns the vertices up to the specified angle, in radians, and includes a central point. 
-## It starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
-static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, drawn_arc : float = TAU) -> PackedVector2Array:
+## [br][param drawn_arc] only returns the vertices up to the specified angle, in radians. 
+## The first point starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
+## [br][param add_central_point] adds [param offset_rotation] at the end of the array. It only works if [param drawn_arc] is used.
+## It should be set to false when using [method add_hole_to_points].
+static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
+	drawn_arc : float = TAU, add_central_point := true) -> PackedVector2Array:
+
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
@@ -309,7 +312,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		var edge_point := last_point + scaler * edge_slope
 		points.append(edge_point)
 	
-	if not is_equal_approx(drawn_arc, PI):
+	if add_central_point and not is_equal_approx(drawn_arc, PI):
 		points.append(offset_position)
 			
 	return points
