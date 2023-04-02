@@ -389,8 +389,8 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 
-## [b]Appends[/b] points, which are [param hole_scaler] of the original points, on [param points] to give it a hole for [member Polygon2D.polygon].
-## [param close_shape] adds the first point to the end before adding the other points.
+## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
+## [param close_shape] adds the first point to the end, before the procedure.
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	if close_shape:
 		points.append(points[0])
