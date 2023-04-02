@@ -9,8 +9,8 @@ extends Polygon2D
 ## It mainly uses draw_* methods, but may use the [member polygon] property when using [member width].
 ## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 
-## The number of vertices in the perfect shape. A value of 1 creates a circle, and a value of 2 creates a line.
-## Values are clamped to a value greater than or equal to 1.
+## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
+## Values are clamped to a value greater than or equal to [code]1[/code].
 ## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 @export_range(1,8,1,"or_greater") 
 var vertices_count : int = 1:
@@ -30,8 +30,7 @@ var vertices_count : int = 1:
 		
 		_pre_redraw()
 
-## The length from each corner to the center.
-## Values are clamped to a value greater than 0.
+## The length from each corner to the center. Values are clamped to a value greater than [code]0[/code].
 @export 
 var size : float = 10:
 	set(value):
@@ -59,10 +58,10 @@ var offset_rotation : float = 0:
 @export_group("advanced")
 
 # The default value is -0.001 so that dragging it into positive values is quick.
-## Determines the width of the shape. A value of 0 outlines the shape with lines, and a value smaller than 0 ignores this effect.
-## Values greater than 0 will have [member polygon] used,
+## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
+## Values greater than [code]0[/code] will have [member polygon] used,
 ## and value greater than [member size] also ignores this effect still while using [member polygon].
-## [br][br]A value between 0 and 0.01 is converted to 0, to make it easier to select it in the inspector.
+## [br][br]A value between [code]0[/code] and [code]0.01[/code] is converted to [code]0[/code], to make it easier to select it in the inspector.
 ## [br][br]Note: If this node isn't in a tree, the setting of [member polygon] will be delayed to when it enters one.
 @export 
 var width : float = -0.001:
@@ -98,7 +97,7 @@ var drawn_arc : float = TAU:
 		drawn_arc = value
 		_pre_redraw()
 
-## The distance from each vertex to the point where the rounded corner starts.
+## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
 ## Values are clamped to a value of [code]0[/code] or greater.
 @export 
@@ -110,7 +109,7 @@ var corner_size : float = 0.0:
 		
 		_pre_redraw()
 
-## How many lines make up the corner. A value of 0 will use a value of 32 divided by [member vertices_count].
+## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 ## Values are clamped to a value of [code]0[/code] or greater.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
@@ -257,7 +256,7 @@ static func get_side_length(vertices_count : int):
 	return 2 * sin(TAU / vertices_count / 2)
 
 ## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
-## [br][br]If [param vertices_count] is 1, a value of 32 is used instead.
+## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
 ## [param drawn_arc] only returns the vertices up to the specified angle, in radians. 
 ## The first point starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
 ## [param add_central_point] adds [param offset_rotation] at the end of the array. It only works if [param drawn_arc] is used.
