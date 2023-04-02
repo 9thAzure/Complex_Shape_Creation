@@ -329,11 +329,12 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor 
 	
-## Modifies [param points] so that the shape it draws have rounded corners. The method uses quadratic Bézier curves for the corners.
-## [br][br][param corner_size] is the distance from a vertex to the point where the rounded corner starts. 
+## Modifies [param points] so that the shape it draws have rounded corners. 
+## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
+## [br][br][param corner_size] is the distance from a vertex along each edge to the point where the rounded corner starts. 
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
 ## [param corner_smoothness] dictates the amount of lines used to draw the corner. 
-## A value of 0 will instead use a value of [code]32[/code] divided by the size of [param points].
+## A value of [code]0[/code] will instead use a value of [code]32[/code] divided by the size of [param points].
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
