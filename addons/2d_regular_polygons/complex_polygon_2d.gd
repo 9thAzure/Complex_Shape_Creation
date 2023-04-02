@@ -10,7 +10,7 @@ extends Polygon2D
 ## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 
 ## The number of vertices in the perfect shape. A value of 1 creates a circle, and a value of 2 creates a line.
-## [br]Values are clamped to a value greater than or equal to 1.
+## Values are clamped to a value greater than or equal to 1.
 ## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 @export_range(1,8,1,"or_greater") 
 var vertices_count : int = 1:
@@ -31,7 +31,7 @@ var vertices_count : int = 1:
 		_pre_redraw()
 
 ## The length from each corner to the center.
-## [br]Values are clamped to a value greater than 0.
+## Values are clamped to a value greater than 0.
 @export 
 var size : float = 10:
 	set(value):
@@ -80,7 +80,7 @@ var width : float = -0.001:
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
-## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360) 
 var drawn_arc_degrees : float = 360:
@@ -91,7 +91,7 @@ var drawn_arc_degrees : float = 360:
 
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
-## [br]The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc : float = TAU:
 	set(value):
@@ -100,7 +100,7 @@ var drawn_arc : float = TAU:
 
 ## The distance from each vertex to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
-## [br]Values are clamped to a value of [code]0[/code] or greater.
+## Values are clamped to a value of [code]0[/code] or greater.
 @export 
 var corner_size : float = 0.0:
 	set(value):
@@ -111,7 +111,7 @@ var corner_size : float = 0.0:
 		_pre_redraw()
 
 ## How many lines make up the corner. A value of 0 will use a value of 32 divided by [member vertices_count].
-## [br]Values are clamped to a value of [code]0[/code] or greater.
+## Values are clamped to a value of [code]0[/code] or greater.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
@@ -258,9 +258,9 @@ static func get_side_length(vertices_count : int):
 
 ## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
 ## [br][br]If [param vertices_count] is 1, a value of 32 is used instead.
-## [br][param drawn_arc] only returns the vertices up to the specified angle, in radians. 
+## [param drawn_arc] only returns the vertices up to the specified angle, in radians. 
 ## The first point starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
-## [br][param add_central_point] adds [param offset_rotation] at the end of the array. It only works if [param drawn_arc] is used.
+## [param add_central_point] adds [param offset_rotation] at the end of the array. It only works if [param drawn_arc] is used.
 ## It should be set to false when using [method add_hole_to_points].
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
 	drawn_arc : float = TAU, add_central_point := true) -> PackedVector2Array:
@@ -332,7 +332,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## Modifies [param points] so that the shape it draws have rounded corners. The method uses quadratic Bézier curves for the corners.
 ## [br][br][param corner_size] is the distance from a vertex to the point where the rounded corner starts. 
 ## If the this distance is over half the edge length, the halfway point of the edge is used instead.
-## [br][param corner_smoothness] dictates the amount of lines used to draw the corner. 
+## [param corner_smoothness] dictates the amount of lines used to draw the corner. 
 ## A value of 0 will instead use a value of [code]32[/code] divided by the size of [param points].
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
