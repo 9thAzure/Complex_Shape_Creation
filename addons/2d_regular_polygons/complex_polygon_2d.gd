@@ -257,10 +257,9 @@ static func get_side_length(vertices_count : int):
 
 ## Returns a [PackedVector2Array] with the points for drawing the shape with [method CanvasItem.draw_colored_polygon].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
-## [param drawn_arc] only returns the vertices up to the specified angle, in radians. 
-## The first point starts in the middle of the base of the shape. Positive values go clockwise, negative values go counterclockwise
 ## [param add_central_point] adds [param offset_rotation] at the end of the array. It only works if [param drawn_arc] is used.
 ## It should be set to false when using [method add_hole_to_points].
+## For [param drawn_arc] documentation, see [member drawn_arc].
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
 	drawn_arc : float = TAU, add_central_point := true) -> PackedVector2Array:
 
@@ -330,10 +329,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	
 ## Modifies [param points] so that the shape it draws have rounded corners. 
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
-## [br][br][param corner_size] is the distance from a vertex along each edge to the point where the rounded corner starts. 
-## If the this distance is over half the edge length, the halfway point of the edge is used instead.
-## [param corner_smoothness] dictates the amount of lines used to draw the corner. 
-## A value of [code]0[/code] will instead use a value of [code]32[/code] divided by the size of [param points].
+## [br][br]For documentation on [param corner_size] and [param corner_smoothness], see [member corner_size] and [member corner_smoothness].
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
