@@ -130,7 +130,7 @@ var _is_queued := false
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 # queue-like functionality - pauses, and only 1 call.
 func _pre_redraw() -> void:
-	if not _uses_polygon_member():
+	if not uses_polygon_member():
 		# the setting the 'polygon' property already calls queue_redraw
 		queue_redraw()
 		return
@@ -153,7 +153,7 @@ func _enter_tree() -> void:
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
-	if _uses_polygon_member() or drawn_arc == 0:
+	if uses_polygon_member() or drawn_arc == 0:
 		return
 	
 	# at this point, width <= 0
@@ -238,7 +238,8 @@ func draw_using_polygon():
 	
 	polygon = points
 
-func _uses_polygon_member() -> bool:
+## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
+func uses_polygon_member() -> bool:
 	return (
 		width > 0
 		and vertices_count != 2
