@@ -288,7 +288,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	var rotation_spacing := TAU / vertices_count * sign
 	
 	# If drawing a full shape
-	if drawn_arc >= TAU or drawn_arc <= -TAU:
+	if drawn_arc <= -TAU or TAU <= drawn_arc:
 		return RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
 			
 	# Drawing a partial shape.
