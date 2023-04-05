@@ -154,6 +154,9 @@ func _enter_tree() -> void:
 		draw_using_polygon()
 	_is_queued = false
 
+func _exit_tree():
+	_is_queued = true
+
 # ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw():
 	if uses_polygon_member() or drawn_arc == 0:
