@@ -270,7 +270,7 @@ static func get_side_length(vertices_count : int):
 
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
-## [param add_central_point] adds [param offset_rotation] at the end of the array. It only has an effect if [param drawn_arc] is used.
+## [param add_central_point] adds [param offset_rotation] at the end of the array. It only has an effect if [param drawn_arc] is used and isn't ±[constant @GDSCript.PI].
 ## It should be set to false when using [method add_hole_to_points].
 ## For [param drawn_arc] documentation, see [member drawn_arc].
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
@@ -317,7 +317,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		var edge_point := last_point + scaler * edge_slope
 		points.append(edge_point)
 	
-	if add_central_point and not is_equal_approx(drawn_arc, PI):
+	if add_central_point and not is_zero_approx(abs(drawn_arc) - PI):
 		points.append(offset_position)
 			
 	return points
