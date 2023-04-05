@@ -6,10 +6,9 @@ extends CollisionShape2D
 ##
 ## A node with variables for generating 2d regular shapes for collision.
 ## It creates various shape inheriting [Shape2D] based on the values of its variables and sets it to [member CollisionShape2D.shape].
-## [br][br]Note: If these properties are set when the node is outside a [SceneTree], its effects are delayed to when it enters one,
-## and if [member CollisionShape2D.shape] is modified directly before then (including the editor), it won't be regenerated.
+## [br][br]Note: If these properties are set when the node is outside a [SceneTree], its effects are delayed to when it enters one.
+## If [member CollisionShape2D.shape] is already set before then, it won't be regenerated.
 ## [method regenerate] can be used to force regeneration.
-## If [member CollisionShape2D.shape] is null, the shape is regenerated.
 
 ## The number of vertices in the regular shape
 ## a value of 1 creates a circle, a value of 2 creates a line.
@@ -100,7 +99,7 @@ func _enter_tree():
 func _exit_tree():
 	_is_queued = true
 
-## Regenerates the [member CollisionShape2D.shape] using the set properties.
+## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
 func regenerate() -> void:
 	if vertices_count == 2:
 		var line := SegmentShape2D.new()
