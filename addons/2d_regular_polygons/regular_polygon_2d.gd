@@ -8,9 +8,9 @@ extends Node2D
 ## A node that draws a regular shape, using methods like [method CanvasItem.draw_colored_polygon] and [method CanvasItem.draw_circle]. 
 ## If more complex features are needed, use [ComplexPolygon2D].
 
-## The number of vertices in the regular shape.
-## a value of 1 creates a circle, a value of 2 creates a line.
-## [br]Values are clamped to a value greater than or equal to 1.
+
+## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
+## Values are clamped to a value greater than or equal to [code]1[/code].
 @export_range(1,8,1,"or_greater")
 var vertices_count : int = 1:
 	set(value):
@@ -21,8 +21,7 @@ var vertices_count : int = 1:
 
 		queue_redraw()
 
-## The length of each corner to the center.
-## Values are clamped to a value greater than 0.
+## The length from each corner to the center. Values are clamped to a value greater than [code]0[/code].
 @export
 var size : float = 10:
 	set(value):
@@ -53,7 +52,7 @@ var color : Color = Color.WHITE:
 		color = value
 		queue_redraw()
 
-## The offset position of each shape.
+## The offset position of the shape.
 @export
 var offset_position : Vector2 = Vector2.ZERO:
 	set(value):
