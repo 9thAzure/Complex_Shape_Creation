@@ -61,8 +61,8 @@ var offset_rotation : float = 0:
 
 # The default value is -0.001 so that dragging it into positive values is quick.
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
-## Values greater than [code]0[/code] will have [member polygon] used,
-## and value greater than [member size] also ignores this effect while still using [member polygon].
+## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
+## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
 ## [br][br]A value between [code]0[/code] and [code]0.01[/code] is converted to [code]0[/code], to make it easier to select it in the inspector.
 @export 
 var width : float = -0.001:
@@ -218,7 +218,7 @@ func _draw():
 	
 	draw_colored_polygon(points, color)
 
-## Sets [member polygon] using the properties of this node. 
+## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
 func draw_using_polygon():
 	if drawn_arc == 0:
