@@ -247,8 +247,8 @@ func _uses_drawn_arc() -> bool:
 
 # <section> helper functions for _draw()
 
-## Gets the side length of a shape with the specified vertices amount, each being a distance of 1 away from the center.
-## If [param vertices_count] is 1, PI is returned. If it is 2, 1 is returned.
+## Gets the side length of a shape with the specified vertices amount, each being a distance of [code]1[/code] away from the center.
+## If [param vertices_count] is [code]1[/code], [constant @GDScript.PI] is returned. If it is [code]2[/code], [code]1[/code] is returned.
 static func get_side_length(vertices_count : int):
 	assert(vertices_count >= 1)
 	if vertices_count == 1: return PI
