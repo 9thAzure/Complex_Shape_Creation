@@ -8,6 +8,8 @@ extends Polygon2D
 ## A node that draws regular shapes, with some advanced properties.
 ## It mainly uses draw_* methods, but may use the [member polygon] property when using [member width].
 ## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
+## [br][br]Note: If the node uses [member polygon] but isn't in the [SceneTree], the setting of polygon will be delayed to when it enters one.
+## Use [method draw_using_polygon] to have [member polygon] set outside the tree.
 
 ## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## Values are clamped to a value greater than or equal to [code]1[/code].
