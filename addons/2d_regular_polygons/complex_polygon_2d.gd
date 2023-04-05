@@ -3,7 +3,7 @@
 class_name ComplexPolygon2D
 extends Polygon2D
 
-## A node that draws regular shapes, with some complex properties. 
+## Node that draws regular shapes, with some complex properties. 
 ##
 ## A node that draws regular shapes, with some complex properties.
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].

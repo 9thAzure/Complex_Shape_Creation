@@ -3,7 +3,7 @@
 class_name RegularPolygon2D
 extends Node2D
 
-## A node that draws a regular shape.
+## Node that draws regular shapes.
 ##
 ## A node that draws a regular shape, using methods like [method CanvasItem.draw_colored_polygon] and [method CanvasItem.draw_circle]. 
 ## If more complex features are needed, use [ComplexPolygon2D].
