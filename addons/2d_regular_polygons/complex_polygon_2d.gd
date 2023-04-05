@@ -6,7 +6,7 @@ extends Polygon2D
 ## A node that draws regular shapes, with some complex properties. 
 ##
 ## A node that draws regular shapes, with some complex properties.
-## It uses methods like [method CanvasItem.draw_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
+## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
 ## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 ## [br][br]Note: If the node uses [member polygon] but isn't in the [SceneTree], the setting of polygon will be delayed to when it enters one.
 ## Use [method draw_using_polygon] to have [member polygon] set outside the tree.
