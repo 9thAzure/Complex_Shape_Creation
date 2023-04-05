@@ -147,6 +147,8 @@ func _pre_redraw() -> void:
 	
 	await get_tree().process_frame
 	_is_queued = false
+	if not uses_polygon_member():
+		return
 	draw_using_polygon()
 
 func _enter_tree() -> void:
@@ -250,6 +252,7 @@ func uses_polygon_member() -> bool:
 	return (
 		width > 0
 		and vertices_count != 2
+		or invert_enabled
 	)
 
 func _uses_drawn_arc() -> bool:
