@@ -405,4 +405,3 @@ static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float,
 
 	for i in original_size:
 		points[-i - 1] = points[i] * hole_scaler
-		# points.append(points[original_size - i - 1] * hole_scaler)
