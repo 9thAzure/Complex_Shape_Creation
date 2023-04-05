@@ -144,11 +144,11 @@ func _pre_redraw() -> void:
 	
 	await get_tree().process_frame
 	_is_queued = false
-	_draw_using_polygon()
+	draw_using_polygon()
 
 func _enter_tree() -> void:
 	if _is_queued and polygon.is_empty():
-		_draw_using_polygon()
+		draw_using_polygon()
 	_is_queued = false
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
@@ -218,7 +218,8 @@ func _draw():
 	
 	draw_colored_polygon(points, color)
 
-func _draw_using_polygon():
+## Sets [member polygon] using the properties of this node. This method can be used when the node is outside the [SceneTree] to force this.
+func draw_using_polygon():
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
