@@ -233,7 +233,7 @@ func draw_using_polygon():
 	
 	var uses_width := width < size
 	var uses_drawn_arc := _uses_drawn_arc()
-	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_drawn_arc)
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
 	if uses_width and uses_drawn_arc:
 		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc)
 
