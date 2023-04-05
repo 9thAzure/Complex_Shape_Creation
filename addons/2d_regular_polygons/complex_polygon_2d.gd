@@ -3,9 +3,9 @@
 class_name ComplexPolygon2D
 extends Polygon2D
 
-## A node that draws regular shapes, with some advanced properties. 
+## A node that draws regular shapes, with some complex properties. 
 ##
-## A node that draws regular shapes, with some advanced properties.
+## A node that draws regular shapes, with some complex properties.
 ## It mainly uses draw_* methods, but may use the [member polygon] property when using [member width].
 ## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 ## [br][br]Note: If the node uses [member polygon] but isn't in the [SceneTree], the setting of polygon will be delayed to when it enters one.
@@ -57,7 +57,7 @@ var offset_rotation : float = 0:
 		_pre_redraw()
 
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
-@export_group("advanced")
+@export_group("complex")
 
 # The default value is -0.001 so that dragging it into positive values is quick.
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
