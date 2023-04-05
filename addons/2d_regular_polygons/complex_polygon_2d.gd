@@ -333,7 +333,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	
 ## Modifies [param points] so that the shape it represents have rounded corners. 
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
-## [br][br]For documentation on [param corner_size] and [param corner_smoothness], see [member corner_size] and [member corner_smoothness].
+## [br][br]For [param corner_size] and [param corner_smoothness] documentation, see [member corner_size] and [member corner_smoothness].
 static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
