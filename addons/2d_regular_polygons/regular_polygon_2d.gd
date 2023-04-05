@@ -5,7 +5,8 @@ extends Node2D
 
 ## A node that draws a regular shape.
 ##
-## A node that draws a regular shape. If more complex features are needed, use ComplexPolygon2D.
+## A node that draws a regular shape, using methods like [method CanvasItem.draw_colored_polygon] and [method CanvasItem.draw_circle]. 
+## If more complex features are needed, use [ComplexPolygon2D].
 
 ## The number of vertices in the regular shape.
 ## a value of 1 creates a circle, a value of 2 creates a line.
