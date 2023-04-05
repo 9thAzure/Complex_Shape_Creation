@@ -8,8 +8,11 @@ extends Polygon2D
 ## A node that draws regular shapes, with some complex properties.
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
 ## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
-## [br][br]Note: If the node uses [member polygon] but isn't in the [SceneTree], the setting of polygon will be delayed to when it enters one.
+## [br][br]Note: If the node uses [member Polygon2D.polygon] but isn't in the [SceneTree], 
+## the setting of [member Polygon2D.polygon] will be delayed to when it enters one.
+## If [member Polygon2D.polygon] is already set before then, it won't be re-set.
 ## Use [method draw_using_polygon] to have [member polygon] set outside the tree.
+## [br][br]If [member Polygon2D.polygon] is set when the node wouldn't use before it enters the [SceneTree], it won't be cleared when it does.
 
 ## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## Values are clamped to a value greater than or equal to [code]1[/code].
