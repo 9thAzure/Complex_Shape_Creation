@@ -395,9 +395,14 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 ## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
 ## [param close_shape] adds the first point to the end, before the procedure.
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
-	if close_shape:
-		points.append(points[0])
-
 	var original_size := points.size()
+	if close_shape:
+		original_size += 1
+	
+	points.resize(original_size * 2)
+	if close_shape:
+		points[original_size - 1] = points[0]
+
 	for i in original_size:
-		points.append(points[original_size - i - 1] * hole_scaler)
+		points[-i - 1] = points[i] * hole_scaler
+		# points.append(points[original_size - i - 1] * hole_scaler)
