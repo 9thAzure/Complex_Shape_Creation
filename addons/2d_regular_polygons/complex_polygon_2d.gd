@@ -245,6 +245,13 @@ func draw_using_polygon():
 	if uses_width and not uses_drawn_arc:
 		add_hole_to_points(points, 1 - width / size, true)
 	
+	# ! temporary redundancy check, removed when done.
+	var last_point := Vector2.ONE * 1000000000000000
+	for point in points:
+		if point.is_equal_approx(last_point):
+			printerr("redundant point")
+		last_point = point
+	
 	polygon = points
 
 ## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
