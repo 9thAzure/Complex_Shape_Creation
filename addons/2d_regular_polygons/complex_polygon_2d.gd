@@ -301,7 +301,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	var original_vertices_count := floori((drawn_arc + half_rotation_spacing) / rotation_spacing) + 1
 	# var array_size : int = roundi(drawn_arc / rotation_spacing) + 1
 	# var ends_on_vertex := is_zero_approx(fmod((drawn_arc - rotation_spacing / 2), rotation_spacing)) 
-	var ends_on_vertex := is_equal_approx(drawn_arc, rotation_spacing * (original_vertices_count - 1))
+	var ends_on_vertex := is_equal_approx(drawn_arc + half_rotation_spacing, rotation_spacing * (original_vertices_count - 1))
 	
 	if add_central_point and is_zero_approx(sign * drawn_arc - PI):
 		add_central_point = false
