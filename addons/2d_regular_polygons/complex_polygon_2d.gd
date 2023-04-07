@@ -283,6 +283,10 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	if vertices_count == 1:
 		vertices_count = 32
 	
+	# If drawing a full shape
+	if drawn_arc <= -TAU or TAU <= drawn_arc:
+		return RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
+	
 	var points := PackedVector2Array()
 	var sign := signf(drawn_arc)
 	var rotation_spacing := TAU / vertices_count * sign
