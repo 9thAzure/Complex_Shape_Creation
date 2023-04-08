@@ -205,8 +205,9 @@ func _draw() -> void:
 		draw_polyline(points, color)
 		return
 	
+	var uv_points := PackedVector2Array()
 	if texture != null:
-		var uv_points := uv
+		uv_points = uv
 		if uv_points.size() != points.size():
 			uv_points = points.duplicate()
 		
@@ -220,11 +221,7 @@ func _draw() -> void:
 			uv_point.x *= uv_scale_x
 			uv_point.y *= uv_scale_y
 			uv_points[i] = uv_point
-		
-		draw_colored_polygon(points, color, uv_points, texture)
-		return
-	
-	draw_colored_polygon(points, color)
+	draw_colored_polygon(points, color, uv_points, texture)
 
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
