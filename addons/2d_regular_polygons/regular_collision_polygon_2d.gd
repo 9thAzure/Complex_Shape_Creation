@@ -139,17 +139,17 @@ func regenerate() -> void:
 	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
 	if uses_width:
 		var polygon : Shape2D
-		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
 		if uses_width and width >= size:
 			uses_width = false
 		if uses_width and uses_drawn_arc:
-			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, false)
+			RegularPolygon2D.add_hole_to_points(points, 1 - width / size, false)
 
 		if uses_rounded_corners:
-			ComplexPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+			RegularPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 		if uses_width and not uses_drawn_arc:
-			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, true)
+			RegularPolygon2D.add_hole_to_points(points, 1 - width / size, true)
 		
 		if uses_width:
 			polygon = ConcavePolygonShape2D.new()
@@ -193,9 +193,9 @@ func regenerate() -> void:
 		return
 	
 	var polygon := ConvexPolygonShape2D.new()
-	var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+	var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if uses_rounded_corners:
-		ComplexPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		RegularPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 	
 	polygon.points = points 
 	shape = polygon

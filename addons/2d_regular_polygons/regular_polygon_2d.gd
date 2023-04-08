@@ -1,6 +1,6 @@
 @tool
-@icon("res://addons/2d_regular_polygons/complex_shape_2d.svg")
-class_name ComplexPolygon2D
+@icon("res://addons/2d_regular_polygons/regular_shape_2d.svg")
+class_name RegularPolygon2D
 extends Polygon2D
 
 ## Node that draws regular shapes, with some complex properties. 
