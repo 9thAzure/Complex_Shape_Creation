@@ -48,7 +48,7 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		queue_regenerate()
 
-@export_group("advanced")
+@export_group("complex")
 
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
 ## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
