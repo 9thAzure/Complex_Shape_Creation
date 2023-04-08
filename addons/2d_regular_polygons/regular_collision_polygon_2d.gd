@@ -91,12 +91,12 @@ func queue_regenerate() -> void:
 	_is_queued = false
 	regenerate()
 
-func _enter_tree():
+func _enter_tree() -> void:
 	if shape == null and not Engine.is_editor_hint():
 		regenerate()
 	_is_queued = false
 
-func _exit_tree():
+func _exit_tree() -> void:
 	_is_queued = true
 
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
@@ -141,5 +141,5 @@ func regenerate() -> void:
 	polygon.points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation)
 	shape = polygon
 
-func _uses_drawn_arc():
+func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU

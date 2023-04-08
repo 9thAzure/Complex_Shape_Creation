@@ -156,11 +156,11 @@ func _enter_tree() -> void:
 		draw_using_polygon()
 	_is_queued = false
 
-func _exit_tree():
+func _exit_tree() -> void:
 	_is_queued = true
 
 # ? I've got a basic testing uv working, not sure if it is fool proof.
-func _draw():
+func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
 		return
 	
@@ -228,7 +228,7 @@ func _draw():
 
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
-func draw_using_polygon():
+func draw_using_polygon() -> void:
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
@@ -262,7 +262,7 @@ func _uses_drawn_arc() -> bool:
 
 ## Gets the side length of a shape with the specified vertices amount, each being a distance of [code]1[/code] away from the center.
 ## If [param vertices_count] is [code]1[/code], [constant @GDScript.PI] is returned. If it is [code]2[/code], [code]1[/code] is returned.
-static func get_side_length(vertices_count : int):
+static func get_side_length(vertices_count : int) -> int:
 	assert(vertices_count >= 1)
 	if vertices_count == 1: return PI
 	if vertices_count == 2: return 1
