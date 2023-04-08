@@ -201,7 +201,6 @@ func _draw() -> void:
 
 	if is_zero_approx(width):
 		points.append(points[0])
-		# antialiased is used here because it only works when width > 0
 		draw_polyline(points, color)
 		return
 	
