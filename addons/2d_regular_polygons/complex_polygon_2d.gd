@@ -258,8 +258,6 @@ func uses_polygon_member() -> bool:
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
-# <section> helper functions for _draw()
-
 ## Gets the side length of a shape with the specified vertices amount, each being a distance of [code]1[/code] away from the center.
 ## If [param vertices_count] is [code]1[/code], [constant @GDScript.PI] is returned. If it is [code]2[/code], [code]1[/code] is returned.
 static func get_side_length(vertices_count : int) -> int:
