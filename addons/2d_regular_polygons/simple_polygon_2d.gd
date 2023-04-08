@@ -1,6 +1,6 @@
 @tool
-@icon("res://addons/2d_regular_polygons/regular_shape_2d.svg")
-class_name RegularPolygon2D
+@icon("res://addons/2d_regular_polygons/simple_shape_2d.svg")
+class_name SimplePolygon2D
 extends Node2D
 
 ## Node that draws regular shapes.
