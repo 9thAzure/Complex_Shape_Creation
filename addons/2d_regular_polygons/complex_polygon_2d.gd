@@ -159,7 +159,6 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	_is_queued = true
 
-# ? I've got a basic testing uv working, not sure if it is fool proof.
 func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
 		return
@@ -180,7 +179,6 @@ func _draw() -> void:
 		
 	if (vertices_count == 4 
 		and is_zero_approx(offset_rotation)
-		# and not is_zero_approx(width)
 		and is_zero_approx(corner_size)
 		and (drawn_arc >= TAU or drawn_arc <= -TAU)
 		and texture == null
@@ -193,7 +191,6 @@ func _draw() -> void:
 		# Using the width param would require having all the checks here also be in the pre_redraw function as well.
 		draw_rect(rect, color)
 		return
-		# no matches, using default drawing.
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
 	if not is_zero_approx(corner_size):
@@ -276,7 +273,6 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	assert(size > 0, "param 'size' must be positive.")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
 
-	# If drawing a full shape
 	if drawn_arc <= -TAU or TAU <= drawn_arc:
 		return RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
 	
@@ -343,6 +339,8 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor 
 	
+# Quadratic Bezier curves are use because we have all three required points already. It isn't a perfect circle, but good enough.
+
 ## Modifies [param points] so that the shape it represents have rounded corners. 
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
 ## [br][br]For [param corner_size] and [param corner_smoothness] documentation, see [member corner_size] and [member corner_smoothness].
@@ -385,8 +383,7 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 
 		points[i * corner_index_size] = starting_point
 		points[i * corner_index_size + corner_index_size - 1] = ending_point
-		# Quadratic Bezier curves are use because we have all three required points already. It isn't a perfect circle, but good enough.
-		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no between points.
+		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no in-between points.
 		var sub_i := 1
 		while sub_i < corner_smoothness:
 			var t_value := sub_i / (corner_smoothness as float)

@@ -162,7 +162,6 @@ func regenerate() -> void:
 				original_size - 2
 
 			segments.resize(original_size * 2)
-			
 			for i in original_size:
 				if i == ignored_i:
 					if i + 1 >= original_size:
