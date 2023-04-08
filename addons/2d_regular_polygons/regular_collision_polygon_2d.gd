@@ -155,23 +155,22 @@ func regenerate() -> void:
 			polygon = ConcavePolygonShape2D.new()
 			var segments := PackedVector2Array()
 			var original_size := points.size()
+			var modified_size := original_size
 			var offset := 0
 			var ignored_i := -1
 			if not uses_drawn_arc:
 				ignored_i = original_size / 2 - 1
-				original_size - 2
+				modified_size -= 2
 
-			segments.resize(original_size * 2)
-			for i in original_size:
+			segments.resize(modified_size * 2)
+			for i in modified_size:
 				if i == ignored_i:
 					if i + 1 >= original_size:
 						break
 					offset += 1
-					ignored_i *= 2
 				
-				i += offset
-				segments[(original_size - i) * 2 - 1] = points[original_size - i - 1]
-				segments[(original_size - i) * 2 - 2] = points[original_size - i - 2]
+				segments[(modified_size - i) * 2 - 1] = points[original_size - i - 1 - offset]
+				segments[(modified_size - i) * 2 - 2] = points[original_size - i - 2 - offset]
 			polygon.segments = segments 
 		else:
 			polygon = ConvexPolygonShape2D.new()
