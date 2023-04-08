@@ -299,19 +299,11 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	var rotation_spacing := TAU / vertices_count * sign
 	var half_rotation_spacing := rotation_spacing / 2
 	var original_vertices_count := floori((drawn_arc + half_rotation_spacing) / rotation_spacing) + 1
-	# var array_size : int = roundi(drawn_arc / rotation_spacing) + 1
-	# var ends_on_vertex := is_zero_approx(fmod((drawn_arc - rotation_spacing / 2), rotation_spacing)) 
 	var ends_on_vertex := is_equal_approx(drawn_arc + half_rotation_spacing, rotation_spacing * (original_vertices_count - 1))
 	
 	if add_central_point and is_zero_approx(sign * drawn_arc - PI):
 		add_central_point = false
 
-	# if not ends_on_vertex:
-	# 	array_size += 1
-	# if add_central_point:
-	# 	points.resize(array_size + 1)
-	# else:
-	# 	points.resize(array_size)
 	if add_central_point and not ends_on_vertex:
 		points.resize(original_vertices_count + 2)
 	# if add central point and end on vertex (true true), or don't add point and don't end on vertex (false, false):
@@ -320,22 +312,12 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	else:
 		points.resize(original_vertices_count)
 
-	# print(array_size)
-	
-	# var current_rotation := -rotation_spacing / 2 + offset_rotation
 	var starting_rotation := -half_rotation_spacing + offset_rotation
 	var limit := sign * (drawn_arc + offset_rotation)
 	for i in original_vertices_count:
 		var rotation := starting_rotation + rotation_spacing * i
 		var point := _get_vertices(rotation, size, offset_position)
 		points[i] = point
-	# var i := 0
-	# while sign * current_rotation < limit:
-	# 	var point := _get_vertices(current_rotation, size, offset_position)
-	# 	# points.append(point)
-	# 	points[i] = point
-	# 	i += 1
-	# 	current_rotation += rotation_spacing
 	
 	# Setting center point.
 	var first_point := points[0]
@@ -343,9 +325,6 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	var vector_to_second := second_point - first_point
 	points[0] = first_point + vector_to_second / 2
 	
-	# if ends_on_vertex and i != array_size: #and is_equal_approx(current_rotation, drawn_arc):
-	# 	# points.append(_get_vertices(current_rotation, size, offset_position)) 
-	# 	points[i] = _get_vertices(current_rotation, size, offset_position)
 	if not ends_on_vertex:
 		# variable names in formula: P, _, Q, R
 		var last_point := points[original_vertices_count - 1]
@@ -355,12 +334,9 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		# formula variables: P, Q, S, R
 		var scaler := _find_intersection(last_point, edge_slope, offset_position, ending_slope)
 		var edge_point := last_point + scaler * edge_slope
-		# points.append(edge_point)
 		points[original_vertices_count] = edge_point
-	# print(points)
 	
 	if add_central_point:
-		# points[i + 1] = offset_position
 		points[-1] = offset_position
 		pass
 			
