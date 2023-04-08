@@ -137,9 +137,7 @@ func regenerate() -> void:
 	var uses_rounded_corners := not is_zero_approx(corner_size)
 	var uses_width := width > 0
 	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
-	if (uses_width
-		or uses_drawn_arc
-	):
+	if uses_width:
 		var polygon : Shape2D
 		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
 		if uses_width and width >= size:
@@ -165,6 +163,7 @@ func regenerate() -> void:
 		else:
 			polygon = ConvexPolygonShape2D.new()
 			polygon.points = points
+		
 		shape = polygon
 		return
 	
@@ -182,9 +181,10 @@ func regenerate() -> void:
 		return
 	
 	var polygon := ConvexPolygonShape2D.new()
-	var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation)
+	var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if uses_rounded_corners:
 		ComplexPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+	
 	polygon.points = points 
 	shape = polygon
 
