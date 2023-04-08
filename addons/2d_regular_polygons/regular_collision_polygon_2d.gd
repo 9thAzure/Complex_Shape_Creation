@@ -140,8 +140,10 @@ func regenerate() -> void:
 	if (uses_width
 		or uses_drawn_arc
 	):
-		var polygon := ConvexPolygonShape2D.new()
+		var polygon : Shape2D
 		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		if uses_width and width >= size:
+			uses_width = false
 		if uses_width and uses_drawn_arc:
 			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, false)
 
@@ -151,7 +153,18 @@ func regenerate() -> void:
 		if uses_width and not uses_drawn_arc:
 			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, true)
 		
-		polygon.points = points
+		if uses_width:
+			polygon = ConcavePolygonShape2D.new()
+			var segments := PackedVector2Array()
+			var original_size := points.size()
+			segments.resize(original_size * 2)
+			for i in points.size():
+				segments[(original_size - i) * 2 - 1] = points[original_size - i - 1]
+				segments[(original_size - i) * 2 - 2] = points[original_size - i - 2]
+			polygon.segments = segments 
+		else:
+			polygon = ConvexPolygonShape2D.new()
+			polygon.points = points
 		shape = polygon
 		return
 	
