@@ -282,24 +282,24 @@ static func get_side_length(vertices_count : int):
 ## For [param drawn_arc] documentation, see [member drawn_arc].
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
 	drawn_arc : float = TAU, add_central_point := true) -> PackedVector2Array:
-
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
 
-	if vertices_count == 1:
-		vertices_count = 32
-	
 	# If drawing a full shape
 	if drawn_arc <= -TAU or TAU <= drawn_arc:
 		return RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
+	
+	if vertices_count == 1:
+		vertices_count = 32
 	
 	var points := PackedVector2Array()
 	var sign := signf(drawn_arc)
 	var rotation_spacing := TAU / vertices_count * sign
 	var half_rotation_spacing := rotation_spacing / 2
-	var original_vertices_count := floori((drawn_arc + half_rotation_spacing) / rotation_spacing) + 1
-	var ends_on_vertex := is_equal_approx(drawn_arc + half_rotation_spacing, rotation_spacing * (original_vertices_count - 1))
+	var original_vertices_count := floori((drawn_arc + half_rotation_spacing) / rotation_spacing)
+	var ends_on_vertex := is_equal_approx(drawn_arc + half_rotation_spacing, rotation_spacing * original_vertices_count)
+	original_vertices_count += 1
 	
 	if add_central_point and is_zero_approx(sign * drawn_arc - PI):
 		add_central_point = false
@@ -313,7 +313,6 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		points.resize(original_vertices_count)
 
 	var starting_rotation := -half_rotation_spacing + offset_rotation
-	var limit := sign * (drawn_arc + offset_rotation)
 	for i in original_vertices_count:
 		var rotation := starting_rotation + rotation_spacing * i
 		var point := _get_vertices(rotation, size, offset_position)
