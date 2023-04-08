@@ -80,21 +80,19 @@ func _draw() -> void:
 		
 	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation, offset_position), color)
 
-# <section> helper functions for _draw()
-
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	
-	if vertices_count == 0:
+	if vertices_count == 1:
 		vertices_count = 32
 
 	var points := PackedVector2Array()
 	points.resize(vertices_count)
 	var rotation_spacing := TAU / vertices_count
-	var current_rotation := rotation_spacing / 2 + offset_rotation
+	var current_rotation := -rotation_spacing / 2 + offset_rotation
 	for i in vertices_count:
 		points[i] = Vector2(-sin(current_rotation), cos(current_rotation)) * size + offset_position
 		current_rotation += rotation_spacing

@@ -48,7 +48,7 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		queue_regenerate()
 
-@export_group("advanced")
+@export_group("complex")
 
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
 ## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
@@ -78,6 +78,29 @@ var drawn_arc : float = TAU:
 		drawn_arc = value
 		queue_regenerate()
 
+## The distance from each vertex along the edge to the point where the rounded corner starts.
+## If this value is over half of the edge length, the mid-point of the edge is used instead.
+## Values are clamped to a value of [code]0[/code] or greater.
+@export 
+var corner_size : float = 0.0:
+	set(value):
+		corner_size = value
+		if value < 0:
+			corner_size = 0
+		
+		queue_regenerate()
+
+## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
+## Values are clamped to a value of [code]0[/code] or greater.
+@export_range(0, 8, 1, "or_greater") 
+var corner_smoothness : int = 0:
+	set(value):
+		corner_smoothness = value
+		if value < 0:
+			corner_smoothness = 0
+		
+		queue_regenerate()
+
 var _is_queued := true
 
 ## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
@@ -91,12 +114,12 @@ func queue_regenerate() -> void:
 	_is_queued = false
 	regenerate()
 
-func _enter_tree():
+func _enter_tree() -> void:
 	if shape == null and not Engine.is_editor_hint():
 		regenerate()
 	_is_queued = false
 
-func _exit_tree():
+func _exit_tree() -> void:
 	_is_queued = true
 
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
@@ -111,16 +134,48 @@ func regenerate() -> void:
 	if drawn_arc == 0:
 		return
 	
+	var uses_rounded_corners := not is_zero_approx(corner_size)
 	var uses_width := width > 0
-	if (uses_width
-		or -TAU < drawn_arc and drawn_arc < TAU
-	):
-		var polygon := ConvexPolygonShape2D.new()
+	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
+	if uses_width:
+		var polygon : Shape2D
 		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
-		if uses_width and width < size:
-			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, not _uses_drawn_arc())
+		if uses_width and width >= size:
+			uses_width = false
+		if uses_width and uses_drawn_arc:
+			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, false)
+
+		if uses_rounded_corners:
+			ComplexPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+
+		if uses_width and not uses_drawn_arc:
+			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, true)
 		
-		polygon.points = points
+		if uses_width:
+			polygon = ConcavePolygonShape2D.new()
+			var segments := PackedVector2Array()
+			var original_size := points.size()
+			var modified_size := original_size
+			var offset := 0
+			var ignored_i := -1
+			if not uses_drawn_arc:
+				ignored_i = original_size / 2 - 1
+				modified_size -= 2
+
+			segments.resize(modified_size * 2)
+			for i in modified_size:
+				if i == ignored_i:
+					if i + 1 >= original_size:
+						break
+					offset += 1
+				
+				segments[(modified_size - i) * 2 - 1] = points[original_size - i - 1 - offset]
+				segments[(modified_size - i) * 2 - 2] = points[original_size - i - 2 - offset]
+			polygon.segments = segments 
+		else:
+			polygon = ConvexPolygonShape2D.new()
+			polygon.points = points
+		
 		shape = polygon
 		return
 	
@@ -130,7 +185,7 @@ func regenerate() -> void:
 		shape = circle
 		return
 	
-	if vertices_count == 4 and is_zero_approx(offset_rotation):
+	if vertices_count == 4 and is_zero_approx(offset_rotation) and not uses_rounded_corners:
 		const sqrt_two_over_two := 0.707106781
 		var square := RectangleShape2D.new()
 		square.size = size / sqrt_two_over_two * Vector2.ONE
@@ -138,8 +193,12 @@ func regenerate() -> void:
 		return
 	
 	var polygon := ConvexPolygonShape2D.new()
-	polygon.points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation)
+	var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+	if uses_rounded_corners:
+		ComplexPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+	
+	polygon.points = points 
 	shape = polygon
 
-func _uses_drawn_arc():
+func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU

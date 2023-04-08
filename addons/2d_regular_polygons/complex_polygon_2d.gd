@@ -147,15 +147,19 @@ func _pre_redraw() -> void:
 	
 	await get_tree().process_frame
 	_is_queued = false
+	if not uses_polygon_member():
+		return
 	draw_using_polygon()
 
 func _enter_tree() -> void:
-	if _is_queued and polygon.is_empty():
+	if uses_polygon_member() and _is_queued and polygon.is_empty():
 		draw_using_polygon()
 	_is_queued = false
 
-# ? I've got a basic testing uv working, not sure if it is fool proof.
-func _draw():
+func _exit_tree() -> void:
+	_is_queued = true
+
+func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
 		return
 	
@@ -175,7 +179,6 @@ func _draw():
 		
 	if (vertices_count == 4 
 		and is_zero_approx(offset_rotation)
-		# and not is_zero_approx(width)
 		and is_zero_approx(corner_size)
 		and (drawn_arc >= TAU or drawn_arc <= -TAU)
 		and texture == null
@@ -188,7 +191,6 @@ func _draw():
 		# Using the width param would require having all the checks here also be in the pre_redraw function as well.
 		draw_rect(rect, color)
 		return
-		# no matches, using default drawing.
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
 	if not is_zero_approx(corner_size):
@@ -196,7 +198,6 @@ func _draw():
 
 	if is_zero_approx(width):
 		points.append(points[0])
-		# antialiased is used here because it only works when width > 0
 		draw_polyline(points, color)
 		return
 	
@@ -223,22 +224,22 @@ func _draw():
 
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
-func draw_using_polygon():
+func draw_using_polygon() -> void:
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
 	
 	var uses_width := width < size
 	var uses_drawn_arc := _uses_drawn_arc()
-	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_drawn_arc)
+	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
 	if uses_width and uses_drawn_arc:
-		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc)
+		add_hole_to_points(points, 1 - width / size, false)
 
 	if not is_zero_approx(corner_size):
 		get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 	if uses_width and not uses_drawn_arc:
-		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc)
+		add_hole_to_points(points, 1 - width / size, true)
 	
 	polygon = points
 
@@ -247,16 +248,15 @@ func uses_polygon_member() -> bool:
 	return (
 		width > 0
 		and vertices_count != 2
+		or invert_enabled
 	)
 
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
-# <section> helper functions for _draw()
-
 ## Gets the side length of a shape with the specified vertices amount, each being a distance of [code]1[/code] away from the center.
 ## If [param vertices_count] is [code]1[/code], [constant @GDScript.PI] is returned. If it is [code]2[/code], [code]1[/code] is returned.
-static func get_side_length(vertices_count : int):
+static func get_side_length(vertices_count : int) -> int:
 	assert(vertices_count >= 1)
 	if vertices_count == 1: return PI
 	if vertices_count == 2: return 1
@@ -264,61 +264,66 @@ static func get_side_length(vertices_count : int):
 
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
-## [param add_central_point] adds [param offset_rotation] at the end of the array. It only has an effect if [param drawn_arc] is used.
+## [param add_central_point] adds [param offset_rotation] at the end of the array. It only has an effect if [param drawn_arc] is used and isn't ±[constant @GDSCript.PI].
 ## It should be set to false when using [method add_hole_to_points].
 ## For [param drawn_arc] documentation, see [member drawn_arc].
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, 
 	drawn_arc : float = TAU, add_central_point := true) -> PackedVector2Array:
-
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
 
+	if drawn_arc <= -TAU or TAU <= drawn_arc:
+		return RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
+	
 	if vertices_count == 1:
 		vertices_count = 32
 	
 	var points := PackedVector2Array()
 	var sign := signf(drawn_arc)
 	var rotation_spacing := TAU / vertices_count * sign
+	var half_rotation_spacing := rotation_spacing / 2
+	var original_vertices_count := floori((drawn_arc + half_rotation_spacing) / rotation_spacing)
+	var ends_on_vertex := is_equal_approx(drawn_arc + half_rotation_spacing, rotation_spacing * original_vertices_count)
+	original_vertices_count += 1
 	
-	# If drawing a full shape
-	if drawn_arc >= TAU or drawn_arc <= -TAU:
-		# rotation is initialized pointing down and offset to the left so that the bottom is flat
-		points.resize(vertices_count)
-		var current_rotation := rotation_spacing / 2 + offset_rotation
-		for i in vertices_count:
-			points[i] = _get_vertices(current_rotation, size, offset_position)
-			current_rotation += rotation_spacing
-		return points
-			
-	# Drawing a partial shape.
-	var current_rotation := -rotation_spacing / 2 + offset_rotation
-	var limit := sign * (drawn_arc + offset_rotation)
-	while sign * current_rotation < limit:
-		var point := _get_vertices(current_rotation, size, offset_position)
-		points.append(point)
-		current_rotation += rotation_spacing
+	if add_central_point and is_zero_approx(sign * drawn_arc - PI):
+		add_central_point = false
+
+	if add_central_point and not ends_on_vertex:
+		points.resize(original_vertices_count + 2)
+	# if add central point and end on vertex (true true), or don't add point and don't end on vertex (false, false):
+	elif add_central_point == ends_on_vertex: 
+		points.resize(original_vertices_count + 1)
+	else:
+		points.resize(original_vertices_count)
+
+	var starting_rotation := -half_rotation_spacing + offset_rotation
+	for i in original_vertices_count:
+		var rotation := starting_rotation + rotation_spacing * i
+		var point := _get_vertices(rotation, size, offset_position)
+		points[i] = point
 	
 	# Setting center point.
 	var first_point := points[0]
-	var vector_to_second := (points[1] if points.size() != 1 else _get_vertices(current_rotation, size, offset_position)) - first_point
+	var second_point := points[1] if original_vertices_count >= 2 else _get_vertices(starting_rotation + rotation_spacing, size, offset_position)
+	var vector_to_second := second_point - first_point
 	points[0] = first_point + vector_to_second / 2
-
-	if is_equal_approx(current_rotation, drawn_arc):
-		points.append(_get_vertices(current_rotation, size, offset_position)) 
-	else:
+	
+	if not ends_on_vertex:
 		# variable names in formula: P, _, Q, R
-		var last_point := points[-1]
-		var next_point := _get_vertices(current_rotation, size, offset_position)
+		var last_point := points[original_vertices_count - 1]
+		var next_point := _get_vertices(starting_rotation + rotation_spacing * original_vertices_count, size, offset_position)
 		var edge_slope := next_point - last_point 
 		var ending_slope := _get_vertices(drawn_arc + offset_rotation)
 		# formula variables: P, Q, S, R
 		var scaler := _find_intersection(last_point, edge_slope, offset_position, ending_slope)
 		var edge_point := last_point + scaler * edge_slope
-		points.append(edge_point)
+		points[original_vertices_count] = edge_point
 	
-	if add_central_point and not is_equal_approx(drawn_arc, PI):
-		points.append(offset_position)
+	if add_central_point:
+		points[-1] = offset_position
+		pass
 			
 	return points
 
@@ -334,6 +339,8 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor 
 	
+# Quadratic Bezier curves are use because we have all three required points already. It isn't a perfect circle, but good enough.
+
 ## Modifies [param points] so that the shape it represents have rounded corners. 
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
 ## [br][br]For [param corner_size] and [param corner_smoothness] documentation, see [member corner_size] and [member corner_smoothness].
@@ -376,8 +383,7 @@ static func get_rounded_corners(points : PackedVector2Array, corner_size : float
 
 		points[i * corner_index_size] = starting_point
 		points[i * corner_index_size + corner_index_size - 1] = ending_point
-		# Quadratic Bezier curves are use because we have all three required points already. It isn't a perfect circle, but good enough.
-		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no between points.
+		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no in-between points.
 		var sub_i := 1
 		while sub_i < corner_smoothness:
 			var t_value := sub_i / (corner_smoothness as float)
@@ -395,9 +401,13 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 ## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
 ## [param close_shape] adds the first point to the end, before the procedure.
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
-	if close_shape:
-		points.append(points[0])
-
 	var original_size := points.size()
+	if close_shape:
+		original_size += 1
+	
+	points.resize(original_size * 2)
+	if close_shape:
+		points[original_size - 1] = points[0]
+
 	for i in original_size:
-		points.append(points[original_size - i - 1] * hole_scaler)
+		points[-i - 1] = points[i] * hole_scaler
