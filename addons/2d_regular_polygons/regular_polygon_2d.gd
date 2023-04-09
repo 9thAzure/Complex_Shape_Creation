@@ -194,7 +194,7 @@ func _draw() -> void:
 
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
 	if not is_zero_approx(corner_size):
-		get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 	if is_zero_approx(width):
 		points.append(points[0])
@@ -236,7 +236,7 @@ func draw_using_polygon() -> void:
 		add_hole_to_points(points, 1 - width / size, false)
 
 	if not is_zero_approx(corner_size):
-		get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 	if uses_width and not uses_drawn_arc:
 		add_hole_to_points(points, 1 - width / size, true)
@@ -344,7 +344,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## Modifies [param points] so that the shape it represents have rounded corners. 
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
 ## [br][br]For [param corner_size] and [param corner_smoothness] documentation, see [member corner_size] and [member corner_smoothness].
-static func get_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
+static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
 	assert(points.size() >= 3, "param 'points' must have at least 3 points")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
 	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
