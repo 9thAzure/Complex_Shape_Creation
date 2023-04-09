@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/2d_regular_polygons/regular_collision_polygon_2d.svg")
 class_name RegularCollisionPolygon2D
 extends CollisionShape2D
 
