@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/regular_polygon_2d/regular_polygon_2d.svg")
+@icon("res://addons/2d_regular_polygons/regular_polygon_2d.svg")
 class_name RegularPolygon2D
 extends Polygon2D
 
