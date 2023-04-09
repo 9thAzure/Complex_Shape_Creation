@@ -200,3 +200,19 @@ func regenerate() -> void:
 
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
+
+func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0.0, drawn_arc := TAU, corner_size := 0.0, corner_smoothness : int = 0):
+	if vertices_count != 1:
+		self.vertices_count = vertices_count
+	if size != 10.0:
+		self.size = size
+	if offset_rotation != 0.0:
+		self.offset_rotation = offset_rotation
+	if width != 0.0:
+		self.width = width
+	if drawn_arc != 360.0:
+		self.drawn_arc = drawn_arc
+	if corner_size != 0.0:
+		self.corner_size = corner_size
+	if corner_smoothness != 0:
+		self.corner_smoothness = corner_smoothness

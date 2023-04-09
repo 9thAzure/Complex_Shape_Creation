@@ -243,6 +243,27 @@ func draw_using_polygon() -> void:
 	
 	polygon = points
 
+func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
+	width := 0.0, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
+	if vertices_count != 1:
+		self.vertices_count = vertices_count
+	if size != 10.0:
+		self.size = size
+	if offset_rotation != 0.0:
+		self.offset_rotation = offset_rotation
+	if color != Color.WHITE:
+		self.color = color
+	if offset_position != Vector2.ZERO:
+		self.offset_position = offset_position
+	if width != 0.0:
+		self.width = width
+	if drawn_arc != TAU:
+		self.drawn_arc = drawn_arc
+	if corner_size != 0.0:
+		self.corner_size = corner_size
+	if corner_smoothness != 0:
+		self.corner_smoothness = corner_smoothness
+	
 ## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
 func uses_polygon_member() -> bool:
 	return (
