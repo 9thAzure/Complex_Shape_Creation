@@ -138,43 +138,40 @@ func regenerate() -> void:
 	var uses_width := width > 0
 	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
 	if uses_width:
-		var polygon : Shape2D
-		var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		var polygon := ConcavePolygonShape2D.new()
+		var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
 		if uses_width and width >= size:
 			uses_width = false
+		
 		if uses_width and uses_drawn_arc:
-			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, false)
+			RegularPolygon2D.add_hole_to_points(points, 1 - width / size, false)
 
 		if uses_rounded_corners:
-			ComplexPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+			RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
 		if uses_width and not uses_drawn_arc:
-			ComplexPolygon2D.add_hole_to_points(points, 1 - width / size, true)
+			RegularPolygon2D.add_hole_to_points(points, 1 - width / size, true)
 		
-		if uses_width:
-			polygon = ConcavePolygonShape2D.new()
-			var segments := PackedVector2Array()
-			var original_size := points.size()
-			var modified_size := original_size
-			var offset := 0
-			var ignored_i := -1
-			if not uses_drawn_arc:
-				ignored_i = original_size / 2 - 1
-				modified_size -= 2
+		var segments := PackedVector2Array()
+		var original_size := points.size()
+		var modified_size := original_size
+		var offset := 0
+		var ignored_i := -1
+		if not uses_drawn_arc:
+			ignored_i = original_size / 2 - 1
+			modified_size -= 2
 
-			segments.resize(modified_size * 2)
-			for i in modified_size:
-				if i == ignored_i:
-					if i + 1 >= original_size:
-						break
-					offset += 1
-				
-				segments[(modified_size - i) * 2 - 1] = points[original_size - i - 1 - offset]
-				segments[(modified_size - i) * 2 - 2] = points[original_size - i - 2 - offset]
-			polygon.segments = segments 
-		else:
-			polygon = ConvexPolygonShape2D.new()
-			polygon.points = points
+		segments.resize(modified_size * 2)
+		for i in modified_size:
+			if i == ignored_i:
+				if i + 1 >= original_size:
+					break
+				offset += 1
+			
+			segments[(modified_size - i) * 2 - 1] = points[original_size - i - 1 - offset]
+			segments[(modified_size - i) * 2 - 2] = points[original_size - i - 2 - offset]
+		
+		polygon.segments = segments 
 		
 		shape = polygon
 		return
@@ -193,9 +190,9 @@ func regenerate() -> void:
 		return
 	
 	var polygon := ConvexPolygonShape2D.new()
-	var points := ComplexPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+	var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if uses_rounded_corners:
-		ComplexPolygon2D.get_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 	
 	polygon.points = points 
 	shape = polygon
