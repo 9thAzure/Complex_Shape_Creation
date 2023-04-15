@@ -53,7 +53,7 @@ public partial class SimplePolygon2D
     }
     public SimplePolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
-        Instance = New(VerticesCount, size, offsetRotation, color, offsetPosition);
+        Instance = SimplePolygon2D.New(VerticesCount, size, offsetRotation, color, offsetPosition);
     }
     public static Node2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
