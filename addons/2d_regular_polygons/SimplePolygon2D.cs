@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Godot;
 using RegularPolygons2D.MemberNames;
 
@@ -6,7 +7,7 @@ namespace RegularPolygons2D;
 
 public partial class SimplePolygon2D
 {
-    public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/simple_polygon_2d";
+    public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/simple_polygon_2d.gd";
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
     private static readonly Lazy<Node2D> _shared = new(() => GDScriptEquivalent.New().As<Node2D>());
     public Node2D Instance { get; }
@@ -53,10 +54,11 @@ public partial class SimplePolygon2D
     }
     public SimplePolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
-        Instance = SimplePolygon2D.New(VerticesCount, size, offsetRotation, color, offsetPosition);
+        Instance = SimplePolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition);
     }
     public static Node2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
+        Debug.Assert(GDScriptEquivalent is not null);
         if (color is null)
         {
             color = Colors.White;
