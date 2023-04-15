@@ -42,6 +42,26 @@ public partial class SimplePolygon2D
         get => (Vector2)Instance.Get(PropertyName.OffsetPosition);
         set => Instance.Set(PropertyName.OffsetPosition, value);
     }
+    public Vector2 Position
+    {
+        get => Instance.Position; 
+        set => Instance.Position = value;
+    }
+    public float Rotation
+    {
+        get => Instance.Rotation;
+        set => Instance.Rotation = value;
+    }
+    public float RotationDegrees
+    {
+        get => Instance.RotationDegrees;
+        set => Instance.RotationDegrees = value;
+    }
+    public Vector2 Scale
+    {
+        get => Instance.Scale;
+        set => Instance.Scale = value;
+    }
 
     public SimplePolygon2D(Node2D instance)
     {
