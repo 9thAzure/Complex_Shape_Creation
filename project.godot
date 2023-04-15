@@ -24,7 +24,7 @@ window/stretch/mode="viewport"
 
 [dotnet]
 
-project/assembly_name="2D Shapes Addon"
+project/assembly_name="ShapesAddon"
 
 [editor_plugins]
 
