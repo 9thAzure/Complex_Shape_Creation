@@ -113,7 +113,7 @@ var corner_size : float = 0.0:
 		
 		_pre_redraw()
 
-## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
+## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 ## Values are clamped to a value of [code]0[/code] or greater.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:

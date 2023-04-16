@@ -16,7 +16,8 @@ public partial class SimplePolygon2D
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
     private static readonly Lazy<Node2D> _shared = new(() => GDScriptEquivalent.New().As<Node2D>());
-    /// <summary>The <see cref="GDScript"/> instance this class wraps around.</summary>
+    
+    /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public Node2D Instance { get; }
 
     /// <summary>
