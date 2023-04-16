@@ -432,3 +432,12 @@ static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float,
 
 	for i in original_size:
 		points[-i - 1] = points[i] * hole_scaler
+
+# these functions are for c# interop, as changes to an argument are not transferred.
+static func _add_rounded_corners_result(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
+	add_rounded_corners(points, corner_size, corner_smoothness)
+	return points
+
+static func _add_hole_to_points_result(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> PackedVector2Array:
+	add_hole_to_points(points, hole_scaler, close_shape)
+	return points
