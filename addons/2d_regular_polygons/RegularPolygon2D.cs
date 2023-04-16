@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Godot;
 using RegularPolygons2D.MemberNames;
 
@@ -123,5 +124,32 @@ public class RegularPolygon2D
     {
         get => Instance.Scale;
         set => Instance.Scale = value;
+    }
+
+    public RegularPolygon2D(Polygon2D instance)
+    {
+        if (instance is null)
+            throw new ArgumentNullException(nameof(instance));
+        if (GDScriptEquivalent != instance.GetScript().As<GDScript>())
+            throw new ArgumentException($"must have attached script '{GDScriptEquivalentPath}'.", nameof(instance));
+
+        Instance = instance;
+    }
+    public RegularPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+        double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    {
+        Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition
+            width, drawnArc, cornerSize, cornerSmoothness);
+    }
+    public static Polygon2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+        double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    {
+        Debug.Assert(GDScriptEquivalent is not null);
+        if (color is null)
+        {
+            color = Colors.White;
+        }
+        return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition, 
+            width, drawnArc, cornerSize, cornerSmoothness);
     }
 }
