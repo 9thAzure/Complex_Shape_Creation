@@ -138,7 +138,7 @@ public class RegularPolygon2D
     public RegularPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
-        Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition
+        Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
     public static Polygon2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
