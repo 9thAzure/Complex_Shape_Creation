@@ -153,6 +153,16 @@ public class RegularPolygon2D
             width, drawnArc, cornerSize, cornerSmoothness);
     }
 
+    public static Vector2[] GetShapeVertices(long verticesCount, double size = 1, double offsetRotation = 0, Vector2 offsetPosition = default,
+       double drawnArc = Math.Tau, bool addCentralPoint = true)
+    => _shared.Value.Call(MethodNames.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
+    public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end)
+    => _shared.Value.Call(MethodNames.QuadraticBezierInterpolate, start, control, end).AsVector2();
+    public static Vector2[] AddRoundedCorners(Vector2[] points, double cornerSize, long cornerSmoothness)
+    => _shared.Value.Call(MethodNames.AddRoundedCorners, points, cornerSize, cornerSmoothness).AsVector2Array();
+    public static Vector2[] AddHoleToPoints(Vector2[] points, double holeScaler, bool closeShape = true)
+    => _shared.Value.Call(MethodNames.AddHoleToPoints, points, holeScaler, closeShape).AsVector2Array();
+
     public static implicit operator Polygon2D(RegularPolygon2D instance) => instance.Instance;
     public static explicit operator RegularPolygon2D(Polygon2D instance) => new RegularPolygon2D(instance);
 }
