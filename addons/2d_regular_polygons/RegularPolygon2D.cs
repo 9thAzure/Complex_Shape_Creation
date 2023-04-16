@@ -152,4 +152,7 @@ public class RegularPolygon2D
         return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition, 
             width, drawnArc, cornerSize, cornerSmoothness);
     }
+
+    public static implicit operator Polygon2D(RegularPolygon2D instance) => instance.Instance;
+    public static explicit operator RegularPolygon2D(Polygon2D instance) => new RegularPolygon2D(instance);
 }
