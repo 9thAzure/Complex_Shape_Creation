@@ -114,15 +114,15 @@ public class RegularCollisionPolygon2D
     /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="CollisionShape2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public RegularCollisionPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Vector2 offsetPosition = default,
+    public RegularCollisionPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0,
         double width = 0, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
-    => Instance = RegularCollisionPolygon2D.New(verticesCount, size, offsetRotation, offsetPosition, width, drawnArc, cornerSize, cornerSmoothness);
+    => Instance = RegularCollisionPolygon2D.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness);
 
     /// <inheritdoc cref="RegularPolygon2D.New)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
-    public static CollisionShape2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Vector2 offsetPosition = default,
+    public static CollisionShape2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0,
         double width = 0, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
-        => GDScriptEquivalent.New(verticesCount, size, offsetRotation, offsetPosition, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
+        => GDScriptEquivalent.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
 
     /// <summary>
     /// Queues <see cref="Regenerate"/> for the next process frame. If this method is called multiple times, the shape is only regenerated once.
