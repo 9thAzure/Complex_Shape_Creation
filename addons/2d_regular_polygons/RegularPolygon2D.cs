@@ -44,7 +44,7 @@ public class RegularPolygon2D
     /// <remarks>
     /// A value of <c>0</c> outlines the shape with lines, and a value smaller than <c>0</c> ignores this effect.
     /// Values greater than <c>0</c> will have <see cref="Polygon2D.Polygon"/> used,
-    /// and value greater than <see cref="size"/> also ignores this effect while still using [member Polygon2D.polygon].
+    /// and value greater than <see cref="size"/> also ignores this effect while still using <see cref="Polygon2D.Polygon"/>.
     /// A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c>, to make it easier to select it in the inspector.
     /// </remarks>
     public double Width
@@ -56,7 +56,7 @@ public class RegularPolygon2D
     /// <remarks>
     /// Values greater than <c>360</c> or <c>-360</c> draws a full shape. It starts in the middle of the base of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
-    /// [br][br]A value of <c>0</c> makes the node not draw anything.
+    /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
     public double DrawnArcDegrees
     {
@@ -67,7 +67,7 @@ public class RegularPolygon2D
     /// <remarks>
     /// Values greater than <see cref="Math.Tau"/> or -<see cref="Math.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
-    /// [br][br]A value of <c>0</c> makes the node not draw anything.
+    /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
     public double DrawnArc
     {
@@ -167,7 +167,7 @@ public class RegularPolygon2D
     }
 
     /// <inheritdoc cref="SimplePolygon2D.GetShapeVertices(long, double, double, Vector2)"/>
-    /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified [param vertices_count].</summary>
+    /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="vertices_count"/>.</summary>
     /// <param name="addCentralPoint">
     /// <paramref name="add_central_point"/> adds <paramref name="offset_rotation"/> at the end of the array. 
     /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Math.Tau"/>.
@@ -182,7 +182,7 @@ public class RegularPolygon2D
     /// </summary>
     public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end)
     => _shared.Value.Call(MethodNames.QuadraticBezierInterpolate, start, control, end).AsVector2();
-    /// <summary>Returns a modified copy of [param points] so that the shape it represents have rounded corners. </summary>
+    /// <summary>Returns a modified copy of <paramref name="points"/> so that the shape it represents have rounded corners. </summary>
     /// <remarks>The method uses quadratic Bézier curves for the corners (see <see cref="QuadraticBezierInterpolate"/>).</remarks>
     /// <param name="points">The array to clone and modify</param>
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>

@@ -41,8 +41,8 @@ public class RegularCollisionPolygon2D
     }
     /// <summary>Determines the width of the shape.</summary>
     /// <remarks>
-    /// It only has an effect with values greater than [code]0[/code].
-    /// Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
+    /// It only has an effect with values greater than <c>0</c>.
+    /// Values greater than or equal to <see cref="size"/> force the usage of <see cref="ConvexPolygonShape2D"/>.
     /// </remarks>
     public double Width
     {
