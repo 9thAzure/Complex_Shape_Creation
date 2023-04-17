@@ -3,7 +3,7 @@ using System;
 
 namespace RegularPolygons2D.MemberNames;
 
-public static class MethodNames
+public static class MethodName
 {
     public static readonly StringName GetShapeVertices = new("get_shape_vertices");
     public static readonly StringName DrawUsingPolygon = new("draw_using_polygon");

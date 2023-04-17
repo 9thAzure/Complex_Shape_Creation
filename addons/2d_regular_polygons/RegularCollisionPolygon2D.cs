@@ -129,11 +129,11 @@ public class RegularCollisionPolygon2D
     /// </summary>
     /// <remarks>This method does nothing if the node is outside the <see cref="SceneTree"/>. Use <see cref="Regenerate"/> instead.</remarks>
     public void QueueRegenerate()
-    => Instance.Call(MethodNames.QueueRegenerate);
+    => Instance.Call(MethodName.QueueRegenerate);
 
     /// <summary>
     /// Regenerates the <see cref="CollisionShape2D.Shape"/> using the properties of this node.
     /// </summary>
     public void Regenerate()
-    => Instance.Call(MethodNames.Regenerate);
+    => Instance.Call(MethodName.Regenerate);
 }

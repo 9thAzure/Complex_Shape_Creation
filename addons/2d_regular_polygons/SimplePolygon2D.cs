@@ -123,7 +123,7 @@ public partial class SimplePolygon2D
     /// <param name="offsetRotation">The rotation applied to the shape.</param>
     /// <param name="offsetPosition">The center of the shape.</param>
     public static Vector2[] GetShapeVertices(long verticesCount, double size = 1, double offsetRotation = 0, Vector2 offsetPosition = default)
-    => _shared.Value.Call(MethodNames.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
+    => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
 
     public static implicit operator Node2D(SimplePolygon2D instance) => instance.Instance;
     public static explicit operator SimplePolygon2D(Node2D instance) => new SimplePolygon2D(instance);

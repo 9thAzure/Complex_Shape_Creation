@@ -175,20 +175,20 @@ public class RegularPolygon2D
     /// </param>
     public static Vector2[] GetShapeVertices(long verticesCount, double size = 1, double offsetRotation = 0, Vector2 offsetPosition = default,
        double drawnArc = Math.Tau, bool addCentralPoint = true)
-    => _shared.Value.Call(MethodNames.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
+    => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
     /// <summary>
     /// Returns the point at the given <paramref name="t"/> on the Bézier curve with the given 
     /// <paramref name="start"/>, <paramref name="end"/>, and single <paramref name="control"/> points.
     /// </summary>
     public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end)
-    => _shared.Value.Call(MethodNames.QuadraticBezierInterpolate, start, control, end).AsVector2();
+    => _shared.Value.Call(MethodName.QuadraticBezierInterpolate, start, control, end).AsVector2();
     /// <summary>Returns a modified copy of <paramref name="points"/> so that the shape it represents have rounded corners. </summary>
     /// <remarks>The method uses quadratic Bézier curves for the corners (see <see cref="QuadraticBezierInterpolate"/>).</remarks>
     /// <param name="points">The array to clone and modify</param>
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
     /// <param name="cornerSmoothness">The number of lines that make up each corner.</param>
     public static Vector2[] AddRoundedCorners(Vector2[] points, double cornerSize, long cornerSmoothness)
-    => _shared.Value.Call(MethodNames.AddRoundedCorners, points, cornerSize, cornerSmoothness).AsVector2Array();
+    => _shared.Value.Call(MethodName.AddRoundedCorners, points, cornerSize, cornerSmoothness).AsVector2Array();
     /// <summary>
     /// Appends points, which are <paramref name="holeScaler"/> times the original <paramref name="points"/>, 
     /// to a clone of <paramref name="points"/>, in reverse order from <paramref name="points"/>.
@@ -198,7 +198,7 @@ public class RegularPolygon2D
     /// <param name="holeScaler">The multiplier applied to the duplicated points.</param>
     /// <param name="closeShape">Adds the first point to the end of <paramref cref="points"/>.</param>
     public static Vector2[] AddHoleToPoints(Vector2[] points, double holeScaler, bool closeShape = true)
-    => _shared.Value.Call(MethodNames.AddHoleToPoints, points, holeScaler, closeShape).AsVector2Array();
+    => _shared.Value.Call(MethodName.AddHoleToPoints, points, holeScaler, closeShape).AsVector2Array();
 
     public static implicit operator Polygon2D(RegularPolygon2D instance) => instance.Instance;
     public static explicit operator RegularPolygon2D(Polygon2D instance) => new RegularPolygon2D(instance);
