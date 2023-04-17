@@ -136,4 +136,7 @@ public class RegularCollisionPolygon2D
     /// </summary>
     public void Regenerate()
     => Instance.Call(MethodName.Regenerate);
+
+    public static implicit operator CollisionShape2D(RegularCollisionPolygon2D instance) => instance.Instance;
+    public static explicit operator RegularCollisionPolygon2D(CollisionShape2D instance) => new RegularCollisionPolygon2D(instance);
 }
