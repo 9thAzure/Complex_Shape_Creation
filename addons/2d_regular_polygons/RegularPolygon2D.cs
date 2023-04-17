@@ -125,7 +125,11 @@ public class RegularPolygon2D
         get => Instance.Scale;
         set => Instance.Scale = value;
     }
-
+    
+    /// <summary>Creates and wraps a <see cref="RegularPolygon2D"/> around <paramref name="instance"/>.</summary>
+    /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="instance"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="instance"/> isn't a instance of <see cref="GDScriptEquivalent"/>.</exception>
     public RegularPolygon2D(Polygon2D instance)
     {
         if (instance is null)
@@ -135,12 +139,15 @@ public class RegularPolygon2D
 
         Instance = instance;
     }
+    /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
+    /// <remarks>See also: <seealso cref="New"/>.</remarks>
     public RegularPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
         Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
+    /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     public static Polygon2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
@@ -153,13 +160,37 @@ public class RegularPolygon2D
             width, drawnArc, cornerSize, cornerSmoothness);
     }
 
+    /// <summary>Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].</summary>
+    /// <param name="verticesCount">If <paramref name="vertices_count"/> is [code]1[/code], a value of [code]32[/code] is used instead.</param>
+    /// <param name="addCentralPoint">
+    /// <paramref name="add_central_point"/> adds <paramref name="offset_rotation"/> at the end of the array. 
+    /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Math.Tau"/>.
+    /// It should be set to false when using <see cref="AddHoleToPoints"/>.
+    /// </param>
     public static Vector2[] GetShapeVertices(long verticesCount, double size = 1, double offsetRotation = 0, Vector2 offsetPosition = default,
        double drawnArc = Math.Tau, bool addCentralPoint = true)
     => _shared.Value.Call(MethodNames.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
+    /// <summary>
+    /// Returns the point at the given <paramref name="t"/> on the Bézier curve with the given 
+    /// <paramref name="start"/>, <paramref name="end"/>, and single <paramref name="control"/> points.
+    /// </summary>
     public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end)
     => _shared.Value.Call(MethodNames.QuadraticBezierInterpolate, start, control, end).AsVector2();
+    /// <summary>Returns a modified copy of [param points] so that the shape it represents have rounded corners. </summary>
+    /// <remarks>The method uses quadratic Bézier curves for the corners (see <see cref="QuadraticBezierInterpolate"/>).</remarks>
+    /// <param name="points">The array to clone and modify</param>
+    /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
+    /// <param name="cornerSmoothness">The number of lines that make up each corner.</param>
     public static Vector2[] AddRoundedCorners(Vector2[] points, double cornerSize, long cornerSmoothness)
     => _shared.Value.Call(MethodNames.AddRoundedCorners, points, cornerSize, cornerSmoothness).AsVector2Array();
+    /// <summary>
+    /// Appends points, which are <paramref name="holeScaler"/> times the original <paramref name="points"/>, 
+    /// to a clone of <paramref name="points"/>, in reverse order from <paramref name="points"/>.
+    /// </summary>
+    /// <remarks>This method doesn't work properly if there is an offset applied to <paramref name="points"/>.</remarks>
+    /// <param name="points">The array to clone and modify.</param>
+    /// <param name="holeScaler">The multiplier applied to the duplicated points.</param>
+    /// <param name="closeShape">Adds the first point to the end of <paramref cref="points"/>.</param>
     public static Vector2[] AddHoleToPoints(Vector2[] points, double holeScaler, bool closeShape = true)
     => _shared.Value.Call(MethodNames.AddHoleToPoints, points, holeScaler, closeShape).AsVector2Array();
 
