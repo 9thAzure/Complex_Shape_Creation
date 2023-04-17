@@ -5,6 +5,10 @@ using RegularPolygons2D.MemberNames;
 
 namespace RegularPolygons2D;
 
+/// <summary>
+/// A Wrapper for a <see cref="Polygon2D"/> which contains the script specified in <see cref="GDScriptEquivalent"/>.
+/// It also provides ways for creating such nodes.
+/// </summary>
 public class RegularPolygon2D
 {
     /// <inheritdoc cref="SimplePolygon2D.GDScriptEquivalentPath"/>
