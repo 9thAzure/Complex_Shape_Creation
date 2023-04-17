@@ -113,7 +113,7 @@ var corner_size : float = 0.0:
 		
 		_pre_redraw()
 
-## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
+## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 ## Values are clamped to a value of [code]0[/code] or greater.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
@@ -243,6 +243,27 @@ func draw_using_polygon() -> void:
 	
 	polygon = points
 
+func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
+	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
+	if vertices_count != 1:
+		self.vertices_count = vertices_count
+	if size != 10.0:
+		self.size = size
+	if offset_rotation != 0.0:
+		self.offset_rotation = offset_rotation
+	if color != Color.WHITE:
+		self.color = color
+	if offset_position != Vector2.ZERO:
+		self.offset_position = offset_position
+	if width != -0.001:
+		self.width = width
+	if drawn_arc != TAU:
+		self.drawn_arc = drawn_arc
+	if corner_size != 0.0:
+		self.corner_size = corner_size
+	if corner_smoothness != 0:
+		self.corner_smoothness = corner_smoothness
+	
 ## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
 func uses_polygon_member() -> bool:
 	return (
@@ -254,13 +275,6 @@ func uses_polygon_member() -> bool:
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
-## Gets the side length of a shape with the specified vertices amount, each being a distance of [code]1[/code] away from the center.
-## If [param vertices_count] is [code]1[/code], [constant @GDScript.PI] is returned. If it is [code]2[/code], [code]1[/code] is returned.
-static func get_side_length(vertices_count : int) -> int:
-	assert(vertices_count >= 1)
-	if vertices_count == 1: return PI
-	if vertices_count == 2: return 1
-	return 2 * sin(TAU / vertices_count / 2)
 
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
@@ -400,6 +414,7 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 
 ## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
 ## [param close_shape] adds the first point to the end, before the procedure.
+## [br][br]Note: This method doesn't work if there is an offset applied to [param hole_scaler].
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	var original_size := points.size()
 	if close_shape:
@@ -411,3 +426,12 @@ static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float,
 
 	for i in original_size:
 		points[-i - 1] = points[i] * hole_scaler
+
+# these functions are for c# interop, as changes to an argument are not transferred.
+static func _add_rounded_corners_result(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
+	add_rounded_corners(points, corner_size, corner_smoothness)
+	return points
+
+static func _add_hole_to_points_result(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> PackedVector2Array:
+	add_hole_to_points(points, hole_scaler, close_shape)
+	return points

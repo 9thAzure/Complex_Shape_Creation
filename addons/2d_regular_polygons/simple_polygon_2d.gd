@@ -80,6 +80,18 @@ func _draw() -> void:
 		
 	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation, offset_position), color)
 
+func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
+	if vertices_count != 1:
+		self.vertices_count = vertices_count
+	if size != 10.0:
+		self.size = size
+	if offset_rotation != 0.0:
+		self.offset_rotation = offset_rotation
+	if color != Color.WHITE:
+		self.color = color
+	if offset_position != Vector2.ZERO:
+		self.offset_position = offset_position
+
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
