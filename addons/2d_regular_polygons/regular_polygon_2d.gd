@@ -275,13 +275,6 @@ func uses_polygon_member() -> bool:
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
-## Gets the side length of a shape with the specified vertices amount, each being a distance of [code]1[/code] away from the center.
-## If [param vertices_count] is [code]1[/code], [constant @GDScript.PI] is returned. If it is [code]2[/code], [code]1[/code] is returned.
-static func get_side_length(vertices_count : int) -> int:
-	assert(vertices_count >= 1)
-	if vertices_count == 1: return PI
-	if vertices_count == 2: return 1
-	return 2 * sin(TAU / vertices_count / 2)
 
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
@@ -421,6 +414,7 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 
 ## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
 ## [param close_shape] adds the first point to the end, before the procedure.
+## [br][br]Note: This method doesn't work if there is an offset applied to [param hole_scaler].
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	var original_size := points.size()
 	if close_shape:
