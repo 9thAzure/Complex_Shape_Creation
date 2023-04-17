@@ -42,10 +42,10 @@ public class RegularPolygon2D
     }
     /// <summary>Determines the width of the shape and whether is uses Draw* methods or <see cref="Polygon2D.Polygon"/>.</summary>
     /// <remarks>
-    /// Determines the width of the shape. A value of <c>0</c> outlines the shape with lines, and a value smaller than <c>0</c> ignores this effect.
+    /// A value of <c>0</c> outlines the shape with lines, and a value smaller than <c>0</c> ignores this effect.
     /// Values greater than <c>0</c> will have <see cref="Polygon2D.Polygon"/> used,
-    /// and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
-    /// [br][br]A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c>, to make it easier to select it in the inspector.
+    /// and value greater than <see cref="size"/> also ignores this effect while still using [member Polygon2D.polygon].
+    /// A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c>, to make it easier to select it in the inspector.
     /// </remarks>
     public double Width
     {
@@ -65,7 +65,7 @@ public class RegularPolygon2D
     }
     /// <summary>The arc of the drawn shape, radians, cutting off beyond that arc.</summary>
     /// <remarks>
-    /// Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
+    /// Values greater than <see cref="Math.Tau"/> or -<see cref="Math.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
     /// [br][br]A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
@@ -83,7 +83,7 @@ public class RegularPolygon2D
         set => Instance.Set(PropertyName.CornerSize, value);
     }
     /// <summary>How many lines make up each corner</summary>
-    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by [member vertices_count].</remarks>
+    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="verticesCount"/>.</remarks>
     public long CornerSmoothness
     {
         get => (long)Instance.Get(PropertyName.CornerSmoothness);
@@ -139,6 +139,7 @@ public class RegularPolygon2D
 
         Instance = instance;
     }
+    /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     public RegularPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
@@ -147,7 +148,12 @@ public class RegularPolygon2D
         Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
+    /// <inheritdoc cref="SimplePolygon2D.New(long, double, double, Color?, Vector2)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
+    /// <param name="width">The width of the shape. Negative values draw a full shape.</param>
+    /// <param name="drawnArc">The drawn arc of the shape. Positive values go clockwise, negative values go counterclockwise.</param>
+    /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
+    /// <param name="cornerSmoothness">How many lines make up each corner.</param>
     public static Polygon2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
@@ -160,8 +166,8 @@ public class RegularPolygon2D
             width, drawnArc, cornerSize, cornerSmoothness);
     }
 
-    /// <summary>Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].</summary>
-    /// <param name="verticesCount">If <paramref name="vertices_count"/> is [code]1[/code], a value of [code]32[/code] is used instead.</param>
+    /// <inheritdoc cref="SimplePolygon2D.GetShapeVertices(long, double, double, Vector2)"/>
+    /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified [param vertices_count].</summary>
     /// <param name="addCentralPoint">
     /// <paramref name="add_central_point"/> adds <paramref name="offset_rotation"/> at the end of the array. 
     /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Math.Tau"/>.

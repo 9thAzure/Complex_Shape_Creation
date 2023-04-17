@@ -98,13 +98,15 @@ public partial class SimplePolygon2D
         Instance = instance;
     }
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="SimplePolygon2D"/>.</summary>
+    /// <remarks>See also: <seealso cref="New"/>.</remarks>
     public SimplePolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
         Instance = SimplePolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition);
     }
-    /// <summary>
-    /// Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.
-    /// </summary>
+    /// <inheritdoc cref="GetShapeVertices"/>
+    /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
+    /// <param name="verticesCount"/>The number of vertices in the shape. A <c>1</c> draws a circle, a <c>2</c> draws a line.</param>
+    /// <param name="color">The color of the shape.</param>
     public static Node2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
         Debug.Assert(GDScriptEquivalent is not null);
@@ -116,7 +118,10 @@ public partial class SimplePolygon2D
     }
 
     /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="verticesCount"/>.</summary>
-    /// <param name="verticesCount">If it is <c>1</c>, a value of <c>32</c> is used.</param>
+    /// <param name="verticesCount">The number of vertices in the shape. If it is <c>1</c>, a value of <c>32</c> is used.</param>
+    /// <param name="size">The distance each corner vertices is from the center.</param>
+    /// <param name="offsetRotation">The rotation applied to the shape.</param>
+    /// <param name="offsetPosition">The center of the shape.</param>
     public static Vector2[] GetShapeVertices(long verticesCount, double size = 1, double offsetRotation = 0, Vector2 offsetPosition = default)
     => _shared.Value.Call(MethodNames.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
 
