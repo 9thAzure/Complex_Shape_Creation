@@ -162,10 +162,7 @@ public class RegularPolygon2D
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
         Debug.Assert(GDScriptEquivalent is not null);
-        if (color is null)
-        {
-            color = Colors.White;
-        }
+        color ??= Colors.White;
         return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition, 
             width, drawnArc, cornerSize, cornerSmoothness);
     }
@@ -205,5 +202,5 @@ public class RegularPolygon2D
     => _shared.Value.Call(MethodName.AddHoleToPoints, points, holeScaler, closeShape).AsVector2Array();
 
     public static implicit operator Polygon2D(RegularPolygon2D instance) => instance.Instance;
-    public static explicit operator RegularPolygon2D(Polygon2D instance) => new RegularPolygon2D(instance);
+    public static explicit operator RegularPolygon2D(Polygon2D instance) => new(instance);
 }

@@ -110,10 +110,7 @@ public partial class SimplePolygon2D
     public static Node2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
         Debug.Assert(GDScriptEquivalent is not null);
-        if (color is null)
-        {
-            color = Colors.White;
-        }
+        color ??= Colors.White;
         return (Node2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition);
     }
 
@@ -126,5 +123,5 @@ public partial class SimplePolygon2D
     => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
 
     public static implicit operator Node2D(SimplePolygon2D instance) => instance.Instance;
-    public static explicit operator SimplePolygon2D(Node2D instance) => new SimplePolygon2D(instance);
+    public static explicit operator SimplePolygon2D(Node2D instance) => new(instance);
 }
