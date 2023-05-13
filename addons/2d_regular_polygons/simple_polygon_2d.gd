@@ -22,13 +22,11 @@ var vertices_count : int = 1:
 		queue_redraw()
 
 ## The length from each corner to the center. Values are clamped to a value greater than [code]0[/code].
-@export
+@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
 		size = value
-		if value <= 0:
-			size = 0.00000001
-		
+		assert(value > 0, "property 'size' must be greater than 0.");
 		queue_redraw()
 
 ## The offset rotation of the shape, in degrees.
