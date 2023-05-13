@@ -32,7 +32,6 @@ var size : float = 10:
 		queue_redraw()
 
 ## The offset rotation of the shape, in degrees.
-@export_range(-360, 360, 0.1, "or_greater", "or_less")
 var offset_rotation_degrees : float = 0:
 	set(value):
 		offset_rotation = deg_to_rad(value)
@@ -40,6 +39,7 @@ var offset_rotation_degrees : float = 0:
 		return rad_to_deg(offset_rotation)
 
 ## The offset rotation of the shape, in radians.
+@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
