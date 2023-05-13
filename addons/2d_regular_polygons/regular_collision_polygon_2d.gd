@@ -183,7 +183,7 @@ func regenerate() -> void:
 		shape = circle
 		return
 	
-	if vertices_count == 4 and is_zero_approx(offset_rotation) and not uses_rounded_corners:
+	if vertices_count == 4 and is_zero_approx(offset_rotation) and not uses_rounded_corners and not uses_drawn_arc:
 		const sqrt_two_over_two := 0.707106781
 		var square := RectangleShape2D.new()
 		square.size = size / sqrt_two_over_two * Vector2.ONE
