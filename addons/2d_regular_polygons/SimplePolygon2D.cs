@@ -22,14 +22,13 @@ public partial class SimplePolygon2D
 
     /// <summary>
     /// The number of vertices in the perfect shape. A value of <c>1</c> creates a circle, and a value of <c>2</c> creates a line.
-    /// Values are clamped to a value greater than or equal to <c>1</c>.
     /// </summary>
     public long VerticesCount
     {
         get => (long)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
-    /// <summary>The length from each corner to the center. Values are clamped to a value greater than <c>0</c>.</summary>
+    /// <summary>The length from each corner to the center.</summary>
     public double Size
     {
         get => (double)Instance.Get(PropertyName.Size);

@@ -49,7 +49,7 @@ public class RegularPolygon2D
     /// A value of <c>0</c> outlines the shape with lines, and a value smaller than <c>0</c> ignores this effect.
     /// Values greater than <c>0</c> will have <see cref="Polygon2D.Polygon"/> used,
     /// and value greater than <see cref="size"/> also ignores this effect while still using <see cref="Polygon2D.Polygon"/>.
-    /// A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c>, to make it easier to select it in the inspector.
+    /// Note: A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c> when running in the editor.
     /// </remarks>
     public double Width
     {
