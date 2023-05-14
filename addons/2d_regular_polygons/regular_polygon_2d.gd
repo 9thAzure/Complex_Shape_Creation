@@ -60,14 +60,14 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
-## [br][br]A value between [code]0[/code] and [code]0.01[/code] is converted to [code]0[/code], to make it easier to select it in the inspector.
+## [br][br]Note: A value between [code]0[/code] and [code]0.01[/code] is converted to [code]0[/code] while in the editor, to make it easier to select it in the inspector.
 @export_range(-0.001, 10, , "or_greater", "hide_slider")
 var width : float = -0.001:
 	set(value):
 		if value > 0 and value < 0.01:
 			value = 0
 		
-		if width > 0 and value <= 0:
+		if Engine.is_editor_hint() and width > 0 and value <= 0:
 			width = value
 			polygon = PackedVector2Array()
 			return
