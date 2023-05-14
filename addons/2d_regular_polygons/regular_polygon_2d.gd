@@ -46,7 +46,6 @@ var size : float = 10:
 		_pre_redraw()
 
 ## The offset rotation of the shape, in degrees.
-@export_range(-360, 360, 0.1, "or_greater", "or_less") 
 var offset_rotation_degrees : float = 0:
 	set(value):
 		offset_rotation = deg_to_rad(value)
@@ -54,6 +53,7 @@ var offset_rotation_degrees : float = 0:
 		return rad_to_deg(offset_rotation)
 
 ## the offset rotation of the shape, in radians.
+@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians") 
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
@@ -85,7 +85,6 @@ var width : float = -0.001:
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
-@export_range(-360, 360) 
 var drawn_arc_degrees : float = 360:
 	set(value):
 		drawn_arc = deg_to_rad(value)
@@ -96,6 +95,7 @@ var drawn_arc_degrees : float = 360:
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
+@export_range(-360, 360, 0.1, "radians") 
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
