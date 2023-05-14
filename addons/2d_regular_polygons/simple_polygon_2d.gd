@@ -17,7 +17,7 @@ var vertices_count : int = 1:
 		vertices_count = value
 		queue_redraw()
 
-## The length from each corner to the center. Values are clamped to a value greater than [code]0[/code].
+## The length from each corner to the center.
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
