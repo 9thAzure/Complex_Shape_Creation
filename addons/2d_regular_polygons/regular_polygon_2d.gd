@@ -14,7 +14,7 @@ extends Polygon2D
 ## Use [method draw_using_polygon] to have [member polygon] set outside the tree.
 ## [br][br]If [member Polygon2D.polygon] is set when the node wouldn't use before it enters the [SceneTree], it won't be cleared when it does.
 
-## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
+## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 @export_range(1, 2000) 
 var vertices_count : int = 1:

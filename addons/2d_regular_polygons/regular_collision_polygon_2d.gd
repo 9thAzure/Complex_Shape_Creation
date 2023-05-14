@@ -11,8 +11,8 @@ extends CollisionShape2D
 ## If [member CollisionShape2D.shape] is already set before then, it won't be regenerated.
 ## [method regenerate] can be used to force regeneration.
 
-## The number of vertices in the regular shape
-## a value of 1 creates a circle, a value of 2 creates a line.
+## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
+## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
 @export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):
