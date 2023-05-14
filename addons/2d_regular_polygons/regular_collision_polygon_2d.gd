@@ -82,7 +82,7 @@ var corner_size : float = 0.0:
 		queue_regenerate()
 
 ## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
-@export_range(0, 8, 0.001, "or_greater") 
+@export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
 		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
