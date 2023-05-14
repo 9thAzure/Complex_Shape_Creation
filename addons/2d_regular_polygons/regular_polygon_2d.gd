@@ -362,11 +362,15 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 		var i := array_size - 1 - pre_i
 		points[i * corner_index_size] = points[i]
 
+	var first_point := points[0]
 	var last_point := points[-corner_index_size]
 	var current_point := points[0]
 	var next_point : Vector2
 	for i in array_size:
-		next_point = points[(i + 1) * corner_index_size % points.size()]
+		if i + 1 == array_size:
+			next_point = first_point
+		else:
+			next_point = points[(i + 1) * corner_index_size]
 		# get starting & ending points of corner.
 		var starting_slope := (current_point - last_point)
 		var ending_slope := (current_point - next_point)
