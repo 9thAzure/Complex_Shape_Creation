@@ -13,26 +13,19 @@ extends CollisionShape2D
 
 ## The number of vertices in the regular shape
 ## a value of 1 creates a circle, a value of 2 creates a line.
-## Values are clamped to a value greater than or equal to 1.
 @export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):
-		assert(value < 2000, "Large vertices counts should not be necessary.")
+		assert(value > 0, "property 'vertices_count' must be greater than 0")
 		vertices_count = value
-		if value < 1:
-			vertices_count = 1
-
 		queue_regenerate()
 
 ## The length of each corner to the center.
-## Values are clamped to a value greater than 0.
 @export_range(0.000001, 10, , "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
+		assert(value > 0, "value 'size' must be greater than 0")
 		size = value
-		if value <= 0:
-			size = 0.000001
-		
 		queue_regenerate()
 
 ## The offset rotation of the shape, in degrees.
@@ -81,25 +74,19 @@ var drawn_arc : float = TAU:
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
-## Values are clamped to a value of [code]0[/code] or greater.
 @export_range(0, 5, , "or_greater", "hide_slider")
 var corner_size : float = 0.0:
 	set(value):
+		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
 		corner_size = value
-		if value < 0:
-			corner_size = 0
-		
 		queue_regenerate()
 
 ## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
-## Values are clamped to a value of [code]0[/code] or greater.
 @export_range(0, 8, , "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
+		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
 		corner_smoothness = value
-		if value < 0:
-			corner_smoothness = 0
-		
 		queue_regenerate()
 
 var _is_queued := true

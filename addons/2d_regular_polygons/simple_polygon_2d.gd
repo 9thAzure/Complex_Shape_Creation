@@ -10,15 +10,11 @@ extends Node2D
 
 
 ## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
-## Values are clamped to a value greater than or equal to [code]1[/code].
-@export_range(1, 8, , "or_greater")
+@export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):
-		assert(value < 2000, "Large vertices counts should not be necessary.")
+		assert(value > 0, "property 'vertices_count' must be greater than 0")
 		vertices_count = value
-		if value < 1:
-			vertices_count = 1
-
 		queue_redraw()
 
 ## The length from each corner to the center. Values are clamped to a value greater than [code]0[/code].
