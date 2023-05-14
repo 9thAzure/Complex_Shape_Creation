@@ -17,7 +17,7 @@ extends Polygon2D
 ## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## Values are clamped to a value greater than or equal to [code]1[/code].
 ## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
-@export_range(1, 2000, 1) 
+@export_range(1, 2000) 
 var vertices_count : int = 1:
 	set(value):
 		assert(value < 2000, "Large vertices counts should not be necessary.")
@@ -36,7 +36,7 @@ var vertices_count : int = 1:
 		_pre_redraw()
 
 ## The length from each corner to the center. Values are clamped to a value greater than [code]0[/code].
-@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
+@export_range(0.000001, 10, , "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
 		size = value
@@ -67,7 +67,7 @@ var offset_rotation : float = 0:
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
 ## [br][br]A value between [code]0[/code] and [code]0.01[/code] is converted to [code]0[/code], to make it easier to select it in the inspector.
-@export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
+@export_range(-0.001, 10, , "or_greater", "hide_slider")
 var width : float = -0.001:
 	set(value):
 		if value > 0 and value < 0.01:
@@ -104,7 +104,7 @@ var drawn_arc : float = TAU:
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
 ## Values are clamped to a value of [code]0[/code] or greater.
-@export_range(0.0, 5, 0.001, "or_greater", "hide_slider") 
+@export_range(0.0, 5, , "or_greater", "hide_slider") 
 var corner_size : float = 0.0:
 	set(value):
 		corner_size = value
@@ -115,7 +115,7 @@ var corner_size : float = 0.0:
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 ## Values are clamped to a value of [code]0[/code] or greater.
-@export_range(0, 8, 1, "or_greater") 
+@export_range(0, 8, , "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
 		corner_smoothness = value
