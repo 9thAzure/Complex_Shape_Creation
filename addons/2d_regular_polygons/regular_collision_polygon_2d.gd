@@ -21,7 +21,7 @@ var vertices_count : int = 1:
 		queue_regenerate()
 
 ## The length of each corner to the center.
-@export_range(0.000001, 10, , "or_greater", "hide_slider")
+@export_range(0.000001, 10, 0.001 , "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
 		assert(value > 0, "value 'size' must be greater than 0")
@@ -46,7 +46,7 @@ var offset_rotation : float = 0:
 
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
 ## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
-@export_range(0, 10, , "or_greater", "hide_slider") 
+@export_range(0, 10, 0.001, "or_greater", "hide_slider") 
 var width : float = 0:
 	set(value):
 		width = value
@@ -74,7 +74,7 @@ var drawn_arc : float = TAU:
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
-@export_range(0, 5, , "or_greater", "hide_slider")
+@export_range(0, 5, 0.001, "or_greater", "hide_slider")
 var corner_size : float = 0.0:
 	set(value):
 		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
@@ -82,7 +82,7 @@ var corner_size : float = 0.0:
 		queue_regenerate()
 
 ## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
-@export_range(0, 8, , "or_greater") 
+@export_range(0, 8, 0.001, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
 		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")

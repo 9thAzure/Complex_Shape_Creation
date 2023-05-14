@@ -16,7 +16,7 @@ extends Polygon2D
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
-@export_range(1, 2000) 
+@export_range(1, 2000, 1) 
 var vertices_count : int = 1:
 	set(value):
 		assert(value > 0, "property 'vertices_count' must be greater than 0")
@@ -32,7 +32,7 @@ var vertices_count : int = 1:
 		_pre_redraw()
 
 ## The length from each corner to the center.
-@export_range(0.000001, 10, , "or_greater", "hide_slider")
+@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
 		assert(value > 0, "property 'size' must be greater than 0");
@@ -60,8 +60,7 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
-## [br][br]Note: A value between [code]0[/code] and [code]0.01[/code] is converted to [code]0[/code] when running in the editor.
-@export_range(-0.001, 10, , "or_greater", "hide_slider")
+@export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
 var width : float = -0.001:
 	set(value):
 		if Engine.is_editor_hint() and value > 0 and value < 0.01:
@@ -97,7 +96,7 @@ var drawn_arc : float = TAU:
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
-@export_range(0.0, 5, , "or_greater", "hide_slider") 
+@export_range(0.0, 5, 0.001, "or_greater", "hide_slider") 
 var corner_size : float = 0.0:
 	set(value):
 		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
@@ -105,7 +104,7 @@ var corner_size : float = 0.0:
 		_pre_redraw()
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
-@export_range(0, 8, , "or_greater") 
+@export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
 		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
