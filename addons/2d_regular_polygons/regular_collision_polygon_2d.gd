@@ -123,7 +123,7 @@ func regenerate() -> void:
 		return
 	
 	var uses_rounded_corners := not is_zero_approx(corner_size)
-	var uses_width := width > 0
+	var uses_width := width > 0 and width < size
 	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
 	if uses_width:
 		var polygon := ConcavePolygonShape2D.new()
