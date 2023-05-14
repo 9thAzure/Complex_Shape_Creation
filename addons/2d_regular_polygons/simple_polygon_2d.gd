@@ -107,4 +107,3 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 
 static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
 	return Vector2(-sin(rotation), cos(rotation)) * size + offset
-	
