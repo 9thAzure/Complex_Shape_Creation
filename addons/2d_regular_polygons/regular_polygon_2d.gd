@@ -153,7 +153,7 @@ func _draw() -> void:
 	# at this point, width <= 0
 	# if there is no advanced features, check for other draw calls.
 	if vertices_count == 1:
-		if drawn_arc < TAU or drawn_arc > -TAU:
+		if drawn_arc < TAU and drawn_arc > -TAU:
 			draw_colored_polygon(get_shape_vertices(32, size, offset_rotation, offset, drawn_arc), color)
 			return
 		draw_circle(offset, size, color)
