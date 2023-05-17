@@ -144,7 +144,7 @@ func _enter_tree() -> void:
 	_is_queued = false
 
 func _exit_tree() -> void:
-	_is_queued = true
+	_is_queued = false
 
 func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
