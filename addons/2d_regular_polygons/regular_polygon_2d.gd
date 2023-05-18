@@ -115,7 +115,7 @@ var corner_smoothness : int = 0:
 # Because the default values don't use the 'polygon' member, calling it in _ready is not needed.
 # Changing the properties to use the polygon member will have _pre_redraw called anyways.
 
-var _is_queued := false
+var _is_queued := true
 
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 # queue-like functionality - pauses, and only 1 call.
@@ -128,10 +128,7 @@ func _pre_redraw() -> void:
 	if _is_queued:
 		return
 	
-	_is_queued = true
-	if not is_inside_tree():
-		return
-	
+	_is_queued = true	
 	await get_tree().process_frame
 	_is_queued = false
 	if not uses_polygon_member():
@@ -139,12 +136,12 @@ func _pre_redraw() -> void:
 	draw_using_polygon()
 
 func _enter_tree() -> void:
-	if uses_polygon_member() and _is_queued and polygon.is_empty():
+	if _is_queued and uses_polygon_member() and polygon.is_empty():
 		draw_using_polygon()
 	_is_queued = false
 
-func _exit_tree() -> void:
-	_is_queued = false
+# func _exit_tree() -> void:
+# 	_is_queued = false
 
 func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
@@ -231,7 +228,7 @@ func draw_using_polygon() -> void:
 	polygon = points
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
-	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
+	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0, _start_queued := true):
 	if vertices_count != 1:
 		self.vertices_count = vertices_count
 	if size != 10.0:
@@ -250,6 +247,7 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 		self.corner_size = corner_size
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
+	_is_queued = _start_queued
 	
 ## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
 func uses_polygon_member() -> bool:
