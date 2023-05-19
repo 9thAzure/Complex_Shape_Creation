@@ -7,7 +7,7 @@ extends CollisionShape2D
 ##
 ## A node with variables for generating 2d regular shapes for collision.
 ## It creates various shape inheriting [Shape2D] based on the values of its variables and sets it to [member CollisionShape2D.shape].
-## [br][br]Note: If properties are set when the node is outside the [SceneTree], the shape isn't generated instantly.
+## [br][br][b]Note[/b]: If properties are set when the node is outside the [SceneTree], the shape isn't generated instantly.
 ## See [method queue_regenerate] for its effects.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.

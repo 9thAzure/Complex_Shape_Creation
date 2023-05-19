@@ -8,7 +8,7 @@ extends Polygon2D
 ## A node that draws regular shapes, with some complex properties.
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
 ## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
-## [br][br]Note: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
+## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
 ## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
 ## [br][br][b]Warning[/b]: Specific values which use a value of [member width] between [code]0[/code] and [member size]
@@ -400,7 +400,7 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 
 ## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
 ## [param close_shape] adds the first point to the end, before the procedure.
-## [br][br]Note: This method doesn't work if there is an offset applied to [param hole_scaler].
+## [br][br][b]Note[/b]: This method doesn't work if there is an offset applied to [param hole_scaler].
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	var original_size := points.size()
 	if close_shape:
