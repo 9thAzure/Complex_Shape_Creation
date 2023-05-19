@@ -213,6 +213,7 @@ func _draw() -> void:
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
 func draw_using_polygon() -> void:
+	_is_queued = false
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
