@@ -231,8 +231,7 @@ func regenerate_polygon() -> void:
 	polygon = points
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
-	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0, _start_queued := true):
-	_is_queued = _start_queued
+	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
 	if vertices_count != 1:
 		self.vertices_count = vertices_count
 	if size != 10.0:
