@@ -227,6 +227,10 @@ func draw_using_polygon() -> void:
 	
 	polygon = points
 
+static func create(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
+	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0) -> RegularPolygon2D:
+	return RegularPolygon2D.new(vertices_count, size, offset_rotation, color, offset_position, width, drawn_arc, corner_size, corner_smoothness, false)
+
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
 	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0, _start_queued := true):
 	_is_queued = _start_queued
