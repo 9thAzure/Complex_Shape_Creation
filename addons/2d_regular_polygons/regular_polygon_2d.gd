@@ -11,7 +11,7 @@ extends Polygon2D
 ## [br][br]Note: If the node uses [member Polygon2D.polygon] but isn't in the [SceneTree], 
 ## the setting of [member Polygon2D.polygon] will be delayed to when it enters one.
 ## If [member Polygon2D.polygon] is already set before then, it won't be re-set.
-## Use [method draw_using_polygon] to have [member polygon] set outside the tree.
+## Use [method regenerate_polygon] to have [member polygon] set outside the tree.
 ## [br][br]If [member Polygon2D.polygon] is set when the node wouldn't use before it enters the [SceneTree], it won't be cleared when it does.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
@@ -137,11 +137,11 @@ func _pre_redraw() -> void:
 	_is_queued = false
 	if not uses_polygon_member():
 		return
-	draw_using_polygon()
+	regenerate_polygon()
 
 func _enter_tree() -> void:
 	if _is_queued and uses_polygon_member() and polygon.is_empty():
-		draw_using_polygon()
+		regenerate_polygon()
 	_is_queued = false
 
 # func _exit_tree() -> void:
@@ -212,7 +212,7 @@ func _draw() -> void:
 
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
-func draw_using_polygon() -> void:
+func regenerate_polygon() -> void:
 	_is_queued = false
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
