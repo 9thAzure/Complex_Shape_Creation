@@ -111,9 +111,6 @@ func _enter_tree() -> void:
 		regenerate()
 	_is_queued = false
 
-func _exit_tree() -> void:
-	_is_queued = true
-
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
 func regenerate() -> void:
 	if vertices_count == 2:
