@@ -109,10 +109,6 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		_pre_redraw()
 
-
-# Because the default values don't use the 'polygon' member, calling it in _ready is not needed.
-# Changing the properties to use the polygon member will have _pre_redraw called anyways.
-
 var _is_queued := true
 
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
@@ -142,15 +138,10 @@ func _enter_tree() -> void:
 		regenerate_polygon()
 	_is_queued = false
 
-# func _exit_tree() -> void:
-# 	_is_queued = false
-
 func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
 		return
 	
-	# at this point, width <= 0
-	# if there is no advanced features, check for other draw calls.
 	if vertices_count == 1:
 		if drawn_arc < TAU and drawn_arc > -TAU:
 			draw_colored_polygon(get_shape_vertices(32, size, offset_rotation, offset, drawn_arc), color)
