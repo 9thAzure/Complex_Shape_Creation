@@ -229,6 +229,7 @@ func draw_using_polygon() -> void:
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
 	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0, _start_queued := true):
+	_is_queued = _start_queued
 	if vertices_count != 1:
 		self.vertices_count = vertices_count
 	if size != 10.0:
@@ -247,7 +248,6 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 		self.corner_size = corner_size
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
-	_is_queued = _start_queued
 	
 ## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
 func uses_polygon_member() -> bool:
