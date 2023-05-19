@@ -7,9 +7,8 @@ extends CollisionShape2D
 ##
 ## A node with variables for generating 2d regular shapes for collision.
 ## It creates various shape inheriting [Shape2D] based on the values of its variables and sets it to [member CollisionShape2D.shape].
-## [br][br]Note: If these properties are set when the node is outside a [SceneTree], its effects are delayed to when it enters one.
-## If [member CollisionShape2D.shape] is already set before then, it won't be regenerated.
-## [method regenerate] can be used to force regeneration.
+## [br][br]Note: If properties are set when the node is outside the [SceneTree], the shape isn't generated instantly.
+## See [method queue_regenerate] for its effects.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
@@ -92,7 +91,8 @@ var corner_smoothness : int = 0:
 var _is_queued := true
 
 ## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
-##[br][br]This method does nothing if the node is outside the [SceneTree]. Use [method regenerate] instead.
+## [br][br]If this method is called when the node is outside the [SceneTree], [member Shape2D.shape] will be set to [code]null[/code]
+## and initialization will be delayed to when the node enters the tree. Call [method regenerate] directly to force initialization.
 func queue_regenerate() -> void:
 	if _is_queued:
 		return
