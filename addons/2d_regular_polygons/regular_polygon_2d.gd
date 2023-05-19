@@ -128,7 +128,11 @@ func _pre_redraw() -> void:
 	if _is_queued:
 		return
 	
-	_is_queued = true	
+	_is_queued = true
+	if not is_inside_tree():
+		polygon = PackedVector2Array()
+		return
+
 	await get_tree().process_frame
 	_is_queued = false
 	if not uses_polygon_member():
