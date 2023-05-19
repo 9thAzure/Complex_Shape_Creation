@@ -135,7 +135,7 @@ func _pre_redraw() -> void:
 		return
 	draw_using_polygon()
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	if _is_queued and uses_polygon_member() and polygon.is_empty():
 		draw_using_polygon()
 	_is_queued = false
