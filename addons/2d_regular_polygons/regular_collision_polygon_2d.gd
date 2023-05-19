@@ -103,7 +103,7 @@ func queue_regenerate() -> void:
 		return
 	
 	await get_tree().process_frame
-	_is_queued = false
+	# _is_queued = false # regenerate already sets this variable to false.
 	regenerate()
 
 func _enter_tree() -> void:
@@ -113,6 +113,7 @@ func _enter_tree() -> void:
 
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
 func regenerate() -> void:
+	_is_queued = false
 	if vertices_count == 2:
 		var line := SegmentShape2D.new()
 		line.a = size * (Vector2.UP if is_zero_approx(offset_rotation) else Vector2(sin(offset_rotation), -cos(offset_rotation)))
