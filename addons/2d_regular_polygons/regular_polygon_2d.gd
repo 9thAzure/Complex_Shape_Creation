@@ -11,6 +11,9 @@ extends Polygon2D
 ## [br][br]Note: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
 ## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
+## [br][br][b]Warning[/b]: Specific values which use a value of [member width] between [code]0[/code] and [member size]
+## (such as a hexagon with [member width] half of [member size]) will cause the node to fail to draw shape.
+## This can be worked around by slightly altering properties, like subtracting [code]0.01[/code] from [member width] or [member drawn_arc].
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
@@ -86,7 +89,7 @@ var drawn_arc_degrees : float = 360:
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
-@export_range(-360, 360, 0.1, "radians") 
+@export_range(-360, 360, 0.01, "radians") 
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
