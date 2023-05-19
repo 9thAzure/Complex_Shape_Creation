@@ -98,12 +98,16 @@ func queue_regenerate() -> void:
 		return
 	
 	_is_queued = true
+	if not is_inside_tree():
+		shape = null
+		return
+	
 	await get_tree().process_frame
 	_is_queued = false
 	regenerate()
 
 func _enter_tree() -> void:
-	if shape == null and not Engine.is_editor_hint():
+	if _is_queued and shape == null:
 		regenerate()
 	_is_queued = false
 
