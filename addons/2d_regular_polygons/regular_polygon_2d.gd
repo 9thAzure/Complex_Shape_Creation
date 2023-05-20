@@ -145,13 +145,6 @@ func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
 		return
 	
-	if vertices_count == 1:
-		if drawn_arc < TAU and drawn_arc > -TAU:
-			draw_colored_polygon(get_shape_vertices(32, size, offset_rotation, offset, drawn_arc), color)
-			return
-		draw_circle(offset, size, color)
-		return
-	
 	if vertices_count == 2:
 		var point = Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
 		draw_line(point + offset, -point + offset, color, -1.0, antialiased)
@@ -171,8 +164,16 @@ func _draw() -> void:
 		# Using the width param would require having all the checks here also be in the pre_redraw function as well.
 		draw_rect(rect, color)
 		return
-
-	var points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
+	
+	var points : PackedVector2Array
+	if vertices_count == 1:
+		if (drawn_arc >= TAU or drawn_arc <= -TAU) and texture == null:
+			draw_circle(offset, size, color)
+			return
+		points = get_shape_vertices(32, size, offset_rotation, offset, drawn_arc)
+	else:
+		points = get_shape_vertices(vertices_count, size, offset_rotation, offset, drawn_arc)
+	
 	if not is_zero_approx(corner_size):
 		add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 
@@ -188,7 +189,7 @@ func _draw() -> void:
 		
 		var uv_scale_x := 1.0 / texture.get_width()
 		var uv_scale_y := 1.0 / texture.get_height()
-		# The scale doesn't need to be reversed, for some reason.
+		# The scale doesn't need to be reversed.
 		var transform := Transform2D(-texture_rotation, texture_scale, 0, -texture_offset)
 		uv_points *= transform
 		for i in uv_points.size():
