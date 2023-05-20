@@ -250,7 +250,6 @@ func uses_polygon_member() -> bool:
 	return (
 		width > 0
 		and vertices_count != 2
-		or invert_enabled
 	)
 
 func _uses_drawn_arc() -> bool:
