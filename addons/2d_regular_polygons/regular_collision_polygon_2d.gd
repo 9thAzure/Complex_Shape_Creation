@@ -167,6 +167,11 @@ func regenerate() -> void:
 		return
 	
 	if vertices_count == 1:
+		if -TAU < drawn_arc and drawn_arc < TAU:
+			var circle = ConvexPolygonShape2D.new()
+			circle.points = RegularPolygon2D.get_shape_vertices(32, size, offset_rotation, Vector2.ZERO, drawn_arc)
+			shape = circle
+			return
 		var circle := CircleShape2D.new()
 		circle.radius = size
 		shape = circle
