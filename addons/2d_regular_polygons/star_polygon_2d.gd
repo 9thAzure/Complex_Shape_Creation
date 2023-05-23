@@ -7,9 +7,6 @@ var point_count : int = 5:
 	set(value):
 		assert(value > 0, "property 'point_count' must be greater than 0")
 		point_count = value
-		if corner_size != 0:
-			corner_size = corner_size
-			return
 		_pre_redraw()
 		
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
