@@ -125,14 +125,14 @@ func _enter_tree() -> void:
 		regenerate_polygon()
 	_is_queued = false
 
+	
+func regenerate_polygon():
+	polygon = StarPolygon2D.create_star_shape(point_count, size, inner_size)
+		
 func uses_polygon_member() -> bool:
 	return (
 		width > 0
 	)
-
-func regenerate_polygon():
-	polygon = StarPolygon2D.create_star_shape(point_count, size, inner_size)
-
 
 static func create_star_shape(point_count : int, size : float, inner_size : float ) -> PackedVector2Array:
 	var points = PackedVector2Array()
