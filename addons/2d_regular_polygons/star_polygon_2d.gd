@@ -22,12 +22,40 @@ var offset_rotation := 0.0
 # 		print(rad_to_deg(a))
 # 		print(rad_to_deg(asin(step)))
 # 		queue_redraw()
-# 		regenerate_polygon()
+# 		regenerate_polygon(
 
+var _is_queued = true
 
-func _process(_delta):
-	# regenerate_polygon()
-	pass
+func _pre_redraw() -> void:
+	if not uses_polygon_member():
+		# the setting the 'polygon' property already calls queue_redraw
+		queue_redraw()
+		return
+	
+	if _is_queued:
+		return
+	
+	_is_queued = true
+	if not is_inside_tree():
+		polygon = PackedVector2Array()
+		return
+
+	await get_tree().process_frame
+	_is_queued = false
+	if not uses_polygon_member():
+		return
+	regenerate_polygon()
+
+func _enter_tree() -> void:
+	if _is_queued and uses_polygon_member() and polygon.is_empty():
+		regenerate_polygon()
+	_is_queued = false
+
+func uses_polygon_member() -> bool:
+	return (
+		width > 0
+		and vertices_count != 2
+	)
 
 # func _draw():
 # 	var scaler1 := Vector2(sin(PI - point_angle), -cos(PI - point_angle))
