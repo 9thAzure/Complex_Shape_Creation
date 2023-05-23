@@ -93,6 +93,10 @@ var corner_smoothness : int = 0:
 		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
 		corner_smoothness = value
 
+func set_point_angle(angle : float) -> void:
+	assert(0 < angle and angle < TAU)
+	angle /= 2
+	inner_size = size * sin(angle / (sin(PI - angle - TAU / point_count / 2)))
 # @export_range(0, 90, 0.001, "radians")
 # var point_angle := 0.0:
 # 	set(value):
