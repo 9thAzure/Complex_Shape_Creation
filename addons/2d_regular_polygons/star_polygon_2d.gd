@@ -2,18 +2,15 @@
 extends Polygon2D
 class_name StarPolygon2D
 
-@export_range(1, 2000)
+@export_range(3, 2000)
 var point_count : int = 5:
 	set(value):
 		assert(value > 0, "property 'point_count' must be greater than 0")
 		point_count = value
-		if point_count == 2 and width > 0:
-			polygon = PackedVector2Array()
-			return
-		
 		if corner_size != 0:
 			corner_size = corner_size
 			return
+		_pre_redraw()
 		
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10.0:
@@ -44,7 +41,6 @@ var offset_rotation : float = 0:
 		_pre_redraw()
 
 @export_group("complex")
-
 
 # The default value is -0.001 so that dragging it into positive values is quick.
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
