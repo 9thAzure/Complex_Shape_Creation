@@ -97,18 +97,6 @@ func set_point_angle(angle : float) -> void:
 	assert(0 < angle and angle < TAU)
 	angle /= 2
 	inner_size = size * sin(angle / (sin(PI - angle - TAU / point_count / 2)))
-# @export_range(0, 90, 0.001, "radians")
-# var point_angle := 0.0:
-# 	set(value):
-# 		# var a := (PI - TAU / point_count) / 2
-# 		var a := TAU / point_count / 2
-# 		var step := sin(PI - value - a)
-# 		inner_size = size * sin(value) / step
-# 		point_angle = value
-# 		print(rad_to_deg(a))
-# 		print(rad_to_deg(asin(step)))
-# 		queue_redraw()
-# 		regenerate_polygon(
 
 var _is_queued = true
 
@@ -141,16 +129,6 @@ func uses_polygon_member() -> bool:
 	return (
 		width > 0
 	)
-
-# func _draw():
-# 	var scaler1 := Vector2(sin(PI - point_angle), -cos(PI - point_angle))
-# 	var scaler2 := Vector2(sin(TAU / point_count / 2), -cos(TAU / point_count / 2))
-# 	# print(point_angle)
-# 	# print(scaler1)
-# 	# print(scaler2)
-# 	draw_line(Vector2.UP * size, Vector2.UP * size + scaler1 * size, Color.GREEN)
-# 	draw_line(Vector2.ZERO, scaler2 * size, Color.BLUE)
-
 
 func regenerate_polygon():
 	polygon = StarPolygon2D.create_star_shape(point_count, size, inner_size)
