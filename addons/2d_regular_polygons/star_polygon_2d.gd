@@ -133,7 +133,25 @@ func _draw():
 	draw_colored_polygon(points, color);
 	
 func regenerate_polygon():
-	polygon = StarPolygon2D.get_star_vertices(point_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc)
+	_is_queued = false
+	if drawn_arc == 0:
+		polygon = PackedVector2Array()
+		return
+	
+	var uses_width := width < size
+	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
+	var points = StarPolygon2D.get_star_vertices(point_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+	if uses_width and uses_drawn_arc:
+		RegularPolygon2D.add_hole_to_points(points, 1 - width / size, false)
+
+	if not is_zero_approx(corner_size):
+		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / point_count)
+
+	if uses_width and not uses_drawn_arc:
+		RegularPolygon2D.add_hole_to_points(points, 1 - width / size, true)
+	
+	polygon = points
+	
 		
 func uses_polygon_member() -> bool:
 	return (
