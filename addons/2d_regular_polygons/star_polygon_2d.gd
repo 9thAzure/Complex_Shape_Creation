@@ -92,6 +92,7 @@ var corner_smoothness : int = 0:
 	set(value):
 		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
 		corner_smoothness = value
+		_pre_redraw()
 
 func set_point_angle(angle : float) -> void:
 	assert(0 < angle and angle < TAU)
