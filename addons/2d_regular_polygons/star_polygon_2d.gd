@@ -20,7 +20,7 @@ var size : float = 10.0:
 var inner_size : float = 5.0:
 	set(value):
 		assert(value > 0, "property 'inner_size' must be greater than 0");
-		size = value
+		inner_size = value
 		_pre_redraw()
 
 ## The offset rotation of the shape, in degrees.
