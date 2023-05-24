@@ -125,22 +125,86 @@ func _enter_tree() -> void:
 		regenerate_polygon()
 	_is_queued = false
 
+func _draw():
+	if uses_polygon_member() or drawn_arc == 0:
+		return
+
+	var points := get_star_vertices(point_count, size, inner_size, offset_rotation, offset, drawn_arc)
+	draw_colored_polygon(points, color);
 	
 func regenerate_polygon():
-	polygon = StarPolygon2D.create_star_shape(point_count, size, inner_size)
+	polygon = StarPolygon2D.get_star_vertices(point_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc)
 		
 func uses_polygon_member() -> bool:
 	return (
 		width > 0
 	)
 
-static func create_star_shape(point_count : int, size : float, inner_size : float ) -> PackedVector2Array:
-	var points = PackedVector2Array()
-	var current_rotation := PI
-	var rotation_spacing := TAU / point_count / 2
-	for i in point_count:	
-		points.append(Vector2(-sin(current_rotation), cos(current_rotation)) * size)
-		current_rotation += rotation_spacing
-		points.append(Vector2(-sin(current_rotation), cos(current_rotation)) * inner_size)
-		current_rotation += rotation_spacing
+static func get_star_vertices(point_count : int, size : float, inner_size : float, offset_rotation := 0.0, offset_position := Vector2.ZERO,
+	drawn_arc := TAU, add_central_point := true) -> PackedVector2Array:
+	assert(point_count > 2, "param 'point_count' must be greater than 2")
+	assert(size > 0, "param 'size' must be greater than 0")
+	assert(inner_size > 0, "param 'inner_size' must be greater than 0")
+	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
+	
+	var points := PackedVector2Array()
+	offset_rotation += PI
+	if drawn_arc >= TAU or drawn_arc <= -TAU:
+		var current_rotation := offset_rotation
+		var rotation_spacing := TAU / point_count / 2
+		for i in point_count:	
+			points.append(Vector2(-sin(current_rotation), cos(current_rotation)) * size + offset_position)
+			current_rotation += rotation_spacing
+			points.append(Vector2(-sin(current_rotation), cos(current_rotation)) * inner_size + offset_position)
+			current_rotation += rotation_spacing
+		return points
+	
+	var sign := signf(drawn_arc)
+	var rotation_spacing := TAU / point_count * sign
+	var half_rotation_spacing := rotation_spacing / 2
+	var original_vertices_count := floori(drawn_arc / half_rotation_spacing)
+	var ends_on_vertex := is_equal_approx(drawn_arc, original_vertices_count * half_rotation_spacing)
+	original_vertices_count += 1
+
+	if add_central_point and is_zero_approx(sign * drawn_arc - PI):
+		add_central_point = false
+
+	# print(original_vertices_count)
+	if add_central_point and not ends_on_vertex:
+		# print("+2")
+		points.resize(original_vertices_count + 2)
+	elif add_central_point == ends_on_vertex:
+		# print("+1")
+		points.resize(original_vertices_count + 1)
+	else:
+		points.resize(original_vertices_count)
+
+	var max_i := original_vertices_count / 2
+	for i in max_i:
+		var rotation := rotation_spacing * i + offset_rotation
+		points[2 * i] = _get_vertices(rotation, size, offset_position)
+		points[2 * i + 1] = _get_vertices(rotation + half_rotation_spacing, inner_size, offset_position)
+	
+	if original_vertices_count & 1 == 1:
+		points[original_vertices_count - 1] = _get_vertices((original_vertices_count - 1) * half_rotation_spacing + offset_rotation, size, offset_position)
+	
+	if not ends_on_vertex:
+		var last_point := points[original_vertices_count - 1]
+		var next_point : Vector2
+		if original_vertices_count & 1 == 0:
+			next_point = _get_vertices(half_rotation_spacing * original_vertices_count + offset_rotation, size, offset_position)
+		else:
+			next_point = _get_vertices(half_rotation_spacing * original_vertices_count + offset_rotation, inner_size, offset_position)
+		
+		var edge_slope := next_point - last_point
+		var ending_slope := _get_vertices(drawn_arc + offset_rotation)
+
+		var scaler := RegularPolygon2D._find_intersection(last_point, edge_slope, offset_position, ending_slope)
+		points[original_vertices_count] = last_point + edge_slope * scaler
+	
+	if add_central_point:
+		points[-1] = offset_position
 	return points
+	
+static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
+	return Vector2(-sin(rotation), cos(rotation)) * size + offset
