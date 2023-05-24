@@ -129,8 +129,35 @@ func _enter_tree() -> void:
 func _draw():
 	if uses_polygon_member() or drawn_arc == 0:
 		return
-
+	
 	var points := get_star_vertices(point_count, size, inner_size, offset_rotation, offset, drawn_arc)
+
+	if not is_zero_approx(corner_size):
+		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / point_count)
+
+	if is_zero_approx(width):
+		points.append(points[0])
+		draw_polyline(points, color)
+		return
+	
+	if texture != null:
+		var uv_points := uv
+		if uv_points.size() != points.size():
+			uv_points = points.duplicate()
+		
+		var uv_scale_x := 1.0 / texture.get_width()
+		var uv_scale_y := 1.0 / texture.get_height()
+		# The scale doesn't need to be reversed.
+		var transform := Transform2D(-texture_rotation, texture_scale, 0, -texture_offset)
+		uv_points *= transform
+		for i in uv_points.size():
+			var uv_point := uv_points[i]
+			uv_point.x *= uv_scale_x
+			uv_point.y *= uv_scale_y
+			uv_points[i] = uv_point
+		
+		draw_colored_polygon(points, color, uv_points, texture)
+		return
 	draw_colored_polygon(points, color);
 	
 func regenerate_polygon():
