@@ -106,8 +106,9 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		_pre_redraw()
 
+## Sets [member inner_size] such that the angle formed by each point is equivalent to [param angle], in radians.
 func set_point_angle(angle : float) -> void:
-	assert(0 < angle and angle < TAU)
+	assert(0 < angle and angle < TAU, "param 'angle' must be between 0 and TAU")
 	angle /= 2
 	inner_size = size * sin(angle / (sin(PI - angle - TAU / point_count / 2)))
 
