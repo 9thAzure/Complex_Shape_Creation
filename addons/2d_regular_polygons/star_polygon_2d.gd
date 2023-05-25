@@ -201,6 +201,10 @@ func uses_polygon_member() -> bool:
 		width > 0
 	)
 
+## Returns a [PackedVector2Array] with points for forming the specified star shape.
+## [br][br][param add_central_point] adds [param offset_rotation] at the end of the array. 
+## It only has an effect if [param drawn_arc] is used and isn't ±[constant @GDSCript.PI].
+## It should be set to false when using [method RegularPolygon2D.add_hole_to_points].
 static func get_star_vertices(point_count : int, size : float, inner_size : float, offset_rotation := 0.0, offset_position := Vector2.ZERO,
 	drawn_arc := TAU, add_central_point := true) -> PackedVector2Array:
 	assert(point_count > 1, "param 'point_count' must be greater than 1")
