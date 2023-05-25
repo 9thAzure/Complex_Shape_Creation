@@ -173,6 +173,8 @@ func _draw():
 		return
 	draw_colored_polygon(points, color);
 	
+## Sets [member Polygon2D.polygon] using the properties of this node. 
+## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
 func regenerate_polygon():
 	_is_queued = false
 	if drawn_arc == 0:
@@ -193,7 +195,7 @@ func regenerate_polygon():
 	
 	polygon = points
 	
-		
+## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
 func uses_polygon_member() -> bool:
 	return (
 		width > 0
