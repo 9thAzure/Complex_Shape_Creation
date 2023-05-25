@@ -12,10 +12,10 @@ class_name StarPolygon2D
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
 
 ## The number of points the star has.
-@export_range(3, 2000)
+@export_range(2, 2000)
 var point_count : int = 5:
 	set(value):
-		assert(value > 0, "property 'point_count' must be greater than 0")
+		assert(value > 1, "property 'point_count' must be greater than 1")
 		point_count = value
 		_pre_redraw()
 		
@@ -200,7 +200,7 @@ func uses_polygon_member() -> bool:
 
 static func get_star_vertices(point_count : int, size : float, inner_size : float, offset_rotation := 0.0, offset_position := Vector2.ZERO,
 	drawn_arc := TAU, add_central_point := true) -> PackedVector2Array:
-	assert(point_count > 2, "param 'point_count' must be greater than 2")
+	assert(point_count > 1, "param 'point_count' must be greater than 1")
 	assert(size > 0, "param 'size' must be greater than 0")
 	assert(inner_size > 0, "param 'inner_size' must be greater than 0")
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
