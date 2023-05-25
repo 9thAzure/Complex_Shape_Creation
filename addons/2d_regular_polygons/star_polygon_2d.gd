@@ -3,6 +3,14 @@
 extends Polygon2D
 class_name StarPolygon2D
 
+## Node that draws a star shape, with complex properties.
+##
+## A node that draws star shapes, with complex properties.
+## It uses [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_polyline], or uses [member Polygon2D.polygon]
+## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
+## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
+## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
+
 @export_range(3, 2000)
 var point_count : int = 5:
 	set(value):
