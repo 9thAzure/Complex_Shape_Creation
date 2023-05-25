@@ -1,5 +1,5 @@
-using Godot;
 using System;
+using Godot;
 
 namespace RegularPolygons2D.MemberNames;
 
@@ -16,5 +16,7 @@ public static class MethodName
     public static readonly StringName AddHoleToPoints = new("_add_hole_to_points_result");
     public static readonly StringName QueueRegenerate = new("queue_regenerate");
     public static readonly StringName Regenerate = new("regenerate");
-    
+    public static readonly StringName SetPointAngle = new("set_point_angle");
+    public static readonly StringName GetStarVertices = new("get_star_vertices");
+
 }
