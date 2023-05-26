@@ -181,4 +181,12 @@ public class StarPolygon2D
         return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, innerSize, offsetRotation, color.Value, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
+
+    /// <inheritdoc cref="RegularPolygon2D.GetShapeVertices(long, double, double, Vector2, double, bool)"/>
+    /// <summary>Returns an array of <see cref="Vector2"/> with points for forming the specified star shape.</summary>
+    /// <param name="pointCount">The number of points in the star.</param>
+    /// <param name="innerSize">The length of the inner vertices to the center of the star.</param>
+    public static Vector2[] GetStarVertices(int pointCount, float size, float innerSize, float offsetRotation = 0, 
+        Vector2 offsetPosition = default, float drawnArc = Mathf.Tau, bool addCentralPoint = true)
+    => (Vector2[])_shared.Value.Call(MethodName.GetStarVertices, pointCount, size, innerSize, offsetRotation, offsetPosition, drawnArc, addCentralPoint);
 }
