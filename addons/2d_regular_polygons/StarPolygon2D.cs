@@ -160,7 +160,7 @@ public class StarPolygon2D
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     /// <param name="pointCount">The number of points in the star.</param>
     public StarPolygon2D(int pontCount = 1, float size = 10, float innerSize = 5, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        float width = -0.001, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
+        float width = -0.001f, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Instance = StarPolygon2D.New(pontCount, size, innerSize, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
@@ -169,7 +169,7 @@ public class StarPolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     /// <param name="pointCount">The number of points in the star.</param>
     public static Polygon2D New(int pointCount = 1, float size = 10, float innerSize = 5, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        float width = -0.001, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
+        float width = -0.001f, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;

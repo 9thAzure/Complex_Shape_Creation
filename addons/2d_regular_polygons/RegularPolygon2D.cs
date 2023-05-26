@@ -69,7 +69,7 @@ public class RegularPolygon2D
     }
     /// <summary>The arc of the drawn shape, radians, cutting off beyond that arc.</summary>
     /// <remarks>
-    /// Values greater than <see cref="Math.Tau"/> or -<see cref="Math.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
+    /// Values greater than <see cref="Mathf.Tau"/> or -<see cref="Mathf.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
     /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
@@ -157,7 +157,7 @@ public class RegularPolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     public RegularPolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        float width = -0.001, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
+        float width = -0.001f, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
@@ -169,7 +169,7 @@ public class RegularPolygon2D
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
     /// <param name="cornerSmoothness">How many lines make up each corner.</param>
     public static Polygon2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        float width = -0.001, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
+        float width = -0.001f, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
@@ -181,11 +181,11 @@ public class RegularPolygon2D
     /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="vertices_count"/>.</summary>
     /// <param name="addCentralPoint">
     /// <paramref name="add_central_point"/> adds <paramref name="offset_rotation"/> at the end of the array. 
-    /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Math.Tau"/>.
+    /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Mathf.Tau"/>.
     /// It should be set to false when using <see cref="AddHoleToPoints"/>.
     /// </param>
     public static Vector2[] GetShapeVertices(int verticesCount, float size = 1, float offsetRotation = 0, Vector2 offsetPosition = default,
-       float drawnArc = Math.Tau, bool addCentralPoint = true)
+       float drawnArc = Mathf.Tau, bool addCentralPoint = true)
     => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
     /// <summary>
     /// Returns the point at the given <paramref name="t"/> on the Bézier curve with the given 
