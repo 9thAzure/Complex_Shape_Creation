@@ -87,7 +87,7 @@ public class RegularPolygon2D
         set => Instance.Set(PropertyName.CornerSize, value);
     }
     /// <summary>How many lines make up each corner</summary>
-    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="verticesCount"/>.</remarks>
+    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="VerticesCount"/>.</remarks>
     public long CornerSmoothness
     {
         get => (long)Instance.Get(PropertyName.CornerSmoothness);
