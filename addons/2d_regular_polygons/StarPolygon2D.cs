@@ -145,11 +145,11 @@ public class StarPolygon2D
     /// </summary>
     public bool UsesPolygonMember() => (bool)Instance.Call(MethodName.UsesPolygonMember);
 
-    /// <summary>Creates and wraps a <see cref="RegularPolygon2D"/> around <paramref name="instance"/>.</summary>
+    /// <summary>Creates and wraps a <see cref="StarPolygon2D"/> around <paramref name="instance"/>.</summary>
     /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>
     /// <exception cref="ArgumentNullException"><paramref name="instance"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="instance"/> isn't a instance of <see cref="GDScriptEquivalent"/>.</exception>
-    public RegularPolygon2D(Polygon2D instance)
+    public StarPolygon2D(Polygon2D instance)
     {
         if (instance is null)
             throw new ArgumentNullException(nameof(instance));
@@ -161,10 +161,10 @@ public class StarPolygon2D
     /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public RegularPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+    public StarPolygon2D(long verticesCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
-        Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition,
+        Instance = StarPolygon2D.New(verticesCount, size, innerSize, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
     /// <inheritdoc cref="SimplePolygon2D.New(long, double, double, Color?, Vector2)"/>
@@ -173,12 +173,12 @@ public class StarPolygon2D
     /// <param name="drawnArc">The drawn arc of the shape. Positive values go clockwise, negative values go counterclockwise.</param>
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
     /// <param name="cornerSmoothness">How many lines make up each corner.</param>
-    public static Polygon2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+    public static Polygon2D New(long verticesCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
-        return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition,
+        return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, innerSize, offsetRotation, color.Value, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
 }
