@@ -129,7 +129,17 @@ public class RegularPolygon2D
         get => Instance.Scale;
         set => Instance.Scale = value;
     }
-    
+
+    /// <summary>
+    /// Sets <see cref="Polygon2D.Polygon"> using the properties of this node. 
+    /// This method can be used when the node is outside the <see cref="SceneTree"/> to force this, and ignores the result of <see cref="UsesPolygonMember"/>.
+    /// </summary>
+    public void RegeneratePolygon() => Instance.Call(MethodName.RegeneratePolygon);
+    /// <summary>
+    /// Checks whether the current properties of this node will have it use <see cref="Polygon2D.Polygon">.
+    /// </summary>
+    public bool UsesPolygonMember() => (bool)Instance.Call(MethodName.UsesPolygonMember);
+
     /// <summary>Creates and wraps a <see cref="RegularPolygon2D"/> around <paramref name="instance"/>.</summary>
     /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>
     /// <exception cref="ArgumentNullException"><paramref name="instance"/> is <see langword="null"/>.</exception>
