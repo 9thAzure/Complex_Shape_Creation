@@ -32,6 +32,11 @@ public class StarPolygon2D
         get => (double)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
+    public double InnerSize
+    {
+        get => (double)Instance.Get(PropertyName.InnerSize);
+        set => Instance.Set(PropertyName.InnerSize, value);
+    }
     /// <inherit doc cref="SimplePolygon2D.OffsetRotationDegrees"/>
     public double OffsetRotationDegrees
     {
