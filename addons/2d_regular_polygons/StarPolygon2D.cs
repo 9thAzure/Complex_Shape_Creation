@@ -158,18 +158,16 @@ public class StarPolygon2D
     /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
+    /// <param name="pointCount">The number of points in the star.</param>
     public StarPolygon2D(long pontCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
         Instance = StarPolygon2D.New(pontCount, size, innerSize, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
-    /// <inheritdoc cref="SimplePolygon2D.New(long, double, double, Color?, Vector2)"/>
+    /// <inheritdoc cref="RegularPolygon2D.New(long, double, double, Color?, Vector2, double, double, double, long)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
-    /// <param name="width">The width of the shape. Negative values draw a full shape.</param>
-    /// <param name="drawnArc">The drawn arc of the shape. Positive values go clockwise, negative values go counterclockwise.</param>
-    /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
-    /// <param name="cornerSmoothness">How many lines make up each corner.</param>
+    /// <param name="pointCount">The number of points in the star.</param>
     public static Polygon2D New(long pointCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
