@@ -23,27 +23,27 @@ public partial class SimplePolygon2D
     /// <summary>
     /// The number of vertices in the perfect shape. A value of <c>1</c> creates a circle, and a value of <c>2</c> creates a line.
     /// </summary>
-    public long VerticesCount
+    public int VerticesCount
     {
-        get => (long)Instance.Get(PropertyName.VerticesCount);
+        get => (int)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
     /// <summary>The length from each corner to the center.</summary>
-    public double Size
+    public float Size
     {
-        get => (double)Instance.Get(PropertyName.Size);
+        get => (float)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
     /// <summary>The offset rotation of the shape, in degrees.</summary>
-    public double OffsetRotationDegrees
+    public float OffsetRotationDegrees
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotationDegrees);
+        get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
     /// <summary>The offset rotation of the shape, in radians.</summary>
-    public double OffsetRotation
+    public float OffsetRotation
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotation);
+        get => (float)Instance.Get(PropertyName.OffsetRotation);
         set => Instance.Set(PropertyName.OffsetRotation, value);
     }
     /// <summary>The color of the shape.</summary>
@@ -98,7 +98,7 @@ public partial class SimplePolygon2D
     }
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="SimplePolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public SimplePolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
+    public SimplePolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
         Instance = SimplePolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition);
     }
@@ -106,7 +106,7 @@ public partial class SimplePolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     /// <param name="verticesCount"/>The number of vertices in the shape. A <c>1</c> draws a circle, a <c>2</c> draws a line.</param>
     /// <param name="color">The color of the shape.</param>
-    public static Node2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
+    public static Node2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
@@ -118,7 +118,7 @@ public partial class SimplePolygon2D
     /// <param name="size">The distance each corner vertices is from the center.</param>
     /// <param name="offsetRotation">The rotation applied to the shape.</param>
     /// <param name="offsetPosition">The center of the shape.</param>
-    public static Vector2[] GetShapeVertices(long verticesCount, double size = 1, double offsetRotation = 0, Vector2 offsetPosition = default)
+    public static Vector2[] GetShapeVertices(int verticesCount, float size = 1, float offsetRotation = 0, Vector2 offsetPosition = default)
     => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
 
     public static implicit operator Node2D(SimplePolygon2D instance) => instance.Instance;

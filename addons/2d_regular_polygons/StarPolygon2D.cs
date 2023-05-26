@@ -23,37 +23,37 @@ public class StarPolygon2D
     /// <summary>
     /// The number of points the star has.
     /// </summary>
-    public long PointCount
+    public int PointCount
     {
-        get => (long)Instance.Get(PropertyName.PointCount);
+        get => (int)Instance.Get(PropertyName.PointCount);
         set => Instance.Set(PropertyName.PointCount, value);
     }
     /// <summary>
     /// The length of each point to the center of the star.
     /// </summary>
-    public double Size
+    public float Size
     {
-        get => (double)Instance.Get(PropertyName.Size);
+        get => (float)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
     /// <summary>
     /// The length of the inner vertices to the center of the star.
     /// </summary>
-    public double InnerSize
+    public float InnerSize
     {
-        get => (double)Instance.Get(PropertyName.InnerSize);
+        get => (float)Instance.Get(PropertyName.InnerSize);
         set => Instance.Set(PropertyName.InnerSize, value);
     }
     /// <inherit doc cref="SimplePolygon2D.OffsetRotationDegrees"/>
-    public double OffsetRotationDegrees
+    public float OffsetRotationDegrees
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotationDegrees);
+        get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
     /// <inherit doc cref="SimplePolygon2D.OffsetRotation"/>
-    public double OffsetRotation
+    public float OffsetRotation
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotation);
+        get => (float)Instance.Get(PropertyName.OffsetRotation);
         set => Instance.Set(PropertyName.OffsetRotation, value);
     }
     /// <summary>Determines the width of the shape and whether is uses Draw* methods or <see cref="Polygon2D.Polygon"/>.</summary>
@@ -63,36 +63,36 @@ public class StarPolygon2D
     /// and value greater than <see cref="size"/> also ignores this effect while still using <see cref="Polygon2D.Polygon"/>.
     /// Note: A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c> when running in the editor.
     /// </remarks>
-    public double Width
+    public float Width
     {
-        get => (double)Instance.Get(PropertyName.Width);
+        get => (float)Instance.Get(PropertyName.Width);
         set => Instance.Set(PropertyName.Width, value);
     }
     
     /// <inheritdoc cref="RegularPolygon2D.DrawnArcDegrees"/>
-    public double DrawnArcDegrees
+    public float DrawnArcDegrees
     {
-        get => (double)Instance.Get(PropertyName.DrawnArcDegrees);
+        get => (float)Instance.Get(PropertyName.DrawnArcDegrees);
         set => Instance.Set(PropertyName.DrawnArcDegrees, value);
     }
     /// <inheritdoc cref="RegularPolygon2D.DrawnArc"/>
-    public double DrawnArc
+    public float DrawnArc
     {
-        get => (double)Instance.Get(PropertyName.DrawnArc);
+        get => (float)Instance.Get(PropertyName.DrawnArc);
         set => Instance.Set(PropertyName.DrawnArc, value);
     }
 
     /// <inheritdoc cref="RegularPolygon2D.CornerSize"/>
-    public double CornerSize
+    public float CornerSize
     {
-        get => (double)Instance.Get(PropertyName.CornerSize);
+        get => (float)Instance.Get(PropertyName.CornerSize);
         set => Instance.Set(PropertyName.CornerSize, value);
     }
     /// <summary>How many lines make up each corner</summary>
     /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="PointCount"/>.</remarks>
-    public long CornerSmoothness
+    public int CornerSmoothness
     {
-        get => (long)Instance.Get(PropertyName.CornerSmoothness);
+        get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
     /// <inherit doc cref="SimplePolygon2D.Color"/>
@@ -159,17 +159,17 @@ public class StarPolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     /// <param name="pointCount">The number of points in the star.</param>
-    public StarPolygon2D(long pontCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    public StarPolygon2D(int pontCount = 1, float size = 10, float innerSize = 5, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+        float width = -0.001, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Instance = StarPolygon2D.New(pontCount, size, innerSize, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
-    /// <inheritdoc cref="RegularPolygon2D.New(long, double, double, Color?, Vector2, double, double, double, long)"/>
+    /// <inheritdoc cref="RegularPolygon2D.New(int, float, float, Color?, Vector2, float, float, float, int)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     /// <param name="pointCount">The number of points in the star.</param>
-    public static Polygon2D New(long pointCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    public static Polygon2D New(int pointCount = 1, float size = 10, float innerSize = 5, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+        float width = -0.001, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
@@ -177,7 +177,7 @@ public class StarPolygon2D
             width, drawnArc, cornerSize, cornerSmoothness);
     }
 
-    /// <inheritdoc cref="RegularPolygon2D.GetShapeVertices(long, double, double, Vector2, double, bool)"/>
+    /// <inheritdoc cref="RegularPolygon2D.GetShapeVertices(int, float, float, Vector2, float, bool)"/>
     /// <summary>Returns an array of <see cref="Vector2"/> with points for forming the specified star shape.</summary>
     /// <param name="pointCount">The number of points in the star.</param>
     /// <param name="innerSize">The length of the inner vertices to the center of the star.</param>
