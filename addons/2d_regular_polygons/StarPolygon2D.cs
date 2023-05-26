@@ -12,7 +12,7 @@ namespace RegularPolygons2D;
 public class StarPolygon2D
 {
     /// <inheritdoc cref="SimplePolygon2D.GDScriptEquivalentPath"/>
-    public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/regular_polygon_2d.gd";
+    public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/star_polygon_2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
     private static readonly Lazy<Polygon2D> _shared = new(() => GDScriptEquivalent.New().As<Polygon2D>());
@@ -20,11 +20,13 @@ public class StarPolygon2D
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public Polygon2D Instance { get; }
 
-    /// <inheritdoc cref="SimplePolygon2D.VerticesCount"/>
-    public long VerticesCount
+    /// <summary>
+    /// The number of points the star has.
+    /// </summary>
+    public long PointCount
     {
-        get => (long)Instance.Get(PropertyName.VerticesCount);
-        set => Instance.Set(PropertyName.VerticesCount, value);
+        get => (long)Instance.Get(PropertyName.PointCount);
+        set => Instance.Set(PropertyName.PointCount, value);
     }
     /// <inheritdoc cref="SimplePolygon2D.Size"/>
     public double Size
@@ -92,7 +94,7 @@ public class StarPolygon2D
         set => Instance.Set(PropertyName.CornerSize, value);
     }
     /// <summary>How many lines make up each corner</summary>
-    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="verticesCount"/>.</remarks>
+    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="PointCount"/>.</remarks>
     public long CornerSmoothness
     {
         get => (long)Instance.Get(PropertyName.CornerSmoothness);
@@ -161,10 +163,10 @@ public class StarPolygon2D
     /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public StarPolygon2D(long verticesCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+    public StarPolygon2D(long pontCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
-        Instance = StarPolygon2D.New(verticesCount, size, innerSize, offsetRotation, color, offsetPosition,
+        Instance = StarPolygon2D.New(pontCount, size, innerSize, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
     /// <inheritdoc cref="SimplePolygon2D.New(long, double, double, Color?, Vector2)"/>
@@ -173,12 +175,12 @@ public class StarPolygon2D
     /// <param name="drawnArc">The drawn arc of the shape. Positive values go clockwise, negative values go counterclockwise.</param>
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
     /// <param name="cornerSmoothness">How many lines make up each corner.</param>
-    public static Polygon2D New(long verticesCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+    public static Polygon2D New(long pointCount = 1, double size = 10, double innerSize = 5, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
         double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
-        return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, innerSize, offsetRotation, color.Value, offsetPosition,
+        return (Polygon2D)GDScriptEquivalent.New(pointCount, size, innerSize, offsetRotation, color.Value, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
 
