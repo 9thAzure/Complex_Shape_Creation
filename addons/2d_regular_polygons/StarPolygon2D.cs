@@ -28,12 +28,17 @@ public class StarPolygon2D
         get => (long)Instance.Get(PropertyName.PointCount);
         set => Instance.Set(PropertyName.PointCount, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.Size"/>
+    /// <summary>
+    /// The length of each point to the center of the star.
+    /// </summary>
     public double Size
     {
         get => (double)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
+    /// <summary>
+    /// The length of the inner vertices to the center of the star.
+    /// </summary>
     public double InnerSize
     {
         get => (double)Instance.Get(PropertyName.InnerSize);
@@ -63,31 +68,21 @@ public class StarPolygon2D
         get => (double)Instance.Get(PropertyName.Width);
         set => Instance.Set(PropertyName.Width, value);
     }
-    /// <summary>The arc of the drawn shape, in degrees, cutting off beyond that arc.</summary>
-    /// <remarks>
-    /// Values greater than <c>360</c> or <c>-360</c> draws a full shape. It starts in the middle of the base of the shapes. 
-    /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
-    /// A value of <c>0</c> makes the node not draw anything.
-    /// </remarks>
+    
+    /// <inheritdoc cref="RegularPolygon2D.DrawnArcDegrees"/>
     public double DrawnArcDegrees
     {
         get => (double)Instance.Get(PropertyName.DrawnArcDegrees);
         set => Instance.Set(PropertyName.DrawnArcDegrees, value);
     }
-    /// <summary>The arc of the drawn shape, radians, cutting off beyond that arc.</summary>
-    /// <remarks>
-    /// Values greater than <see cref="Math.Tau"/> or -<see cref="Math.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
-    /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
-    /// A value of <c>0</c> makes the node not draw anything.
-    /// </remarks>
+    /// <inheritdoc cref="RegularPolygon2D.DrawnArc"/>
     public double DrawnArc
     {
         get => (double)Instance.Get(PropertyName.DrawnArc);
         set => Instance.Set(PropertyName.DrawnArc, value);
     }
 
-    /// <summary>The distance from each vertex along the edge to the point where the rounded corner starts.</summary>
-    /// <remarks>If this value is over half of the edge length, the mid-point of the edge is used instead.</remarks>
+    /// <inheritdoc cref="RegularPolygon2D.CornerSize"/>
     public double CornerSize
     {
         get => (double)Instance.Get(PropertyName.CornerSize);
