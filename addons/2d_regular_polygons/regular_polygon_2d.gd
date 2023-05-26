@@ -25,11 +25,6 @@ var vertices_count : int = 1:
 		if vertices_count == 2 and width > 0:
 			polygon = PackedVector2Array()
 			return
-		
-		if corner_size != 0:
-			corner_size = corner_size
-			return
-		
 		_pre_redraw()
 
 ## The length from each corner to the center.
