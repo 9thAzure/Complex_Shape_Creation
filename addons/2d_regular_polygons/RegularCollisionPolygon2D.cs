@@ -119,13 +119,13 @@ public class RegularCollisionPolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="CollisionShape2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     public RegularCollisionPolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0,
-        float width = 0, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
+        float width = 0, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     => Instance = RegularCollisionPolygon2D.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness);
 
     /// <inheritdoc cref="RegularPolygon2D.New)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     public static CollisionShape2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0,
-        float width = 0, float drawnArc = Math.Tau, float cornerSize = 0, int cornerSmoothness = 0)
+        float width = 0, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
         => GDScriptEquivalent.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
 
     /// <summary>
