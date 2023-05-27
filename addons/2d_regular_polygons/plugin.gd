@@ -1,2 +1,1 @@
-@tool
 extends EditorPlugin
