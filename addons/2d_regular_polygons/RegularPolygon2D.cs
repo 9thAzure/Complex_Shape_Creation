@@ -193,8 +193,8 @@ public class RegularPolygon2D
     /// Returns the point at the given <paramref name="t"/> on the Bézier curve with the given 
     /// <paramref name="start"/>, <paramref name="end"/>, and single <paramref name="control"/> points.
     /// </summary>
-    public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end)
-    => _shared.Value.Call(MethodName.QuadraticBezierInterpolate, start, control, end).AsVector2();
+    public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end, float t)
+    => _shared.Value.Call(MethodName.QuadraticBezierInterpolate, start, control, end, t).AsVector2();
     /// <summary>Returns a modified copy of <paramref name="points"/> so that the shape it represents have rounded corners. </summary>
     /// <remarks>The method uses quadratic Bézier curves for the corners (see <see cref="QuadraticBezierInterpolate"/>).</remarks>
     /// <param name="points">The array to clone and modify</param>
