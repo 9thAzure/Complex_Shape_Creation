@@ -185,4 +185,7 @@ public class StarPolygon2D
     public static Vector2[] GetStarVertices(int pointCount, float size, float innerSize, float offsetRotation = 0, 
         Vector2 offsetPosition = default, float drawnArc = Mathf.Tau, bool addCentralPoint = true)
     => _shared.Value.Call(MethodName.GetStarVertices, pointCount, size, innerSize, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
+
+    public static implicit operator Polygon2D(StarPolygon2D instance) => instance.Instance;
+    public static explicit operator StarPolygon2D(Polygon2D instance) => new(instance);
 }
