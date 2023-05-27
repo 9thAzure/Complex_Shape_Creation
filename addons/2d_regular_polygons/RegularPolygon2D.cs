@@ -173,8 +173,8 @@ public class RegularPolygon2D
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
-        return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition, 
-            width, drawnArc, cornerSize, cornerSmoothness);
+        return GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition, 
+            width, drawnArc, cornerSize, cornerSmoothness).As<Polygon2D>();
     }
 
     /// <inheritdoc cref="SimplePolygon2D.GetShapeVertices(int, float, float, Vector2)"/>

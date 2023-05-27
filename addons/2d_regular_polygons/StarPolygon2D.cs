@@ -173,8 +173,8 @@ public class StarPolygon2D
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
-        return (Polygon2D)GDScriptEquivalent.New(pointCount, size, innerSize, offsetRotation, color.Value, offsetPosition,
-            width, drawnArc, cornerSize, cornerSmoothness);
+        return GDScriptEquivalent.New(pointCount, size, innerSize, offsetRotation, color.Value, offsetPosition,
+            width, drawnArc, cornerSize, cornerSmoothness).As<Polygon2D>();
     }
 
     /// <inheritdoc cref="RegularPolygon2D.GetShapeVertices(int, float, float, Vector2, float, bool)"/>
@@ -184,5 +184,5 @@ public class StarPolygon2D
     /// <param name="drawnArc">The drawn arc of the shape. Stars at the top point. Positive values go clockwise and negative values counter-clockwise.</param>
     public static Vector2[] GetStarVertices(int pointCount, float size, float innerSize, float offsetRotation = 0, 
         Vector2 offsetPosition = default, float drawnArc = Mathf.Tau, bool addCentralPoint = true)
-    => (Vector2[])_shared.Value.Call(MethodName.GetStarVertices, pointCount, size, innerSize, offsetRotation, offsetPosition, drawnArc, addCentralPoint);
+    => _shared.Value.Call(MethodName.GetStarVertices, pointCount, size, innerSize, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
 }

@@ -111,7 +111,7 @@ public partial class SimplePolygon2D
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
-        return (Node2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition);
+        return GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition).As<Node2D>();
     }
 
     /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="verticesCount"/>.</summary>
