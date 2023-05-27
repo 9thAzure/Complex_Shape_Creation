@@ -133,6 +133,10 @@ public class StarPolygon2D
     }
 
     /// <summary>
+    /// Sets <see cref="innerSize"/> such that the angle formed by each point is equivalent to <paramref name="angle"/>, in radians.
+    /// </summary>
+    public void SetPointAngle(float angle) => Instance.Call(MethodName.SetPointAngle, angle);
+    /// <summary>
     /// Sets <see cref="Polygon2D.Polygon"> using the properties of this node. 
     /// This method can be used when the node is outside the <see cref="SceneTree"/> to force this, and ignores the result of <see cref="UsesPolygonMember"/>.
     /// </summary>

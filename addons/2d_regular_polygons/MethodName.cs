@@ -18,5 +18,4 @@ public static class MethodName
     public static readonly StringName Regenerate = new("regenerate");
     public static readonly StringName SetPointAngle = new("set_point_angle");
     public static readonly StringName GetStarVertices = new("get_star_vertices");
-
 }
