@@ -104,7 +104,7 @@ public partial class SimplePolygon2D
     }
     /// <inheritdoc cref="GetShapeVertices"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
-    /// <param name="verticesCount"/>The number of vertices in the shape. A <c>1</c> draws a circle, a <c>2</c> draws a line.</param>
+    /// <param name="verticesCount">The number of vertices in the shape. A <c>1</c> draws a circle, a <c>2</c> draws a line.</param>
     /// <param name="color">The color of the shape.</param>
     public static Node2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
