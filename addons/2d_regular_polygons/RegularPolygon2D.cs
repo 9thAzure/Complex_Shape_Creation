@@ -21,27 +21,27 @@ public class RegularPolygon2D
     public Polygon2D Instance { get; }
     
     /// <inheritdoc cref="SimplePolygon2D.VerticesCount"/>
-    public long VerticesCount
+    public int VerticesCount
     {
-        get => (long)Instance.Get(PropertyName.VerticesCount);
+        get => (int)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
     /// <inheritdoc cref="SimplePolygon2D.Size"/>
-    public double Size
+    public float Size
     {
-        get => (double)Instance.Get(PropertyName.Size);
+        get => (float)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
     /// <inherit doc cref="SimplePolygon2D.OffsetRotationDegrees"/>
-    public double OffsetRotationDegrees
+    public float OffsetRotationDegrees
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotationDegrees);
+        get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
     /// <inherit doc cref="SimplePolygon2D.OffsetRotation"/>
-    public double OffsetRotation
+    public float OffsetRotation
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotation);
+        get => (float)Instance.Get(PropertyName.OffsetRotation);
         set => Instance.Set(PropertyName.OffsetRotation, value);
     }
     /// <summary>Determines the width of the shape and whether is uses Draw* methods or <see cref="Polygon2D.Polygon"/>.</summary>
@@ -51,9 +51,9 @@ public class RegularPolygon2D
     /// and value greater than <see cref="size"/> also ignores this effect while still using <see cref="Polygon2D.Polygon"/>.
     /// Note: A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c> when running in the editor.
     /// </remarks>
-    public double Width
+    public float Width
     {
-        get => (double)Instance.Get(PropertyName.Width);
+        get => (float)Instance.Get(PropertyName.Width);
         set => Instance.Set(PropertyName.Width, value);
     }
     /// <summary>The arc of the drawn shape, in degrees, cutting off beyond that arc.</summary>
@@ -62,35 +62,35 @@ public class RegularPolygon2D
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
     /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
-    public double DrawnArcDegrees
+    public float DrawnArcDegrees
     {
-        get => (double)Instance.Get(PropertyName.DrawnArcDegrees);
+        get => (float)Instance.Get(PropertyName.DrawnArcDegrees);
         set => Instance.Set(PropertyName.DrawnArcDegrees, value);
     }
     /// <summary>The arc of the drawn shape, radians, cutting off beyond that arc.</summary>
     /// <remarks>
-    /// Values greater than <see cref="Math.Tau"/> or -<see cref="Math.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
+    /// Values greater than <see cref="Mathf.Tau"/> or -<see cref="Mathf.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
     /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
-    public double DrawnArc
+    public float DrawnArc
     {
-        get => (double)Instance.Get(PropertyName.DrawnArc);
+        get => (float)Instance.Get(PropertyName.DrawnArc);
         set => Instance.Set(PropertyName.DrawnArc, value);
     }
 
     /// <summary>The distance from each vertex along the edge to the point where the rounded corner starts.</summary>
     /// <remarks>If this value is over half of the edge length, the mid-point of the edge is used instead.</remarks>
-    public double CornerSize
+    public float CornerSize
     {
-        get => (double)Instance.Get(PropertyName.CornerSize);
+        get => (float)Instance.Get(PropertyName.CornerSize);
         set => Instance.Set(PropertyName.CornerSize, value);
     }
     /// <summary>How many lines make up each corner</summary>
-    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="verticesCount"/>.</remarks>
-    public long CornerSmoothness
+    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="VerticesCount"/>.</remarks>
+    public int CornerSmoothness
     {
-        get => (long)Instance.Get(PropertyName.CornerSmoothness);
+        get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
     /// <inherit doc cref="SimplePolygon2D.Color"/>
@@ -129,7 +129,17 @@ public class RegularPolygon2D
         get => Instance.Scale;
         set => Instance.Scale = value;
     }
-    
+
+    /// <summary>
+    /// Sets <see cref="Polygon2D.Polygon"> using the properties of this node. 
+    /// This method can be used when the node is outside the <see cref="SceneTree"/> to force this, and ignores the result of <see cref="UsesPolygonMember"/>.
+    /// </summary>
+    public void RegeneratePolygon() => Instance.Call(MethodName.RegeneratePolygon);
+    /// <summary>
+    /// Checks whether the current properties of this node will have it use <see cref="Polygon2D.Polygon">.
+    /// </summary>
+    public bool UsesPolygonMember() => (bool)Instance.Call(MethodName.UsesPolygonMember);
+
     /// <summary>Creates and wraps a <see cref="RegularPolygon2D"/> around <paramref name="instance"/>.</summary>
     /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>
     /// <exception cref="ArgumentNullException"><paramref name="instance"/> is <see langword="null"/>.</exception>
@@ -146,49 +156,51 @@ public class RegularPolygon2D
     /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public RegularPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    public RegularPolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+        float width = -0.001f, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
-    /// <inheritdoc cref="SimplePolygon2D.New(long, double, double, Color?, Vector2)"/>
+    /// <inheritdoc cref="SimplePolygon2D.New(int, float, float, Color?, Vector2)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     /// <param name="width">The width of the shape. Negative values draw a full shape.</param>
-    /// <param name="drawnArc">The drawn arc of the shape. Positive values go clockwise, negative values go counterclockwise.</param>
+    /// <param name="drawnArc">The drawn arc of the shape. It starts in the middle of the base. Positive values go clockwise, negative values go counterclockwise.</param>
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
     /// <param name="cornerSmoothness">How many lines make up each corner.</param>
-    public static Polygon2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
-        double width = -0.001, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    public static Polygon2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
+        float width = -0.001f, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     {
         Debug.Assert(GDScriptEquivalent is not null);
         color ??= Colors.White;
-        return (Polygon2D)GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition, 
-            width, drawnArc, cornerSize, cornerSmoothness);
+        return GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition, 
+            width, drawnArc, cornerSize, cornerSmoothness).As<Polygon2D>();
     }
 
-    /// <inheritdoc cref="SimplePolygon2D.GetShapeVertices(long, double, double, Vector2)"/>
-    /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="vertices_count"/>.</summary>
+    /// <inheritdoc cref="SimplePolygon2D.GetShapeVertices(int, float, float, Vector2)"/>
+    /// <param name="drawnArc">
+    /// The drawn arc of the shape. It starts in the middle of the base. Positive values go clockwise and negative values counter-clockwise.
+    /// </param>
     /// <param name="addCentralPoint">
     /// <paramref name="add_central_point"/> adds <paramref name="offset_rotation"/> at the end of the array. 
-    /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Math.Tau"/>.
+    /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Mathf.Tau"/>.
     /// It should be set to false when using <see cref="AddHoleToPoints"/>.
     /// </param>
-    public static Vector2[] GetShapeVertices(long verticesCount, double size = 1, double offsetRotation = 0, Vector2 offsetPosition = default,
-       double drawnArc = Math.Tau, bool addCentralPoint = true)
+    public static Vector2[] GetShapeVertices(int verticesCount, float size = 1, float offsetRotation = 0, Vector2 offsetPosition = default,
+       float drawnArc = Mathf.Tau, bool addCentralPoint = true)
     => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
     /// <summary>
     /// Returns the point at the given <paramref name="t"/> on the Bézier curve with the given 
     /// <paramref name="start"/>, <paramref name="end"/>, and single <paramref name="control"/> points.
     /// </summary>
-    public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end)
-    => _shared.Value.Call(MethodName.QuadraticBezierInterpolate, start, control, end).AsVector2();
+    public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end, float t)
+    => _shared.Value.Call(MethodName.QuadraticBezierInterpolate, start, control, end, t).AsVector2();
     /// <summary>Returns a modified copy of <paramref name="points"/> so that the shape it represents have rounded corners. </summary>
     /// <remarks>The method uses quadratic Bézier curves for the corners (see <see cref="QuadraticBezierInterpolate"/>).</remarks>
     /// <param name="points">The array to clone and modify</param>
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
     /// <param name="cornerSmoothness">The number of lines that make up each corner.</param>
-    public static Vector2[] AddRoundedCorners(Vector2[] points, double cornerSize, long cornerSmoothness)
+    public static Vector2[] AddRoundedCorners(Vector2[] points, float cornerSize, int cornerSmoothness)
     => _shared.Value.Call(MethodName.AddRoundedCorners, points, cornerSize, cornerSmoothness).AsVector2Array();
     /// <summary>
     /// Appends points, which are <paramref name="holeScaler"/> times the original <paramref name="points"/>, 
@@ -198,7 +210,7 @@ public class RegularPolygon2D
     /// <param name="points">The array to clone and modify.</param>
     /// <param name="holeScaler">The multiplier applied to the duplicated points.</param>
     /// <param name="closeShape">Adds the first point to the end of <paramref cref="points"/>.</param>
-    public static Vector2[] AddHoleToPoints(Vector2[] points, double holeScaler, bool closeShape = true)
+    public static Vector2[] AddHoleToPoints(Vector2[] points, float holeScaler, bool closeShape = true)
     => _shared.Value.Call(MethodName.AddHoleToPoints, points, holeScaler, closeShape).AsVector2Array();
 
     public static implicit operator Polygon2D(RegularPolygon2D instance) => instance.Instance;

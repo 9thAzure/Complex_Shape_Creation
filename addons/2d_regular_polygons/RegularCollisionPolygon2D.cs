@@ -20,27 +20,27 @@ public class RegularCollisionPolygon2D
     public CollisionShape2D Instance { get; }
 
     /// <inheritdoc cref="SimplePolygon2D.VerticesCount"/>
-    public long VerticesCount
+    public int VerticesCount
     {
-        get => (long)Instance.Get(PropertyName.VerticesCount);
+        get => (int)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
     /// <inheritdoc cref="SimplePolygon2D.Size"/>
-    public double Size
+    public float Size
     {
-        get => (double)Instance.Get(PropertyName.Size);
+        get => (float)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
     /// <inherit doc cref="SimplePolygon2D.OffsetRotationDegrees"/>
-    public double OffsetRotationDegrees
+    public float OffsetRotationDegrees
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotationDegrees);
+        get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
     /// <inherit doc cref="SimplePolygon2D.OffsetRotation"/>
-    public double OffsetRotation
+    public float OffsetRotation
     {
-        get => (double)Instance.Get(PropertyName.OffsetRotation);
+        get => (float)Instance.Get(PropertyName.OffsetRotation);
         set => Instance.Set(PropertyName.OffsetRotation, value);
     }
     /// <summary>Determines the width of the shape.</summary>
@@ -48,33 +48,33 @@ public class RegularCollisionPolygon2D
     /// It only has an effect with values greater than <c>0</c>.
     /// Values greater than or equal to <see cref="size"/> force the usage of <see cref="ConvexPolygonShape2D"/>.
     /// </remarks>
-    public double Width
+    public float Width
     {
-        get => (double)Instance.Get(PropertyName.Width);
+        get => (float)Instance.Get(PropertyName.Width);
         set => Instance.Set(PropertyName.Width, value);
     }
     /// <inheritdoc cref="RegularPolygon2D.DrawnArcDegrees"/>
-    public double DrawnArcDegrees
+    public float DrawnArcDegrees
     {
-        get => (double)Instance.Get(PropertyName.DrawnArcDegrees);
+        get => (float)Instance.Get(PropertyName.DrawnArcDegrees);
         set => Instance.Set(PropertyName.DrawnArcDegrees, value);
     }
     /// <inheritdoc cref="RegularPolygon2D.DrawnArc"/>
-    public double DrawnArc
+    public float DrawnArc
     {
-        get => (double)Instance.Get(PropertyName.DrawnArc);
+        get => (float)Instance.Get(PropertyName.DrawnArc);
         set => Instance.Set(PropertyName.DrawnArc, value);
     }
     /// <inheritdoc cref="RegularPolygon2D.CornerSize"/>
-    public double CornerSize
+    public float CornerSize
     {
-        get => (double)Instance.Get(PropertyName.CornerSize);
+        get => (float)Instance.Get(PropertyName.CornerSize);
         set => Instance.Set(PropertyName.CornerSize, value);
     }
     /// <inheritdoc cref="RegularPolygon2D.CornerSmoothness"/>
-    public long CornerSmoothness
+    public int CornerSmoothness
     {
-        get => (long)Instance.Get(PropertyName.CornerSmoothness);
+        get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
     /// <inherit doc cref="SimplePolygon2D.Position"/>
@@ -118,14 +118,14 @@ public class RegularCollisionPolygon2D
     /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="CollisionShape2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public RegularCollisionPolygon2D(long verticesCount = 1, double size = 10, double offsetRotation = 0,
-        double width = 0, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    public RegularCollisionPolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0,
+        float width = 0, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
     => Instance = RegularCollisionPolygon2D.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness);
 
     /// <inheritdoc cref="RegularPolygon2D.New)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
-    public static CollisionShape2D New(long verticesCount = 1, double size = 10, double offsetRotation = 0,
-        double width = 0, double drawnArc = Math.Tau, double cornerSize = 0, long cornerSmoothness = 0)
+    public static CollisionShape2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0,
+        float width = 0, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
         => GDScriptEquivalent.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
 
     /// <summary>
