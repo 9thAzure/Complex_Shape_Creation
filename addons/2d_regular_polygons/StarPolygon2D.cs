@@ -155,7 +155,7 @@ public class StarPolygon2D
 
         Instance = instance;
     }
-    /// <inheritdoc cref="New"/>
+    /// <inheritdoc cref="New(int, float, float, float, Color?, Vector2, float, float, float, int)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="RegularPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     /// <param name="pointCount">The number of points in the star.</param>
