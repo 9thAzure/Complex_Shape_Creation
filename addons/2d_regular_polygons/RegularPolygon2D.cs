@@ -165,7 +165,7 @@ public class RegularPolygon2D
     /// <inheritdoc cref="SimplePolygon2D.New(int, float, float, Color?, Vector2)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     /// <param name="width">The width of the shape. Negative values draw a full shape.</param>
-    /// <param name="drawnArc">The drawn arc of the shape. Positive values go clockwise, negative values go counterclockwise.</param>
+    /// <param name="drawnArc">The drawn arc of the shape. It starts in the middle of the base. Positive values go clockwise, negative values go counterclockwise.</param>
     /// <param name="cornerSize">The distance along each edge to the point where the corner starts.</param>
     /// <param name="cornerSmoothness">How many lines make up each corner.</param>
     public static Polygon2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default,
@@ -178,7 +178,9 @@ public class RegularPolygon2D
     }
 
     /// <inheritdoc cref="SimplePolygon2D.GetShapeVertices(int, float, float, Vector2)"/>
-    /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="vertices_count"/>.</summary>
+    /// <param name="drawnArc">
+    /// The drawn arc of the shape. It starts in the middle of the base. Positive values go clockwise and negative values counter-clockwise.
+    /// </param>
     /// <param name="addCentralPoint">
     /// <paramref name="add_central_point"/> adds <paramref name="offset_rotation"/> at the end of the array. 
     /// It only has an effect if <paramref name="drawn_arc"/> is used and isn't ±<see cref="Mathf.Tau"/>.

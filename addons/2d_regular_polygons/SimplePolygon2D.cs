@@ -96,6 +96,7 @@ public partial class SimplePolygon2D
 
         Instance = instance;
     }
+    /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="SimplePolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     public SimplePolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
