@@ -12,7 +12,7 @@ namespace RegularPolygons2D;
 public partial class SimplePolygon2D
 {
     /// <summary>The string path to the script this class wraps around.</summary>
-    public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/simple_polygon_2d.gd";
+    public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/simple_polygon_2d/simple_polygon_2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
     private static readonly Lazy<Node2D> _shared = new(() => GDScriptEquivalent.New().As<Node2D>());
