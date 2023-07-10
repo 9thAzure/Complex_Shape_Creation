@@ -238,12 +238,13 @@ static func get_star_vertices(point_count : int, size : float, inner_size : floa
 	var points := PackedVector2Array()
 	offset_rotation += PI
 	if drawn_arc >= TAU or drawn_arc <= -TAU:
+		points.resize(point_count * 2)
 		var current_rotation := offset_rotation
 		var rotation_spacing := TAU / point_count / 2
 		for i in point_count:	
-			points.append(Vector2(-sin(current_rotation), cos(current_rotation)) * size + offset_position)
+			points[i * 2] = Vector2(-sin(current_rotation), cos(current_rotation)) * size + offset_position
 			current_rotation += rotation_spacing
-			points.append(Vector2(-sin(current_rotation), cos(current_rotation)) * inner_size + offset_position)
+			points[i * 2 + 1] = Vector2(-sin(current_rotation), cos(current_rotation)) * inner_size + offset_position
 			current_rotation += rotation_spacing
 		return points
 	
