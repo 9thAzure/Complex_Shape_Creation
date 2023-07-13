@@ -97,7 +97,7 @@ public class RegularCollisionPolygon2DTests : TestClass
     }
 
     [Test]
-    public async void QueueRegenerate_ShapeSetEmpty_PolygonFilled()
+    public async System.Threading.Tasks.Task QueueRegenerate_ShapeSetEmpty_PolygonFilled()
     {
         polygon.Instance.Shape = null;
         TestScene.AddChild(polygon);
