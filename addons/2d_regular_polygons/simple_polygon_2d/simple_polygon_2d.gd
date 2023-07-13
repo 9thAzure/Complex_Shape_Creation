@@ -86,14 +86,20 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if offset_position != Vector2.ZERO:
 		self.offset_position = offset_position
 
+static var _cache := {}
+
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
-static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
+static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO, use_cache : bool = true) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(size > 0, "param 'size' must be positive.")
 	
 	if vertices_count == 1:
 		vertices_count = 32
+	
+	var key := [vertices_count, size, offset_rotation, offset_position]
+	if use_cache && _cache.has(key):
+		return _cache[key]
 
 	var points := PackedVector2Array()
 	points.resize(vertices_count)
@@ -103,6 +109,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 		points[i] = Vector2(-sin(current_rotation), cos(current_rotation)) * size + offset_position
 		current_rotation += rotation_spacing
 
+	_cache[key] = points
 	return points
 
 static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
