@@ -71,7 +71,7 @@ var width : float = -0.001:
 		_pre_redraw()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
-## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
+## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc_degrees : float = 360:
@@ -81,7 +81,7 @@ var drawn_arc_degrees : float = 360:
 		return rad_to_deg(drawn_arc)
 
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
-## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
+## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360, 0.01, "radians") 
