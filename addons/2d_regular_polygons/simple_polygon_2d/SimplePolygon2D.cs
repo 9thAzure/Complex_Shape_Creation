@@ -21,14 +21,14 @@ public partial class SimplePolygon2D
     public Node2D Instance { get; }
 
     /// <summary>
-    /// The number of vertices in the perfect shape. A value of <c>1</c> creates a circle, and a value of <c>2</c> creates a line.
+    /// The number of vertices in the regular shape. A value of <c>1</c> creates a circle, and a value of <c>2</c> creates a line.
     /// </summary>
     public int VerticesCount
     {
         get => (int)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
-    /// <summary>The length from each corner to the center.</summary>
+    /// <summary>The length from each corner to the center of the shape.</summary>
     public float Size
     {
         get => (float)Instance.Get(PropertyName.Size);

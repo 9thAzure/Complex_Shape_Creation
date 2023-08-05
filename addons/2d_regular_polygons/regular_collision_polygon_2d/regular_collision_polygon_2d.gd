@@ -19,7 +19,7 @@ var vertices_count : int = 1:
 		vertices_count = value
 		queue_regenerate()
 
-## The length of each corner to the center.
+## The length of each corner to the center of the shape.
 @export_range(0.000001, 10, 0.001 , "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):

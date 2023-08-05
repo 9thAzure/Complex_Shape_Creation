@@ -199,7 +199,7 @@ func _draw() -> void:
 	draw_colored_polygon(points, color)
 
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
-## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
+## This method can be used when the node is outside the [SceneTree] to force the regeneration of [member Polygon2D.polygon].
 func regenerate_polygon() -> void:
 	_is_queued = false
 	if drawn_arc == 0:
@@ -394,7 +394,7 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 
 ## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
 ## [param close_shape] adds the first point to the end, before the procedure.
-## [br][br][b]Note[/b]: This method doesn't work if there is an offset applied to [param hole_scaler].
+## [br][br][b]Note[/b]: This method assumes the shape specified in [param points] is centered onto [constant Vector2.ZERO]
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	var original_size := points.size()
 	if close_shape:

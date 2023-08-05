@@ -9,7 +9,7 @@ extends Node2D
 ## If more complex features are needed, use [RegularPolygon2D].
 
 
-## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
+## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 @export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):
@@ -17,7 +17,7 @@ var vertices_count : int = 1:
 		vertices_count = value
 		queue_redraw()
 
-## The length from each corner to the center.
+## The length from each corner to the center of the shape.
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
