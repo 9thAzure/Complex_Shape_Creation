@@ -3,12 +3,12 @@
 extends Polygon2D
 class_name StarPolygon2D
 
-## Node that draws a star shape, with complex properties.
+## Node that draws a star, with complex properties.
 ##
-## A node that draws star shapes, with complex properties.
-## It uses [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_polyline], or uses [member Polygon2D.polygon]
+## A node that draws star, with complex properties.
+## It uses [method CanvasItem.draw_colored_polygon], [method CanvasItem.draw_polyline], or [member Polygon2D.polygon]
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
-## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
+## [member Polygon2D.polygon] will be cleared and will be set when the node enters the [SceneTree].
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
 
 ## The number of points the star has.
@@ -35,14 +35,14 @@ var inner_size : float = 5.0:
 		inner_size = value
 		_pre_redraw()
 
-## The offset rotation of the shape, in degrees.
+## The offset rotation of the star, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
 		offset_rotation = deg_to_rad(value)
 	get:
 		return rad_to_deg(offset_rotation)
 
-## the offset rotation of the shape, in radians.
+## the offset rotation of the star, in radians.
 @export_range(-360, 360, 0.1, "or_greater", "or_less", "radians") 
 var offset_rotation : float = 0:
 	set(value):
@@ -52,7 +52,7 @@ var offset_rotation : float = 0:
 @export_group("complex")
 
 # The default value is -0.001 so that dragging it into positive values is quick.
-## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
+## Determines the width of the star. A value of [code]0[/code] outlines the star with lines, and a value smaller than [code]0[/code] ignores this effect.
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
 @export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
@@ -69,8 +69,8 @@ var width : float = -0.001:
 		width = value
 		_pre_redraw()
 
-## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
-## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts at the top point.
+## The arc of the drawn star, in degrees, cutting off beyond that arc. 
+## Values greater than [code]360[/code] or [code]-360[/code] draws a full star. It starts at the top point.
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc_degrees : float = 360:
@@ -79,8 +79,8 @@ var drawn_arc_degrees : float = 360:
 	get:
 		return rad_to_deg(drawn_arc)
 
-## The arc of the drawn shape, in radians, cutting off beyond that arc. 
-## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts at the top point
+## The arc of the drawn star, in radians, cutting off beyond that arc. 
+## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full star. It starts at the top point
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360, 0.01, "radians") 
@@ -224,7 +224,7 @@ func uses_polygon_member() -> bool:
 		width > 0
 	)
 
-## Returns a [PackedVector2Array] with points for forming the specified star shape.
+## Returns a [PackedVector2Array] with points for forming the specified star.
 ## [br][br][param add_central_point] adds [param offset_rotation] at the end of the array. 
 ## It only has an effect if [param drawn_arc] is used and isn't ±[constant @GDSCript.PI].
 ## It should be set to false when using [method RegularPolygon2D.add_hole_to_points].

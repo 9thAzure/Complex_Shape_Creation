@@ -9,7 +9,7 @@ extends Node2D
 ## If more complex features are needed, use [RegularPolygon2D].
 
 
-## The number of vertices in the perfect shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
+## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 @export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):
@@ -17,7 +17,7 @@ var vertices_count : int = 1:
 		vertices_count = value
 		queue_redraw()
 
-## The length from each corner to the center.
+## The length from each corner to the center of the shape.
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10:
 	set(value):
@@ -86,6 +86,8 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if offset_position != Vector2.ZERO:
 		self.offset_position = offset_position
 
+static var _circle := get_shape_vertices(32)
+
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
 ## [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
 static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
@@ -93,7 +95,9 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	assert(size > 0, "param 'size' must be positive.")
 	
 	if vertices_count == 1:
-		vertices_count = 32
+		if size == 1 and offset_rotation == 0.0 and offset_position == Vector2.ZERO:
+			return PackedVector2Array(_circle)
+		return PackedVector2Array(_circle) * Transform2D(offset_rotation, Vector2.ONE * size, 0, offset_position)
 
 	var points := PackedVector2Array()
 	points.resize(vertices_count)

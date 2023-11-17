@@ -71,7 +71,7 @@ var width : float = -0.001:
 		_pre_redraw()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
-## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
+## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc_degrees : float = 360:
@@ -81,7 +81,7 @@ var drawn_arc_degrees : float = 360:
 		return rad_to_deg(drawn_arc)
 
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
-## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
+## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360, 0.01, "radians") 
@@ -199,7 +199,7 @@ func _draw() -> void:
 	draw_colored_polygon(points, color)
 
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
-## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
+## This method can be used when the node is outside the [SceneTree] to force the regeneration of [member Polygon2D.polygon].
 func regenerate_polygon() -> void:
 	_is_queued = false
 	if drawn_arc == 0:
@@ -394,7 +394,7 @@ static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end
 
 ## Appends points, which are [param hole_scaler] times the original [param points], in reverse order from the original.
 ## [param close_shape] adds the first point to the end, before the procedure.
-## [br][br][b]Note[/b]: This method doesn't work if there is an offset applied to [param hole_scaler].
+## [br][br][b]Note[/b]: This method assumes the shape specified in [param points] is centered onto [constant Vector2.ZERO]
 static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float, close_shape : bool = true) -> void:
 	var original_size := points.size()
 	if close_shape:

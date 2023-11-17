@@ -58,7 +58,7 @@ public class RegularPolygon2D
     }
     /// <summary>The arc of the drawn shape, in degrees, cutting off beyond that arc.</summary>
     /// <remarks>
-    /// Values greater than <c>360</c> or <c>-360</c> draws a full shape. It starts in the middle of the base of the shapes. 
+    /// Values greater than <c>360</c> or <c>-360</c> draws a full shape. It starts in the middle of the bottom edge of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
     /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
@@ -69,7 +69,7 @@ public class RegularPolygon2D
     }
     /// <summary>The arc of the drawn shape, radians, cutting off beyond that arc.</summary>
     /// <remarks>
-    /// Values greater than <see cref="Mathf.Tau"/> or -<see cref="Mathf.Tau"/> draws a full shape. It starts in the middle of the base of the shapes. 
+    /// Values greater than <see cref="Mathf.Tau"/> or -<see cref="Mathf.Tau"/> draws a full shape. It starts in the middle of the bottom edge of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
     /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
