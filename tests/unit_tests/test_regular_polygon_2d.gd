@@ -80,6 +80,14 @@ func test_get_shape_vertices__false_central_point__last_point_not_ZERO():
 
 	assert_false(shape[-1].is_equal_approx(Vector2.ZERO), "%s should not equal Vector2.ZERO (0, 0)" % shape[-1])
 
+func test_add_rounded_corners__various_corner_smoothness__array_size_increases_by_that_percentage(p = use_parameters([[1], [2], [3], [10]])):
+	var shape := SimplePolygon2D.get_shape_vertices(3)
+	var previous_size := shape.size()
+	
+	RegularPolygon2D.add_rounded_corners(shape, 0, p[0])
+	var new_size := shape.size()
+
+	assert_eq(new_size, previous_size + previous_size * p[0])
 
 
 # more so integration tests. Move them there when created.
