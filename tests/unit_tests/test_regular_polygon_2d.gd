@@ -98,6 +98,15 @@ func test_add_rounded_corners__very_small_corner_size__approximately_equal_vecto
 		var index := i * 3
 		assert_almost_eq(shape[index + 1], shape[index], Vector2.ONE * 0.1)
 		assert_almost_eq(shape[index + 2], shape[index], Vector2.ONE * 0.1)
+
+func test_add_hole_to_points__do_not_close_shape__array_size_doubles():
+	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
+	var previous_size := shape.size()
+
+	RegularPolygon2D.add_hole_to_points(shape, 1, false)
+	var new_size := shape.size()
+
+	assert_eq(new_size, 2 * previous_size)
 	
 
 # more so integration tests. Move them there when created.
