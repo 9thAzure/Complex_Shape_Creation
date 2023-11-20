@@ -108,6 +108,14 @@ func test_add_hole_to_points__do_not_close_shape__array_size_doubles():
 
 	assert_eq(new_size, 2 * previous_size)
 	
+func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
+	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
+	var previous_size := shape.size()
+
+	RegularPolygon2D.add_hole_to_points(shape, 1, true)
+	var new_size := shape.size()
+
+	assert_eq(new_size, 2 * previous_size + 2)
 
 # more so integration tests. Move them there when created.
 # func test_regenerate_polygon__create_rounded_closed_holed_shape__properly_closed():
