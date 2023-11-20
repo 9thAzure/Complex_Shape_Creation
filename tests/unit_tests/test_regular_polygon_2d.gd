@@ -84,11 +84,21 @@ func test_add_rounded_corners__various_corner_smoothness__array_size_increases_b
 	var shape := SimplePolygon2D.get_shape_vertices(3)
 	var previous_size := shape.size()
 	
-	RegularPolygon2D.add_rounded_corners(shape, 0, p[0])
+	RegularPolygon2D.add_rounded_corners(shape, 1, p[0])
 	var new_size := shape.size()
 
 	assert_eq(new_size, previous_size + previous_size * p[0])
 
+func test_add_rounded_corners__very_small_corner_size__approximately_equal_vectors():
+	var shape := SimplePolygon2D.get_shape_vertices(3)
+	
+	RegularPolygon2D.add_rounded_corners(shape, 0.01, 2)
+
+	for i in 3:
+		var index := i * 3
+		assert_almost_eq(shape[index + 1], shape[index], Vector2.ONE * 0.1)
+		assert_almost_eq(shape[index + 2], shape[index], Vector2.ONE * 0.1)
+	
 
 # more so integration tests. Move them there when created.
 # func test_regenerate_polygon__create_rounded_closed_holed_shape__properly_closed():
