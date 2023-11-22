@@ -45,3 +45,11 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
     assert_null(shape.shape, "shape should not be instantly set.")
     await wait_frames(2)
     assert_not_null(shape.shape, "shape should be set at this point.")
+
+func test_regenerate__vertices_count_2__shape_segment_shape():
+    var shape := RegularCollisionPolygon2D.new()
+    shape.vertices_count = 2
+
+    shape.regenerate()
+
+    assert_true(shape.shape is SegmentShape2D, "property shape should be SegmentShape2D")
