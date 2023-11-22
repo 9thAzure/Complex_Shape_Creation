@@ -61,3 +61,11 @@ func test_regenerate__uses_width__shape_concave_shape():
     shape.regenerate()
 
     assert_true(shape.shape is ConcavePolygonShape2D, "property shape should be ConcavePolygonShape2D")
+
+func test_regenerate__vertices_count_4__shape_rectangle_shape():
+    var shape := RegularCollisionPolygon2D.new()
+    shape.vertices_count = 4
+
+    shape.regenerate()
+
+    assert_true(shape.shape is RectangleShape2D, "property shape should be RectangleShape2D")
