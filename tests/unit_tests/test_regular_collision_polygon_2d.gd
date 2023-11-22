@@ -1,5 +1,7 @@
 extends GutTest
 
+var class_script := preload("res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd")
+
 func test_init__filled_params__assigned_to_vars():
     var shape : RegularCollisionPolygon2D
 
@@ -14,7 +16,7 @@ func test_init__filled_params__assigned_to_vars():
     assert_eq(shape.corner_smoothness, 1)
 
 func test_enter_tree__shape_filled__regenerate_not_called():
-    var shape = partial_double(preload("res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd"))
+    var shape = partial_double(class_script)
     stub(shape, "regenerate").to_do_nothing()
     shape.shape = RectangleShape2D.new()
     shape.queue_redraw = true
