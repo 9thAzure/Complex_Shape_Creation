@@ -12,3 +12,14 @@ func test_init__filled_params__assigned_to_vars():
     assert_eq(shape.drawn_arc, 1.0)
     assert_eq(shape.corner_size, 1.0)
     assert_eq(shape.corner_smoothness, 1)
+
+func test_enter_tree__shape_filled__regenerate_not_called():
+    var shape = partial_double(preload("res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd"))
+    stub(shape, "regenerate").to_do_nothing()
+    shape.shape = RectangleShape2D.new()
+    shape.queue_redraw = true
+
+    shape._enter_tree()
+
+    assert_not_called(shape, "regenerate")
+    assert_false(shape.queue_redraw)
