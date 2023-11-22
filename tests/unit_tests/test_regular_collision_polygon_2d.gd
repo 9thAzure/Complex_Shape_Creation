@@ -33,3 +33,15 @@ func test_queue_regenerate__shape_filled__shape_null():
     shape.queue_regenerate()
 
     assert_null(shape.shape)
+
+func test_queue_regenerate__in_tree__delayed_shape_filled():
+    var shape = partial_double(class_script)
+    shape.is_queued = false
+    add_child(shape)
+    assert(shape == null)
+
+    shape.queue_regenerate()
+
+    assert_null(shape.shape, "shape should not be instantly set.")
+    await wait_frames(2)
+    assert_not_null(shape.shape, "shape should be set at this point.")
