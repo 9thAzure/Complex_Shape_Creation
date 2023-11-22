@@ -25,3 +25,11 @@ func test_enter_tree__shape_filled__regenerate_not_called():
 
     assert_not_called(shape, "regenerate")
     assert_false(shape.queue_redraw)
+
+func test_queue_regenerate__shape_filled__shape_null():
+    var shape = RegularCollisionPolygon2D.new()
+    shape.shape = RectangleShape2D.new()
+
+    shape.queue_regenerate()
+
+    assert_null(shape.shape)
