@@ -1,5 +1,10 @@
 extends GutTest
 
+var class_script := preload("res://addons/2d_regular_polygons/star_polygon_2d/star_polygon_2d.gd")
+
+func before_each():
+    ignore_method_when_doubling(class_script, "get_star_vertices")
+
 func test_init__params_filled__assigned_to_vars():
     var star : StarPolygon2D
 
@@ -15,3 +20,4 @@ func test_init__params_filled__assigned_to_vars():
     assert_eq(star.drawn_arc, 1.0)
     assert_eq(star.corner_size, 1.0)
     assert_eq(star.corner_smoothness, 1)
+
