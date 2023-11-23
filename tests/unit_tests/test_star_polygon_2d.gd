@@ -40,3 +40,15 @@ func test_pre_redraw__polygon_filled__polygon_empty():
     star._pre_redraw()
 
     assert_true(star.polygon.is_empty(), "polygon property should be empty")
+
+func test_queue_regenerate__in_tree__delayed_shape_filled():
+    var star = partial_double(class_script)
+    star.is_queued = false
+    stub(star, "_enter_tree").to_do_nothing()
+    add_child(star)
+
+    star.queue_regenerate()
+
+    assert_true(star.polygon.is_empty(), "polygon property should not be instantly filled.")
+    await wait_frames(2)
+    assert_false(star.polygon.is_empty(), "polygon property should be filled at this point.")
