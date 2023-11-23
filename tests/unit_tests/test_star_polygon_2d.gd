@@ -1,6 +1,7 @@
 extends GutTest
 
 var class_script := preload("res://addons/2d_regular_polygons/star_polygon_2d/star_polygon_2d.gd")
+var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
 
 func before_each():
     ignore_method_when_doubling(class_script, "get_star_vertices")
@@ -24,7 +25,7 @@ func test_init__params_filled__assigned_to_vars():
 func test_enter_tree__polygon_filled__regenerate_not_called():
     var shape = partial_double(class_script)
     stub(shape, "regenerate_polygon").to_do_nothing()
-    shape.polygon = PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
+    shape.polygon = sample_polygon
     shape.queue_redraw = true
 
     shape._enter_tree()
