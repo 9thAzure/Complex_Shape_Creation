@@ -21,3 +21,14 @@ func test_init__params_filled__assigned_to_vars():
     assert_eq(star.corner_size, 1.0)
     assert_eq(star.corner_smoothness, 1)
 
+func test_enter_tree__polygon_filled__regenerate_not_called():
+    var shape = partial_double(class_script)
+    stub(shape, "regenerate_polygon").to_do_nothing()
+    shape.polygon = PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
+    shape.queue_redraw = true
+
+    shape._enter_tree()
+
+    assert_not_called(shape, "regenerate_polygon")
+    assert_false(shape.queue_redraw)
+
