@@ -33,3 +33,10 @@ func test_enter_tree__polygon_filled__regenerate_not_called():
     assert_not_called(shape, "regenerate_polygon")
     assert_false(shape.queue_redraw)
 
+func test_pre_redraw__polygon_filled__polygon_empty():
+    var star := StarPolygon2D.new()
+    star.polygon = sample_polygon
+
+    star._pre_redraw()
+
+    assert_true(star.polygon.is_empty(), "polygon property should be empty")
