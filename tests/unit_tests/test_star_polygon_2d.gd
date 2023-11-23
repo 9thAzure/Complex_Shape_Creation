@@ -57,7 +57,15 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 func test_get_star_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
     var star : PackedVector2Array
 
-    star = StarPolygon2D.get_star_vertices(5, 10, 5, p[0])
+    star = StarPolygon2D.get_star_vertices(5, 10, 5, 0, Vector2.ZERO, p[0])
 
     assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01)
     assert_eq(star.size(), 6, "size of array should be 6.")
+
+func test_get_star_vertices__add_central_point_false__expected_size_and_not_ZERO():
+    var star : PackedVector2Array
+
+    star = StarPolygon2D.get_star_vertices(5, 10, 5, 0, Vector2.ZERO, PI * 3 / 2, false)
+
+    assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01, "last point shouldn't be (0, 0)")
+    assert_eq(star.size(), 9, "size of array should be 9")
