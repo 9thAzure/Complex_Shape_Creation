@@ -37,8 +37,8 @@ func test_queue_regenerate__shape_filled__shape_null():
 func test_queue_regenerate__in_tree__delayed_shape_filled():
     var shape = partial_double(class_script)
     shape.is_queued = false
+    stub(shape, "_enter_tree").to_do_nothing()
     add_child(shape)
-    assert(shape == null)
 
     shape.queue_regenerate()
 
