@@ -9,7 +9,7 @@ func before_each():
 func test_init__params_filled__assigned_to_vars():
     var star : StarPolygon2D
 
-    star = StarPolygon2D.new(3, 5.0, 1.0, 1.0, Color.RED, Vector2.ONE, 1.0, 1.0, 1.0, 1)
+    star = autoqfree(StarPolygon2D.new(3, 5.0, 1.0, 1.0, Color.RED, Vector2.ONE, 1.0, 1.0, 1.0, 1))
 
     assert_eq(star.point_count, 3)
     assert_eq(star.size, 5.0)
@@ -34,7 +34,7 @@ func test_enter_tree__polygon_filled__regenerate_not_called():
     assert_false(shape.queue_redraw)
 
 func test_pre_redraw__polygon_filled__polygon_empty():
-    var star := StarPolygon2D.new()
+    var star : StarPolygon2D = autoqfree(StarPolygon2D.new())
     star.polygon = sample_polygon
 
     star._pre_redraw()
