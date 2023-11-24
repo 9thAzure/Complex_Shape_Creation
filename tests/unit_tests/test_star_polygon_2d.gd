@@ -5,6 +5,7 @@ var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LE
 
 func before_each():
     ignore_method_when_doubling(class_script, "get_star_vertices")
+    ignore_method_when_doubling(class_script, "_get_vertices")
 
 func test_init__params_filled__assigned_to_vars():
     var star : StarPolygon2D
