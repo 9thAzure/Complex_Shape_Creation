@@ -24,15 +24,15 @@ func test_init__params_filled__assigned_to_vars():
     assert_eq(star.corner_smoothness, 1)
 
 func test_enter_tree__polygon_filled__regenerate_not_called():
-    var shape = partial_double(class_script)
+    var shape : StarPolygon2D = partial_double(class_script)
     stub(shape, "regenerate_polygon").to_do_nothing()
     shape.polygon = sample_polygon
-    shape.queue_redraw = true
+    shape._is_queued = true
 
     shape._enter_tree()
 
     assert_not_called(shape, "regenerate_polygon")
-    assert_false(shape.queue_redraw)
+    assert_false(shape._is_queued)
 
 func test_pre_redraw__polygon_filled__polygon_empty():
     var star : StarPolygon2D = autoqfree(StarPolygon2D.new())
@@ -43,7 +43,7 @@ func test_pre_redraw__polygon_filled__polygon_empty():
     assert_true(star.polygon.is_empty(), "polygon property should be empty")
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
-    var star = partial_double(class_script)
+    var star : StarPolygon2D = partial_double(class_script)
     star.width = 10
     star.is_queued = false
     stub(star, "_enter_tree").to_do_nothing()
