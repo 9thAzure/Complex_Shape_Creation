@@ -1,10 +1,6 @@
 extends GutTest
 
 var class_script := preload("res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd")
-var doubled_class : GDScript
-
-func before_all():
-	doubled_class = partial_double(class_script)
 
 func test_init__filled_params__assigned_to_vars():
 	var shape : RegularCollisionPolygon2D
@@ -20,7 +16,7 @@ func test_init__filled_params__assigned_to_vars():
 	assert_eq(shape.corner_smoothness, 1)
 
 func test_enter_tree__shape_filled__regenerate_not_called():
-	var shape : RegularCollisionPolygon2D = doubled_class.new() 
+	var shape : RegularCollisionPolygon2D = partial_double(class_script).new() 
 	stub(shape, "regenerate").to_do_nothing()
 	shape.shape = RectangleShape2D.new()
 	shape._is_queued = true
@@ -39,7 +35,7 @@ func test_queue_regenerate__shape_filled__shape_null():
 	assert_null(shape.shape)
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
-	var shape : RegularCollisionPolygon2D = doubled_class.new()
+	var shape : RegularCollisionPolygon2D = partial_double(class_script).new()
 	shape._is_queued = false
 	stub(shape, "_enter_tree").to_do_nothing()
 	add_child(shape)

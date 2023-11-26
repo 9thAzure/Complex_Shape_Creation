@@ -1,11 +1,7 @@
 extends GutTest
 
 var class_script := preload("res://addons/2d_regular_polygons/star_polygon_2d/star_polygon_2d.gd")
-var doubled_class : GDScript
 var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
-
-func before_all():
-	doubled_class = partial_double(class_script)
 
 func before_each():
 	ignore_method_when_doubling(class_script, "get_star_vertices")
@@ -28,7 +24,7 @@ func test_init__params_filled__assigned_to_vars():
 	assert_eq(star.corner_smoothness, 1)
 
 func test_enter_tree__polygon_filled__regenerate_not_called():
-	var shape : StarPolygon2D = doubled_class.new()
+	var shape : StarPolygon2D = partial_double(class_script).new()
 	stub(shape, "regenerate_polygon").to_do_nothing()
 	shape.polygon = sample_polygon
 	shape._is_queued = true
@@ -47,7 +43,7 @@ func test_pre_redraw__polygon_filled__polygon_empty():
 	assert_true(star.polygon.is_empty(), "polygon property should be empty")
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
-	var star : StarPolygon2D = doubled_class.new()
+	var star : StarPolygon2D = partial_double(class_script).new()
 	star.width = 10
 	star._is_queued = false
 	stub(star, "_enter_tree").to_do_nothing()

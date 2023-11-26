@@ -1,11 +1,7 @@
 extends GutTest
 
 var class_script := preload("res://addons/2d_regular_polygons/regular_polygon_2d/regular_polygon_2d.gd")
-var doubled_class : GDScript
 var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
-
-func before_all():
-	doubled_class = partial_double(class_script)
 
 func before_each():
 	# Gut cannot handle static methods when doubling.
@@ -34,7 +30,7 @@ func test_init__filled__variables_assigned():
 	assert_eq(shape.corner_smoothness, 1)
 
 func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_regenerated():
-	var shape : RegularPolygon2D = doubled_class.new()
+	var shape : RegularPolygon2D = partial_double(class_script).new()
 	stub(shape, "uses_polygon_member").to_return(true)
 	stub(shape, "regenerate_polygon").to_do_nothing()
 	shape._is_queued = true
