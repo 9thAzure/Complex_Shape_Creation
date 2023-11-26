@@ -16,15 +16,15 @@ func test_init__filled_params__assigned_to_vars():
     assert_eq(shape.corner_smoothness, 1)
 
 func test_enter_tree__shape_filled__regenerate_not_called():
-    var shape = partial_double(class_script)
+    var shape : RegularCollisionPolygon2D = partial_double(class_script)
     stub(shape, "regenerate").to_do_nothing()
     shape.shape = RectangleShape2D.new()
-    shape.queue_redraw = true
+    shape._is_queued = true
 
     shape._enter_tree()
 
     assert_not_called(shape, "regenerate")
-    assert_false(shape.queue_redraw)
+    assert_false(shape._is_queued)
 
 func test_queue_regenerate__shape_filled__shape_null():
     var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
@@ -35,8 +35,8 @@ func test_queue_regenerate__shape_filled__shape_null():
     assert_null(shape.shape)
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
-    var shape = partial_double(class_script)
-    shape.is_queued = false
+    var shape : RegularCollisionPolygon2D = partial_double(class_script)
+    shape._is_queued = false
     stub(shape, "_enter_tree").to_do_nothing()
     add_child(shape)
 
