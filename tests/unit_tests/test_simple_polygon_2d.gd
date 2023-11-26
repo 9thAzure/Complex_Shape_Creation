@@ -27,15 +27,15 @@ func test_init__filled__variables_assigned():
 
 var param2 := [[2], [5], [8], [32], [100]]
 func test_get_shape_vertices__various_vertices_counts__matches_output_size(p = use_parameters(param2)):
-	pass
+	var shape : PackedVector2Array
 
-	var shape = SimplePolygon2D.get_shape_vertices(p[0])
+	shape = SimplePolygon2D.get_shape_vertices(p[0])
 
 	assert_eq(shape.size(), p[0])
 
 func test_get_shape_vertices__straight_line__not_vertical():
-	pass
+	var line : PackedVector2Array
 
-	var line = SimplePolygon2D.get_shape_vertices(2)
+	line = SimplePolygon2D.get_shape_vertices(2)
 
 	assert_false(line[0].is_equal_approx(Vector2.DOWN))
