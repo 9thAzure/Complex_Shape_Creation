@@ -29,7 +29,7 @@ func test_init__filled__variables_assigned():
 	assert_eq(shape.corner_smoothness, 1)
 
 func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_regenerated():
-	var shape = partial_double(class_script)
+	var shape : RegularPolygon2D = partial_double(class_script)
 	stub(shape, "uses_polygon_member").to_return(true)
 	stub(shape, "regenerate_polygon").to_do_nothing()
 	shape._is_queued = true
