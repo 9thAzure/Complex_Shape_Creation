@@ -1,6 +1,7 @@
 extends GutTest
 
 var class_script := preload("res://addons/2d_regular_polygons/regular_polygon_2d/regular_polygon_2d.gd")
+var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
 
 func before_each():
 	# Gut cannot handle static methods when doubling.
@@ -33,7 +34,7 @@ func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_r
 	stub(shape, "uses_polygon_member").to_return(true)
 	stub(shape, "regenerate_polygon").to_do_nothing()
 	shape._is_queued = true
-	shape.polygon = shape.polygon.resize(10)
+	shape.polygon = sample_polygon
 
 	shape._enter_tree()
 
