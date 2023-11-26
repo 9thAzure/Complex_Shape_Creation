@@ -52,7 +52,7 @@ func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters(
 	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01)
 	assert_eq(shape.size(), 4, "size of array should be 4.")
 
-func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_difference(p = [[TAU], [PI], [-PI]]):
+func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_difference(p = use_parameters([[TAU], [PI], [-PI]])):
 	var shape_control : PackedVector2Array
 	var shape_test : PackedVector2Array
 
