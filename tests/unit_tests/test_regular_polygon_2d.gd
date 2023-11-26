@@ -47,24 +47,12 @@ func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters(
 	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01)
 	assert_eq(shape.size(), 4, "size of array should be 4.")
 
-func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU__no_difference():
+func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_difference(p = [[TAU], [PI], [-PI]]):
 	var shape_control : PackedVector2Array
 	var shape_test : PackedVector2Array
 
-	shape_control = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, TAU, true)
-	shape_test = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, TAU, false)
-
-	for i in 4:
-		if not shape_control[i].is_equal_approx(shape_test[i]):
-			fail_test("difference between %s and %s at index %s" % [shape_control[i], shape_test[i], i])
-	pass_test("control and test match")
-
-func test_get_shape_vertices__false_central_point_when_drawn_arc_is_PI__no_difference():
-	var shape_control : PackedVector2Array
-	var shape_test : PackedVector2Array
-
-	shape_control = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, PI, true)
-	shape_test = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, PI, false)
+	shape_control = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, p[0], true)
+	shape_test = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, p[0], false)
 
 	for i in 4:
 		if not shape_control[i].is_equal_approx(shape_test[i]):
