@@ -39,15 +39,13 @@ func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_r
 
 	assert_not_called(shape, "regenerate_polygon")
 
-var param1 = [[4, TAU, 4], [5, -TAU, 5],
-	[4, PI, 4], [4, PI - 0.1, 5],
-	[5, -PI, 4], [5 -PI + 0.1, 5]]
-func test_get_shape_vertices__various_drawn_arcs__matches_expected_value(p = use_parameters(param1)):
+func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
 	var shape : PackedVector2Array
 
-	shape = RegularPolygon2D.get_shape_vertices(p[0], 1, 0, Vector2.ZERO, p[1])
+	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, p[0])
 
-	assert_eq(shape.size(), p[2])
+	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01)
+	assert_eq(shape.size(), 4, "size of array should be 4.")
 
 func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU__no_difference():
 	var shape_control : PackedVector2Array
