@@ -49,7 +49,7 @@ func test_pre_redraw__polygon_filled__polygon_empty():
 func test_queue_regenerate__in_tree__delayed_shape_filled():
 	var star : StarPolygon2D = doubled_class.new()
 	star.width = 10
-	star.is_queued = false
+	star._is_queued = false
 	stub(star, "_enter_tree").to_do_nothing()
 	add_child(star)
 
