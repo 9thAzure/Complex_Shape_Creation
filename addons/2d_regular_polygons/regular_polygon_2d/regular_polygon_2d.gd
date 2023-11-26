@@ -231,7 +231,7 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if color != Color.WHITE:
 		self.color = color
 	if offset_position != Vector2.ZERO:
-		self.offset_position = offset_position
+		self.offset = offset_position
 	if width != -0.001:
 		self.width = width
 	if drawn_arc != TAU:
@@ -388,7 +388,8 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 		last_point = current_point
 		current_point = next_point
 
-## Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
+# Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
+## [b][color=red]Warning[/color][/b]: This method is not meant to be used outside the class, and will be changed/made private in the future.
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 

@@ -190,8 +190,7 @@ public class RegularPolygon2D
        float drawnArc = Mathf.Tau, bool addCentralPoint = true)
     => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition, drawnArc, addCentralPoint).AsVector2Array();
     /// <summary>
-    /// Returns the point at the given <paramref name="t"/> on the Bézier curve with the given 
-    /// <paramref name="start"/>, <paramref name="end"/>, and single <paramref name="control"/> points.
+    /// WARNING: This method is not meant to be used outside the class, and will be removed in the future
     /// </summary>
     public static Vector2 QuadraticBezierInterpolate(Vector2 start, Vector2 control, Vector2 end, float t)
     => _shared.Value.Call(MethodName.QuadraticBezierInterpolate, start, control, end, t).AsVector2();
