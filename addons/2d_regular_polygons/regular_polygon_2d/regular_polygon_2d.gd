@@ -231,7 +231,7 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if color != Color.WHITE:
 		self.color = color
 	if offset_position != Vector2.ZERO:
-		self.offset_position = offset_position
+		self.offset = offset_position
 	if width != -0.001:
 		self.width = width
 	if drawn_arc != TAU:
