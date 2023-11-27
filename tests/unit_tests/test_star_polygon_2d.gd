@@ -32,8 +32,8 @@ func test_enter_tree__polygon_filled__regenerate_not_called():
 
 	shape._enter_tree()
 
-	assert_not_called(shape, "regenerate_polygon")
-	assert_false(shape._is_queued)
+	assert_not_called(shape, "regenerate_polygon", "Method 'regenerate_polygon' should not have been called.")
+	assert_false(shape._is_queued, "Variable '_is_queued' should be false.")
 
 func test_pre_redraw__polygon_filled_outside_tree__polygon_empty():
 	var star : StarPolygon2D = partial_double(class_script).new()
@@ -43,7 +43,7 @@ func test_pre_redraw__polygon_filled_outside_tree__polygon_empty():
 
 	star._pre_redraw()
 
-	assert_true(star.polygon.is_empty(), "polygon property should be empty")
+	assert_true(star.polygon.is_empty(), "Variable 'Polygon2D.polygon' should be an empty array.")
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
 	var star : StarPolygon2D = partial_double(class_script).new()
@@ -54,23 +54,23 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 
 	star._pre_redraw()
 
-	assert_true(star.polygon.is_empty(), "polygon property should not be instantly filled.")
+	assert_true(star.polygon.is_empty(), "Variable 'Polygon2D.polygon' should still be an empty array.")
 	await wait_for_signal(get_tree().process_frame, 10)
 	await wait_frames(2)
-	assert_false(star.polygon.is_empty(), "polygon property should be filled at this point.")
+	assert_false(star.polygon.is_empty(), "Variable 'Polygon2D.polygon' should be a filled array at this point.")
 
 func test_get_star_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
 	var star : PackedVector2Array
 
 	star = StarPolygon2D.get_star_vertices(5, 10, 5, 0, Vector2.ZERO, p[0])
 
-	assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01)
-	assert_eq(star.size(), 6, "size of array should be 6.")
+	assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last point in the returned array should not be around Vector2.ZERO.")
+	assert_eq(star.size(), 6, "The size of the returned array should be 6.")
 
 func test_get_star_vertices__add_central_point_false__expected_size_and_not_ZERO():
 	var star : PackedVector2Array
 
 	star = StarPolygon2D.get_star_vertices(5, 10, 5, 0, Vector2.ZERO, PI * 3 / 2, false)
 
-	assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01, "last point shouldn't be (0, 0)")
-	assert_eq(star.size(), 9, "size of array should be 9")
+	assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last point in the returned array should not be around Vector2.ZERO")
+	assert_eq(star.size(), 9, "The size of the returned array should be 9")
