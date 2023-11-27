@@ -4,6 +4,7 @@ var class_script := preload("res://addons/2d_regular_polygons/star_polygon_2d/st
 var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
 
 func before_each():
+	ignore_method_when_doubling(class_script, "_init")
 	ignore_method_when_doubling(class_script, "get_star_vertices")
 	ignore_method_when_doubling(class_script, "_get_vertices")
 

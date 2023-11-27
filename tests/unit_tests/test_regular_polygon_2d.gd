@@ -4,6 +4,7 @@ var class_script := preload("res://addons/2d_regular_polygons/regular_polygon_2d
 var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
 
 func before_each():
+	ignore_method_when_doubling(class_script, "_init")
 	# Gut cannot handle static methods when doubling.
 	ignore_method_when_doubling(class_script, "get_shape_vertices")
 	ignore_method_when_doubling(class_script, "_get_vertices")
