@@ -32,6 +32,7 @@ func test_enter_tree__shape_filled__regenerate_not_called():
 func test_queue_regenerate__shape_filled__shape_null():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.shape = RectangleShape2D.new()
+	shape._is_queued = false
 
 	shape.queue_regenerate()
 
@@ -46,6 +47,7 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 	shape.queue_regenerate()
 
 	assert_null(shape.shape, "shape should not be instantly set.")
+	await wait_for_signal(get_tree().process_frame, 10)
 	await wait_frames(2)
 	assert_not_null(shape.shape, "shape should be set at this point.")
 
