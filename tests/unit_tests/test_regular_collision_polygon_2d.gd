@@ -29,7 +29,7 @@ func test_enter_tree__shape_filled__regenerate_not_called():
 	assert_not_called(shape, "regenerate")
 	assert_false(shape._is_queued)
 
-func test_queue_regenerate__shape_filled__shape_null():
+func test_queue_regenerate__shape_filled_outside_tree__shape_null():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.shape = RectangleShape2D.new()
 	shape._is_queued = false

@@ -35,7 +35,7 @@ func test_enter_tree__polygon_filled__regenerate_not_called():
 	assert_not_called(shape, "regenerate_polygon")
 	assert_false(shape._is_queued)
 
-func test_pre_redraw__polygon_filled__polygon_empty():
+func test_pre_redraw__polygon_filled_outside_tree__polygon_empty():
 	var star : StarPolygon2D = partial_double(class_script).new()
 	stub(star, "uses_polygon_member").to_return(true)
 	star.polygon = sample_polygon
