@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 
-/testing/
-/benchmarking/
+# personal ignores.
 addons.zip
+/benchmarking/
+/testing/
