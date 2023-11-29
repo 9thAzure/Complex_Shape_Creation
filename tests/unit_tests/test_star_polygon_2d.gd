@@ -32,7 +32,7 @@ func test_enter_tree__polygon_filled__regenerate_not_called():
 
 	shape._enter_tree()
 
-	assert_not_called(shape, "regenerate_polygon", "Method 'regenerate_polygon' should not have been called.")
+	assert_not_called(shape, "regenerate_polygon") # does not accept a custom message.
 	assert_false(shape._is_queued, "Variable '_is_queued' should be false.")
 
 func test_pre_redraw__polygon_filled_outside_tree__polygon_empty():
