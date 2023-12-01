@@ -20,15 +20,15 @@ func test_init__filled__variables_assigned():
 
 	shape = autoqfree(RegularPolygon2D.new(5, 5.0, 1.0, Color.RED, Vector2.ONE, 0.0, 2.0, 1.0, 1))
 
-	assert_eq(shape.vertices_count, 5)
-	assert_eq(shape.size, 5.0)
-	assert_eq(shape.offset_rotation, 1.0)
-	assert_eq(shape.color, Color.RED)
-	assert_eq(shape.offset, Vector2.ONE)
-	assert_eq(shape.width, 0.0)
-	assert_eq(shape.drawn_arc, 2.0)
-	assert_eq(shape.corner_size, 1.0)
-	assert_eq(shape.corner_smoothness, 1)
+	assert_eq(shape.vertices_count, 5, "Property 'vertices_count'.")
+	assert_eq(shape.size, 5.0, "Property 'size'.")
+	assert_eq(shape.offset_rotation, 1.0, "Property 'offset_rotation'.")
+	assert_eq(shape.color, Color.RED, "Property 'color'.")
+	assert_eq(shape.offset, Vector2.ONE, "Property 'offset'.")
+	assert_eq(shape.width, 0.0, "Property 'width'.")
+	assert_eq(shape.drawn_arc, 2.0, "Property 'drawn_arc'.")
+	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
+	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
 func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_regenerated():
 	var shape : RegularPolygon2D = partial_double(class_script).new()
@@ -46,20 +46,15 @@ func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters(
 
 	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, p[0])
 
-	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01)
-	assert_eq(shape.size(), 4, "size of array should be 4.")
+	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last element of the returned array.")
+	assert_eq(shape.size(), 4, "Size of returned array.")
 
-func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_difference(p = use_parameters([[TAU], [PI], [-PI]])):
-	var shape_control : PackedVector2Array
-	var shape_test : PackedVector2Array
+func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_central_point(p = use_parameters([[TAU], [PI], [-PI]])):
+	var shape : PackedVector2Array
 
-	shape_control = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, p[0], true)
-	shape_test = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, p[0], false)
+	shape = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, p[0], false)
 
-	for i in 4:
-		if not shape_control[i].is_equal_approx(shape_test[i]):
-			fail_test("difference between %s and %s at index %s" % [shape_control[i], shape_test[i], i])
-	pass_test("control and test match")
+	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last element of the returned array.")
 
 func test_get_shape_vertices__false_central_point__last_point_not_ZERO():
 	var shape : PackedVector2Array
@@ -73,9 +68,8 @@ func test_add_rounded_corners__various_corner_smoothness__array_size_increases_b
 	var previous_size := shape.size()
 	
 	RegularPolygon2D.add_rounded_corners(shape, 1, p[0])
-	var new_size := shape.size()
 
-	assert_eq(new_size, previous_size + previous_size * p[0])
+	assert_eq(shape.size(), previous_size + previous_size * p[0], "Size of modified array, %s * the original size" % (p[0] + 1))
 
 func test_add_rounded_corners__very_small_corner_size__approximately_equal_vectors():
 	var shape := SimplePolygon2D.get_shape_vertices(3)
@@ -84,8 +78,8 @@ func test_add_rounded_corners__very_small_corner_size__approximately_equal_vecto
 
 	for i in 3:
 		var index := i * 3
-		assert_almost_eq(shape[index + 1], shape[index], Vector2.ONE * 0.1)
-		assert_almost_eq(shape[index + 2], shape[index], Vector2.ONE * 0.1)
+		assert_almost_eq(shape[index + 1], shape[index], Vector2.ONE * 0.1, "First part of corner of modified array.")
+		assert_almost_eq(shape[index + 2], shape[index], Vector2.ONE * 0.1, "Last part of corner of modified array.")
 
 func test_add_hole_to_points__do_not_close_shape__array_size_doubles():
 	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
@@ -94,7 +88,7 @@ func test_add_hole_to_points__do_not_close_shape__array_size_doubles():
 	RegularPolygon2D.add_hole_to_points(shape, 1, false)
 	var new_size := shape.size()
 
-	assert_eq(new_size, 2 * previous_size)
+	assert_eq(new_size, 2 * previous_size, "Size of modified array, 2 * the original size.")
 	
 func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
 	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
@@ -103,7 +97,7 @@ func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
 	RegularPolygon2D.add_hole_to_points(shape, 1, true)
 	var new_size := shape.size()
 
-	assert_eq(new_size, 2 * previous_size + 2)
+	assert_eq(new_size, 2 * previous_size + 2, "Size of modifed array, 2 + 2 * the original size")
 
 # more so integration tests. Move them there when created.
 # func test_regenerate_polygon__create_rounded_closed_holed_shape__properly_closed():

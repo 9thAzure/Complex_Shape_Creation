@@ -10,13 +10,13 @@ func test_init__filled_params__assigned_to_vars():
 
 	shape = autoqfree(RegularCollisionPolygon2D.new(5, 5.0, 1.0, 1.0, 1.0, 1.0, 1))
 
-	assert_eq(shape.vertices_count, 5)
-	assert_eq(shape.size, 5.0)
-	assert_eq(shape.offset_rotation, 1.0)
-	assert_eq(shape.width, 1.0)
-	assert_eq(shape.drawn_arc, 1.0)
-	assert_eq(shape.corner_size, 1.0)
-	assert_eq(shape.corner_smoothness, 1)
+	assert_eq(shape.vertices_count, 5, "Property 'vertices_count'.")
+	assert_eq(shape.size, 5.0, "Property 'size'.")
+	assert_eq(shape.offset_rotation, 1.0, "Property 'offset_rotation'.")
+	assert_eq(shape.width, 1.0, "Property 'width'.")
+	assert_eq(shape.drawn_arc, 1.0, "Property 'drawn_arc'.")
+	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
+	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
 func test_enter_tree__shape_filled__regenerate_not_called():
 	var shape : RegularCollisionPolygon2D = partial_double(class_script).new() 
@@ -27,7 +27,7 @@ func test_enter_tree__shape_filled__regenerate_not_called():
 	shape._enter_tree()
 
 	assert_not_called(shape, "regenerate")
-	assert_false(shape._is_queued)
+	assert_false(shape._is_queued, "Variable '_is_queued' should be false (was %s)." % shape._is_queued)
 
 func test_queue_regenerate__shape_filled_outside_tree__shape_null():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
@@ -36,7 +36,7 @@ func test_queue_regenerate__shape_filled_outside_tree__shape_null():
 
 	shape.queue_regenerate()
 
-	assert_null(shape.shape)
+	assert_null(shape.shape, "Property 'shape'.")
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
 	var shape : RegularCollisionPolygon2D = partial_double(class_script).new()
@@ -46,10 +46,10 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 
 	shape.queue_regenerate()
 
-	assert_null(shape.shape, "shape should not be instantly set.")
+	assert_null(shape.shape, "Property 'shape'.")
 	await wait_for_signal(get_tree().process_frame, 10)
 	await wait_frames(2)
-	assert_not_null(shape.shape, "shape should be set at this point.")
+	assert_not_null(shape.shape, "Property 'shape'.")
 
 func test_regenerate__vertices_count_2__shape_segment_shape():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
@@ -57,7 +57,7 @@ func test_regenerate__vertices_count_2__shape_segment_shape():
 
 	shape.regenerate()
 
-	assert_true(shape.shape is SegmentShape2D, "property shape should be SegmentShape2D")
+	assert_true(shape.shape is SegmentShape2D, "Property 'shape' should be type SegmentShape2D.")
 
 func test_regenerate__uses_width__shape_concave_shape():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
@@ -65,7 +65,7 @@ func test_regenerate__uses_width__shape_concave_shape():
 
 	shape.regenerate()
 
-	assert_true(shape.shape is ConcavePolygonShape2D, "property shape should be ConcavePolygonShape2D")
+	assert_true(shape.shape is ConcavePolygonShape2D, "Property 'shape' should be type ConcavePolygonShape2D.")
 
 func test_regenerate__vertices_count_4__shape_rectangle_shape():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
@@ -73,4 +73,4 @@ func test_regenerate__vertices_count_4__shape_rectangle_shape():
 
 	shape.regenerate()
 
-	assert_true(shape.shape is RectangleShape2D, "property shape should be RectangleShape2D")
+	assert_true(shape.shape is RectangleShape2D, "Property 'shape' should be type RectangleShape2D.")
