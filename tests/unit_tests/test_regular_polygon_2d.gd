@@ -30,6 +30,20 @@ func test_init__filled__variables_assigned():
 	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
+func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape.width = 10
+	shape._is_queued = false
+	stub(shape, "_enter_tree").to_do_nothing()
+	add_child(shape)
+
+	shape._pre_redraw()
+
+	assert_true(shape.polygon.is_empty(), "Variable 'polygon' should still be an empty array.")
+	await wait_for_signal(get_tree().process_frame, 10)
+	await wait_frames(2)
+	assert_false(shape.polygon.is_empty(), "Variable 'polygon' should be a filled array at this point.")
+
 func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_regenerated():
 	var shape : RegularPolygon2D = partial_double(class_script).new()
 	stub(shape, "uses_polygon_member").to_return(true)

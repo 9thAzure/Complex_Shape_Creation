@@ -43,7 +43,7 @@ func test_pre_redraw__polygon_filled_outside_tree__polygon_empty():
 
 	star._pre_redraw()
 
-	assert_true(star.polygon.is_empty(), "Variable 'Polygon2D.polygon' should be an empty array.")
+	assert_true(star.polygon.is_empty(), "Variable 'polygon' should be an empty array.")
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
 	var star : StarPolygon2D = partial_double(class_script).new()
@@ -54,10 +54,10 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 
 	star._pre_redraw()
 
-	assert_true(star.polygon.is_empty(), "Variable 'Polygon2D.polygon' should still be an empty array.")
+	assert_true(star.polygon.is_empty(), "Variable 'polygon' should still be an empty array.")
 	await wait_for_signal(get_tree().process_frame, 10)
 	await wait_frames(2)
-	assert_false(star.polygon.is_empty(), "Variable 'Polygon2D.polygon' should be a filled array at this point.")
+	assert_false(star.polygon.is_empty(), "Variable 'polygon' should be a filled array at this point.")
 
 func test_get_star_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
 	var star : PackedVector2Array
