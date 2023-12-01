@@ -59,9 +59,15 @@ tests.
 
 ## Gut Features Style Guide
 ### Asserts
-Always use the message parameters of asserts to provide better context, like so:
+The first parameter of the comparing asserts should be the thing being tested.
+
+The assert default messages compare the values, with the custom messages added afterwards.
+The custom message should clarify what is being compared.
+
+`assert_true` and `assert_false` don't provide a default message, so a full message should be provided.
 ```swift
-assert_eq(polygon.size(), 4, "Property 'polygon' should be of size 4.")
+assert_eq(polygon.size(), 4, "size of Property 'polygon'.")
+assert_false(polygon.is_empty(), "Property 'polygon' should not be empty.")
 ```
 
 ### Doubles
@@ -97,7 +103,6 @@ func test_add__param_and_0__returns_param(p = use_parameters([1, 2, 3, 4])):
 Besides testing [interop](/tests/c#_interop/), c# shouldn't be used for any other unit tests.
 
 Only the guidelines under **format and naming** apply to c# tests. 
-The assertion default messages are generally better, so customs ones are not required.
 
 [/tests]: (/tests/)
 [GUT]: (https://github.com/bitwes/Gut)
