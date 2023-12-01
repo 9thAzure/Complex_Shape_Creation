@@ -198,7 +198,7 @@ func regenerate_polygon():
 func _init(vertices_count : int = 1, size := 10.0, inner_size := 5.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
 	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
 	if vertices_count != 1:
-		self.vertices_count = vertices_count
+		self.point_count = vertices_count
 	if size != 10.0:
 		self.size = size
 	if inner_size != 5.0:
@@ -208,7 +208,7 @@ func _init(vertices_count : int = 1, size := 10.0, inner_size := 5.0, offset_rot
 	if color != Color.WHITE:
 		self.color = color
 	if offset_position != Vector2.ZERO:
-		self.offset_position = offset_position
+		self.offset = offset_position
 	if width != -0.001:
 		self.width = width
 	if drawn_arc != TAU:

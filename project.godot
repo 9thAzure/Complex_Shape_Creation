@@ -17,8 +17,6 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=150
-window/size/viewport_height=150
 window/size/mode=2
 window/stretch/mode="viewport"
 
@@ -28,7 +26,7 @@ project/assembly_name="ShapesAddon"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/2d_regular_polygons/plugin.cfg")
+enabled=PackedStringArray("res://addons/2d_regular_polygons/plugin.cfg", "res://addons/gut/plugin.cfg")
 
 [rendering]
 
