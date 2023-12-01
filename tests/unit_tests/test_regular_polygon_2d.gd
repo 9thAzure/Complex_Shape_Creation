@@ -5,7 +5,6 @@ var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LE
 
 func before_each():
 	ignore_method_when_doubling(class_script, "_init")
-	# Gut cannot handle static methods when doubling.
 	ignore_method_when_doubling(class_script, "get_shape_vertices")
 	ignore_method_when_doubling(class_script, "_get_vertices")
 	ignore_method_when_doubling(class_script, "_find_intersection")
@@ -78,18 +77,18 @@ func test_regenerate_polygon__holed_shape_with_drawn_arc__ends_not_equal():
 	assert_almost_ne(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
 	assert_almost_ne(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
 
-func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
+func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters([PI, -PI])):
 	var shape : PackedVector2Array
 
-	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, p[0])
+	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, p)
 
 	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last element of the returned array.")
 	assert_eq(shape.size(), 4, "Size of returned array.")
 
-func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_central_point(p = use_parameters([[TAU], [PI], [-PI]])):
+func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_central_point(p = use_parameters([TAU, PI, -PI])):
 	var shape : PackedVector2Array
 
-	shape = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, p[0], false)
+	shape = RegularPolygon2D.get_shape_vertices(4, 1, 0, Vector2.ZERO, p, false)
 
 	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last element of the returned array.")
 
@@ -100,13 +99,13 @@ func test_get_shape_vertices__false_central_point__last_point_not_ZERO():
 
 	assert_false(shape[-1].is_equal_approx(Vector2.ZERO), "%s should not equal Vector2.ZERO (0, 0)" % shape[-1])
 
-func test_add_rounded_corners__various_corner_smoothness__array_size_increases_by_that_percentage(p = use_parameters([[1], [2], [3], [10]])):
+func test_add_rounded_corners__various_corner_smoothness__array_size_increases_by_that_percentage(p = use_parameters([1, 2, 3, 10])):
 	var shape := SimplePolygon2D.get_shape_vertices(3)
 	var previous_size := shape.size()
 	
-	RegularPolygon2D.add_rounded_corners(shape, 1, p[0])
+	RegularPolygon2D.add_rounded_corners(shape, 1, p)
 
-	assert_eq(shape.size(), previous_size + previous_size * p[0], "Size of modified array, %s * the original size" % (p[0] + 1))
+	assert_eq(shape.size(), previous_size + previous_size * p, "Size of modified array, %s * the original size" % (p + 1))
 
 func test_add_rounded_corners__very_small_corner_size__approximately_equal_vectors():
 	var shape := SimplePolygon2D.get_shape_vertices(3)

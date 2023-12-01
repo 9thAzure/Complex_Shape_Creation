@@ -32,7 +32,7 @@ func test_enter_tree__polygon_filled__regenerate_not_called():
 
 	shape._enter_tree()
 
-	assert_not_called(shape, "regenerate_polygon") # does not accept a custom message.
+	assert_not_called(shape, "regenerate_polygon")
 	assert_false(shape._is_queued, "Variable '_is_queued' should be false.")
 
 func test_pre_redraw__polygon_filled_outside_tree__polygon_empty():
@@ -59,10 +59,10 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 	await wait_frames(2)
 	assert_false(star.polygon.is_empty(), "Variable 'polygon' should be a filled array at this point.")
 
-func test_get_star_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
+func test_get_star_vertices__drawn_arc_PI__no_central_point(p = use_parameters([PI, -PI])):
 	var star : PackedVector2Array
 
-	star = StarPolygon2D.get_star_vertices(5, 10, 5, 0, Vector2.ZERO, p[0])
+	star = StarPolygon2D.get_star_vertices(5, 10, 5, 0, Vector2.ZERO, p)
 
 	assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last point of the returned array.")
 	assert_eq(star.size(), 6, "Size of the returned array.")
