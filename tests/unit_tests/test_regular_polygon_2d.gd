@@ -55,6 +55,29 @@ func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_r
 
 	assert_not_called(shape, "regenerate_polygon")
 
+func test_regenerate_polygon__holed_shape_without_drawn_arc__ends_equal():
+	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
+	shape.vertices_count = 4
+	shape.width = 5
+
+	shape.regenerate_polygon()
+
+	var polygon := shape.polygon
+	assert_almost_eq(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
+	assert_almost_eq(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
+
+func test_regenerate_polygon__holed_shape_with_drawn_arc__ends_not_equal():
+	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
+	shape.vertices_count = 4
+	shape.width = 5
+	shape.drawn_arc = 6
+
+	shape.regenerate_polygon()
+
+	var polygon := shape.polygon
+	assert_almost_ne(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
+	assert_almost_ne(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
+
 func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
 	var shape : PackedVector2Array
 
@@ -113,24 +136,4 @@ func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
 
 	assert_eq(new_size, 2 * previous_size + 2, "Size of modifed array, 2 + 2 * the original size")
 
-# more so integration tests. Move them there when created.
-# func test_regenerate_polygon__create_rounded_closed_holed_shape__properly_closed():
-# 	var shape := RegularPolygon2D.new()
-# 	shape.vertices_count = 4
-# 	shape.width = 5
 
-# 	shape.regenerate_polygon()
-
-# 	# to properly close a holed shape, 2 points must be added: the first points of the outer and inner ring.
-# 	assert_eq(shape.polygon.size(), 10)
-
-# func test_regenerate_polygon__create_rounded_open_holed_shape__left_open():
-# 	var shape := RegularPolygon2D.new()
-# 	shape.vertices_count = 4
-# 	shape.width = 5
-# 	shape.drawn_arc -= 0.1
-
-# 	shape.regenerate_polygon()
-
-# 	# 2 points are added because of drawn_arc. 2 additional points should not be added, as the shape is not closed.
-# 	assert_eq(shape.polygon.size(), 10)
