@@ -38,5 +38,4 @@ func test_get_shape_vertices__straight_line__not_vertical():
 
 	line = SimplePolygon2D.get_shape_vertices(2)
 
-	# assert_false(line[0].is_equal_approx(Vector2.DOWN))
-	assert_almost_ne(line[0], Vector2.ONE * 0.01, "First element of the returned array.")
+	assert_almost_ne(line[0], Vector2.DOWN, Vector2.ONE * 0.01, "First element of the returned array.")
