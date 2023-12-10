@@ -141,7 +141,7 @@ func _draw() -> void:
 		return
 	
 	if vertices_count == 2:
-		var point := _get_vertices(rotation, size)
+		var point := _get_vertices(offset_rotation, size)
 		if width > 0 and width < size:
 			var end_point :=  point * (1 - (width / size))
 			draw_line(point + offset, end_point + offset, color, -1.0, antialiased)
