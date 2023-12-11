@@ -146,6 +146,11 @@ func _draw():
 	if uses_polygon_member() or drawn_arc == 0:
 		return
 	
+	if point_count == 1:
+		var point := _get_vertices(offset_rotation, size)
+		draw_line(point, -point * inner_size / size, color, width, antialiased)
+		return
+	
 	var points := get_star_vertices(point_count, size, inner_size, offset_rotation, offset, drawn_arc)
 
 	if not is_zero_approx(corner_size):
