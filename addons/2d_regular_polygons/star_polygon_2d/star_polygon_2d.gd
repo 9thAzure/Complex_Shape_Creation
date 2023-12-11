@@ -17,6 +17,9 @@ var point_count : int = 5:
 	set(value):
 		assert(value > 0, "property 'point_count' must be greater than 0")
 		point_count = value
+		if point_count == 1 and width > 0:
+			polygon = PackedVector2Array()
+			return
 		_pre_redraw()
 		
 ## The length of each point to the center of the star.
