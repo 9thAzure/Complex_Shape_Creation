@@ -12,10 +12,10 @@ class_name StarPolygon2D
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
 
 ## The number of points the star has.
-@export_range(2, 2000)
+@export_range(1, 2000)
 var point_count : int = 5:
 	set(value):
-		assert(value > 1, "property 'point_count' must be greater than 1")
+		assert(value > 0, "property 'point_count' must be greater than 0")
 		point_count = value
 		_pre_redraw()
 		
