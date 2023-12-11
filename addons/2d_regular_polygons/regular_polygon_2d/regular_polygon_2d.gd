@@ -142,13 +142,14 @@ func _draw() -> void:
 	
 	if vertices_count == 2:
 		var point := _get_vertices(offset_rotation, size)
-		if _uses_drawn_arc():
-			var point2 := _get_vertices(offset_rotation + drawn_arc + PI, size)
+		if not _uses_drawn_arc():
+			draw_line(point + offset, -point + offset, color, width, antialiased)
+			return
+
+		var point2 := _get_vertices(offset_rotation + drawn_arc + PI, size)
+		if is_zero_approx(corner_size):
 			draw_line(point + offset, offset, color, width, antialiased)
 			draw_line(point2 + offset, offset, color, width, antialiased)
-			return;
-		
-		draw_line(point + offset, -point + offset, color, width, antialiased)
 		return
 		
 	if (vertices_count == 4 
