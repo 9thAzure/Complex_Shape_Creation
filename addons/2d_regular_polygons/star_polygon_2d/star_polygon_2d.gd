@@ -222,6 +222,7 @@ func _init(vertices_count : int = 1, size := 10.0, inner_size := 5.0, offset_rot
 func uses_polygon_member() -> bool:
 	return (
 		width > 0
+		and point_count != 1
 	)
 
 ## Returns a [PackedVector2Array] with points for forming the specified star.
