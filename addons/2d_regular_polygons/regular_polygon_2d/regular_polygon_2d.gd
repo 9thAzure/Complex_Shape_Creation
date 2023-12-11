@@ -150,7 +150,22 @@ func _draw() -> void:
 		if is_zero_approx(corner_size):
 			draw_line(point + offset, offset, color, width, antialiased)
 			draw_line(point2 + offset, offset, color, width, antialiased)
-		return
+			return
+		
+		var smoothness := corner_smoothness
+		if smoothness == 0:
+			smoothness = 16
+		var line := PackedVector2Array()
+		line.resize(3 + smoothness)
+		line[0] = point + offset
+		line[1] = point * corner_size / size + offset
+		line[-2] = point2 * corner_size / size + offset
+		line[-1] = point2 + offset
+		var i := 1
+		while i < smoothness:
+			line[i + 1] = quadratic_bezier_interpolate(line[1], offset, line[-2], i / (smoothness as float))
+			i += 1
+		draw_polyline(line, color, width, antialiased)
 		
 	if (vertices_count == 4 
 		and is_zero_approx(offset_rotation)
