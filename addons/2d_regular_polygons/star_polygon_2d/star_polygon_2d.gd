@@ -159,10 +159,7 @@ func _draw():
 			draw_line(point2 + offset, offset, color, width_value, antialiased)
 			return
 		
-		var smoothness := corner_smoothness
-		if smoothness == 0:
-			smoothness = 16
-
+		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
 		var multiplier1 := corner_size / size if corner_size <= size else 1.0
 		var multiplier2 := corner_size / inner_size if corner_size <= inner_size else 1.0
 		var line := PackedVector2Array()
