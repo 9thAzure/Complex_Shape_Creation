@@ -166,6 +166,7 @@ func _draw() -> void:
 			line[i + 1] = quadratic_bezier_interpolate(line[1], offset, line[-2], i / (smoothness as float))
 			i += 1
 		draw_polyline(line, color, width, antialiased)
+		return
 		
 	if (vertices_count == 4 
 		and is_zero_approx(offset_rotation)
