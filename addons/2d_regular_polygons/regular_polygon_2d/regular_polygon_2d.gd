@@ -142,14 +142,15 @@ func _draw() -> void:
 	
 	if vertices_count == 2:
 		var point := _get_vertices(offset_rotation, size)
+		var width_value = width if width != 0 else -1
 		if not _uses_drawn_arc():
-			draw_line(point + offset, -point + offset, color, width, antialiased)
+			draw_line(point + offset, -point + offset, color, width_value, antialiased)
 			return
 
 		var point2 := _get_vertices(offset_rotation + drawn_arc + PI, size)
 		if is_zero_approx(corner_size):
-			draw_line(point + offset, offset, color, width, antialiased)
-			draw_line(point2 + offset, offset, color, width, antialiased)
+			draw_line(point + offset, offset, color, width_value, antialiased)
+			draw_line(point2 + offset, offset, color, width_value, antialiased)
 			return
 		
 		var smoothness := corner_smoothness
@@ -165,7 +166,7 @@ func _draw() -> void:
 		while i < smoothness:
 			line[i + 1] = quadratic_bezier_interpolate(line[1], offset, line[-2], i / (smoothness as float))
 			i += 1
-		draw_polyline(line, color, width, antialiased)
+		draw_polyline(line, color, width_value, antialiased)
 		return
 		
 	if (vertices_count == 4 
