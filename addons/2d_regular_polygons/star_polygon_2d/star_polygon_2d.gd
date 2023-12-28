@@ -147,7 +147,7 @@ func _draw():
 		return
 	
 	if point_count == 1:
-		var point := _get_vertices(offset_rotation, size)
+		var point := -_get_vertices(offset_rotation, size)
 		draw_line(point, -point * inner_size / size, color, width, antialiased)
 		return
 	
