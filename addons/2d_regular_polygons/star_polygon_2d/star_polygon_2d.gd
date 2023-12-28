@@ -147,8 +147,14 @@ func _draw():
 		return
 	
 	if point_count == 1:
-		var point := -_get_vertices(offset_rotation, size)
-		draw_line(point, -point * inner_size / size, color, width, antialiased)
+		var point := -_get_vertices(offset_rotation + drawn_arc, size)
+		if drawn_arc <= -TAU or drawn_arc >= TAU:
+			draw_line(point, -point * inner_size / size, color, width, antialiased)
+			return
+		
+		var point2 := _get_vertices(offset_rotation, inner_size)
+		draw_line(point, offset, color, width, antialiased)
+		draw_line(point2, offset, color, width, antialiased)
 		return
 	
 	var points := get_star_vertices(point_count, size, inner_size, offset_rotation, offset, drawn_arc)
