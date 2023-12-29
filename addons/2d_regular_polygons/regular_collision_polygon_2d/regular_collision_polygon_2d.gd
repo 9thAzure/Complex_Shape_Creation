@@ -115,10 +115,25 @@ func _enter_tree() -> void:
 func regenerate() -> void:
 	_is_queued = false
 	if vertices_count == 2:
-		var line := SegmentShape2D.new()
-		line.a = size * (Vector2.UP if is_zero_approx(offset_rotation) else Vector2(sin(offset_rotation), -cos(offset_rotation)))
-		line.b = -line.a
-		shape = line
+		var point1 = SimplePolygon2D._get_vertices(offset_rotation) * size
+		if drawn_arc <= -TAU or drawn_arc >= TAU:
+			var line := SegmentShape2D.new()
+			line.a = point1
+			line.b = -line.a
+			shape = line
+			return
+		
+		var point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
+		var lines := ConcavePolygonShape2D.new()
+		if is_zero_approx(corner_size):
+			var array := PackedVector2Array()
+			array.resize(4)
+			array[0] = point1
+			array[1] = Vector2.ZERO
+			array[2] = Vector2.ZERO
+			array[3] = point2
+			lines.segments = array
+			shape = lines
 		return
 	
 	if drawn_arc == 0:
