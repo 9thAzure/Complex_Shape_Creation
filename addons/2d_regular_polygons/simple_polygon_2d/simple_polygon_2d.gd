@@ -60,11 +60,11 @@ func _draw() -> void:
 	
 	if (vertices_count == 2):
 		if offset_rotation == 0:
-			draw_line(Vector2.UP * size, Vector2.DOWN * size, color)
+			draw_line(Vector2.UP * size + offset_position, Vector2.DOWN * size + offset_position, color)
 			return
 		
 		var point1 := Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
-		draw_line(point1, -point1, color)
+		draw_line(point1 + offset_position, -point1 + offset_position, color)
 		return
 	
 	if (vertices_count == 4 && offset_rotation == 0):
