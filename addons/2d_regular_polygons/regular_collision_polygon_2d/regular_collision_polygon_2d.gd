@@ -134,6 +134,23 @@ func regenerate() -> void:
 			array[3] = point2
 			lines.segments = array
 			shape = lines
+			return
+		
+		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
+		var multiplier := corner_size / size if corner_size <= size else 1.0
+		var array := PackedVector2Array()
+		array.resize((smoothness + 2) * 2)
+		array[0] = point1
+		array[1] = point1 * multiplier
+		array[-2] = point2 * multiplier
+		array[-1] = point2
+		var i := 1
+		while i <= smoothness:
+			array[i * 2] = array[i * 2 - 1]
+			array[i * 2 + 1] = RegularPolygon2D.quadratic_bezier_interpolate(array[1], Vector2.ZERO, array[-2], i / (smoothness as float))
+			i += 1
+		lines.segments = array
+		shape = lines
 		return
 	
 	if drawn_arc == 0:
