@@ -265,12 +265,20 @@ static func widen_lines(segments : PackedVector2Array, width : float) -> void:
 	slope = segments[0] - segments[1]
 	segments[-1] = segments[0] + slope
 
+	var next_point := segments[original_size]
+	var point := segments[original_size - 1]
+	slope = next_point - point
+	var tangent := Vector2(slope.y, -slope.x).normalized() * width / 2
 	for i in original_size:
 		var index := original_size - i - 1
-		var point := segments[index]
-		var next_point = segments[index + 1]
 		var previous_point = segments[index - 1]
-		var tangent : Vector2
+		print(index)
+		print(segments)
+		print(previous_point, ", ", point, ", ", next_point)
+
+		# next points
+		segments[index * 2] = point + tangent
+		segments[index * -2 - 3] = point - tangent
 
 		# previous points
 		slope = point - previous_point
@@ -278,9 +286,6 @@ static func widen_lines(segments : PackedVector2Array, width : float) -> void:
 		segments[index * 2 - 1] = point + tangent
 		segments[index * -2 - 2] = point - tangent
 
-		# next points
-		slope = next_point - point
-		tangent = Vector2(slope.y, -slope.x).normalized() * width / 2
-		segments[index * 2] = point + tangent
-		segments[index * -2 - 3] = point - tangent
+		next_point = point
+		point = previous_point
 		
