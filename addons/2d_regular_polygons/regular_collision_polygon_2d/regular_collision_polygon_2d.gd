@@ -125,17 +125,11 @@ func regenerate() -> void:
 				return
 			
 			var line := ConcavePolygonShape2D.new()
-			var tangent := SimplePolygon2D._get_vertices(offset_rotation + PI / 2) * width / 2
 			var array := PackedVector2Array()
-			array.resize(8)
-			array[0] = point1 + tangent
-			array[2] = point1 - tangent
-			array[4] = -point1 - tangent
-			array[6] = -point1 + tangent
-			array[1] = array[2]
-			array[3] = array[4]
-			array[5] = array[6]
-			array[7] = array[0]
+			array.resize(2)
+			array[0] = point1
+			array[1] = -point1
+			widen_lines(array, width)
 			line.segments = array
 			shape = line
 			return
@@ -259,3 +253,34 @@ func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0
 		self.corner_size = corner_size
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
+
+static func widen_lines(segments : PackedVector2Array, width : float) -> void:
+	var original_size := segments.size()
+	var size := original_size * 4
+	segments.resize(size)
+
+	var slope := segments[original_size - 1] - segments[original_size - 2]
+	segments[original_size] = segments[original_size - 1] + slope
+
+	slope = segments[0] - segments[1]
+	segments[-1] = segments[0] + slope
+
+	for i in original_size:
+		var index := original_size - i - 1
+		var point := segments[index]
+		var next_point = segments[index + 1]
+		var previous_point = segments[index - 1]
+		var tangent : Vector2
+
+		# previous points
+		slope = point - previous_point
+		tangent = Vector2(slope.y, -slope.x).normalized() * width / 2
+		segments[index * 2 - 1] = point + tangent
+		segments[index * -2 - 2] = point - tangent
+
+		# next points
+		slope = next_point - point
+		tangent = Vector2(slope.y, -slope.x).normalized() * width / 2
+		segments[index * 2] = point + tangent
+		segments[index * -2 - 3] = point - tangent
+		
