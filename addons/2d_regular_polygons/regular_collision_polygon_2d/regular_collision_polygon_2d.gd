@@ -143,6 +143,8 @@ func regenerate() -> void:
 			array[1] = Vector2.ZERO
 			array[2] = Vector2.ZERO
 			array[3] = point2
+			if width > 0:
+				widen_lines(array, width)
 			lines.segments = array
 			shape = lines
 			return
@@ -160,6 +162,8 @@ func regenerate() -> void:
 			array[i * 2] = array[i * 2 - 1]
 			array[i * 2 + 1] = RegularPolygon2D.quadratic_bezier_interpolate(array[1], Vector2.ZERO, array[-2], i / (smoothness as float))
 			i += 1
+		if width > 0:
+			widen_lines(array, width)
 		lines.segments = array
 		shape = lines
 		return
