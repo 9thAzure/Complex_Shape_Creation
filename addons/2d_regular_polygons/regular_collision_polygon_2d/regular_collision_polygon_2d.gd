@@ -276,9 +276,6 @@ static func widen_lines(segments : PackedVector2Array, width : float) -> void:
 	for i in original_size:
 		var index := original_size - i - 1
 		var previous_point = segments[index - 1]
-		print(index)
-		print(segments)
-		print(previous_point, ", ", point, ", ", next_point)
 
 		# next points
 		segments[index * 2] = point + tangent
