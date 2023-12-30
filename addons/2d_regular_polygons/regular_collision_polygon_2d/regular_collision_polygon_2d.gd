@@ -117,9 +117,26 @@ func regenerate() -> void:
 	if vertices_count == 2:
 		var point1 = SimplePolygon2D._get_vertices(offset_rotation) * size
 		if drawn_arc <= -TAU or drawn_arc >= TAU:
-			var line := SegmentShape2D.new()
-			line.a = point1
-			line.b = -line.a
+			if width <= 0:
+				var line := SegmentShape2D.new()
+				line.a = point1
+				line.b = -line.a
+				shape = line
+				return
+			
+			var line := ConcavePolygonShape2D.new()
+			var tangent := SimplePolygon2D._get_vertices(offset_rotation + PI / 2) * width / 2
+			var array := PackedVector2Array()
+			array.resize(8)
+			array[0] = point1 + tangent
+			array[2] = point1 - tangent
+			array[4] = -point1 - tangent
+			array[6] = -point1 + tangent
+			array[1] = array[2]
+			array[3] = array[4]
+			array[5] = array[6]
+			array[7] = array[0]
+			line.segments = array
 			shape = line
 			return
 		
