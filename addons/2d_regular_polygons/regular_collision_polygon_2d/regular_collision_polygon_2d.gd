@@ -260,33 +260,34 @@ func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0
 
 static func widen_lines(segments : PackedVector2Array, width : float) -> void:
 	var original_size := segments.size()
-	var size := original_size * 4
+	var size := original_size * 2 + 4
 	segments.resize(size)
 
-	var slope := segments[original_size - 1] - segments[original_size - 2]
-	segments[original_size] = segments[original_size - 1] + slope
+	var previous_slope : Vector2
+	for i in original_size / 2:
+		var point1 := segments[i * 2]
+		var point2 := segments[i * 2 + 1]
+		var slope := point2 - point1 
+		var tangent := Vector2(slope.y, -slope.x).normalized() * width / 2
 
-	slope = segments[0] - segments[1]
-	segments[-1] = segments[0] + slope
+		segments[i * 2] = point1 + tangent
+		segments[i * -2 - 3] = point1 - tangent
 
-	var next_point := segments[original_size]
-	var point := segments[original_size - 1]
-	slope = next_point - point
-	var tangent := Vector2(slope.y, -slope.x).normalized() * width / 2
-	for i in original_size:
-		var index := original_size - i - 1
-		var previous_point = segments[index - 1]
+		segments[i * 2 + 1] = point2 + tangent
+		segments[i * -2 - 4] = point2 - tangent
 
-		# next points
-		segments[index * 2] = point + tangent
-		segments[index * -2 - 3] = point - tangent
+		if i != 0:
+			var previous_point := segments[i * 2 - 1]
+			segments[i * 2] += slope * RegularPolygon2D._find_intersection(point1 + tangent, slope, previous_point, previous_slope)
+			segments[i * 2 - 1] = segments[i * 2]
 
-		# previous points
-		slope = point - previous_point
-		tangent = Vector2(slope.y, -slope.x).normalized() * width / 2
-		segments[index * 2 - 1] = point + tangent
-		segments[index * -2 - 2] = point - tangent
-
-		next_point = point
-		point = previous_point
+			previous_point = segments[i * -2 - 2]
+			segments[i * -2 - 3] += slope * RegularPolygon2D._find_intersection(point1 - tangent, slope, previous_point, previous_slope)
+			segments[i * -2 - 2] = segments[i * -2 - 3]
 		
+		previous_slope = slope
+	
+	segments[-1] = segments[0]
+	segments[-2] = segments[-3]
+	segments[original_size] = segments[original_size - 1]
+	segments[original_size + 1] = segments[original_size + 2]
