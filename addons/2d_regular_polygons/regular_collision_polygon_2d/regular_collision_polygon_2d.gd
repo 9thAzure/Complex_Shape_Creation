@@ -124,6 +124,20 @@ func regenerate() -> void:
 				shape = line
 				return
 			
+			# using rectangle every 90º, sin = 0 every 180º.
+			if is_zero_approx(sin(offset_rotation * 2)):
+				# cos is positive every 0 ± 180º, negative every 90 ± 180º. This corralates to vertical / horizontal lines.
+				var slope := cos(offset_rotation * 2)
+				var rect_line := RectangleShape2D.new()
+				if slope > 0:
+					rect_line.size.y = size * 2
+					rect_line.size.x = width
+				else:
+					rect_line.size.y = width
+					rect_line.size.x = size * 2
+				shape = rect_line
+				return
+			
 			var line := ConcavePolygonShape2D.new()
 			var array := PackedVector2Array()
 			array.resize(2)
