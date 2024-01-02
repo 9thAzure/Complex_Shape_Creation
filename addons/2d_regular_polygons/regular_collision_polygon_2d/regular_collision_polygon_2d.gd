@@ -11,7 +11,7 @@ extends CollisionShape2D
 ## See [method queue_regenerate] for its effects.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
-## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
+## [br][br]Certain properties with circles will use a 32-sided polygon instead.
 @export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):

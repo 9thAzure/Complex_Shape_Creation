@@ -7,7 +7,7 @@ extends Polygon2D
 ##
 ## A node that draws regular shapes, with some complex properties.
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
-## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
+## Certain properties with circles will use a 32-sided polygon instead.
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
 ## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
@@ -16,7 +16,7 @@ extends Polygon2D
 ## This can be worked around by slightly altering properties, like subtracting [code]0.01[/code] from [member width] or [member drawn_arc].
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
-## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
+## [br][br]Certain properties with circles will use a 32-sided polygon instead.
 @export_range(1, 2000, 1) 
 var vertices_count : int = 1:
 	set(value):
