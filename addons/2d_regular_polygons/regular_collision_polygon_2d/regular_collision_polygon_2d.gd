@@ -143,7 +143,7 @@ func regenerate() -> void:
 			array.resize(2)
 			array[0] = point1
 			array[1] = -point1
-			widen_lines(array, width)
+			widen_lines(array, width, false)
 			line.segments = array
 			shape = line
 			return
@@ -158,7 +158,7 @@ func regenerate() -> void:
 			array[2] = Vector2.ZERO
 			array[3] = point2
 			if width > 0:
-				widen_lines(array, width)
+				widen_lines(array, width, false)
 			lines.segments = array
 			shape = lines
 			return
@@ -177,7 +177,7 @@ func regenerate() -> void:
 			array[i * 2 + 1] = RegularPolygon2D.quadratic_bezier_interpolate(array[1], Vector2.ZERO, array[-2], i / (smoothness as float))
 			i += 1
 		if width > 0:
-			widen_lines(array, width)
+			widen_lines(array, width, true)
 		lines.segments = array
 		shape = lines
 		return
@@ -272,7 +272,7 @@ func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
 
-static func widen_lines(segments : PackedVector2Array, width : float) -> void:
+static func widen_lines(segments : PackedVector2Array, width : float, join_perimeter : bool) -> void:
 	var original_size := segments.size()
 	var size := original_size * 2 + 4
 	segments.resize(size)
@@ -290,7 +290,7 @@ static func widen_lines(segments : PackedVector2Array, width : float) -> void:
 		segments[i * 2 + 1] = point2 + tangent
 		segments[i * -2 - 4] = point2 - tangent
 
-		if i != 0:
+		if join_perimeter and i != 0:
 			var previous_point := segments[i * 2 - 1]
 			segments[i * 2] += slope * RegularPolygon2D._find_intersection(point1 + tangent, slope, previous_point, previous_slope)
 			segments[i * 2 - 1] = segments[i * 2]
