@@ -47,6 +47,7 @@ public class RegularCollisionPolygon2D
     /// <remarks>
     /// It only has an effect with values greater than <c>0</c>.
     /// Values greater than or equal to <see cref="size"/> force the usage of <see cref="ConvexPolygonShape2D"/>.
+    /// <br/><br/><b>Note</b>: using this property with lines may not produce the same shape as <see cref="RegularPolygon2D"/>.
     /// </remarks>
     public float Width
     {
