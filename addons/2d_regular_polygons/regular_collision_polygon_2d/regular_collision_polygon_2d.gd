@@ -44,7 +44,8 @@ var offset_rotation : float = 0:
 @export_group("complex")
 
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
-## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D].
+## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D], except for lines.
+## [br][br][b]Note[/b]: using this property with lines may not produce the same shape as [RegularPolygon2D].
 @export_range(0, 10, 0.001, "or_greater", "hide_slider") 
 var width : float = 0:
 	set(value):
@@ -54,6 +55,8 @@ var width : float = 0:
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or smaller than [code]-360[/code] draws a full shape. It starts in the middle of the base of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]For lines, this property rotates the top half of the line.
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not change [member CollisionShape2D.shape].
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -64,6 +67,8 @@ var drawn_arc_degrees : float = 360:
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
 ## Values greater than [constant @GDScript.TAU] or smaller than -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the base of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]For lines, this property rotates the top half of the line.
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not change [member CollisionShape2D.shape].
 @export_range(-360, 360, 0.1, "radians") 
 var drawn_arc : float = TAU:
@@ -73,6 +78,8 @@ var drawn_arc : float = TAU:
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
+## [br][br]This only has an effect on lines if [member drawn_arc] is also used.
+## The maximum possible distance is the ends of the line from the middle.
 @export_range(0, 5, 0.001, "or_greater", "hide_slider")
 var corner_size : float = 0.0:
 	set(value):
@@ -81,6 +88,7 @@ var corner_size : float = 0.0:
 		queue_regenerate()
 
 ## How many lines make up the corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
+## This only has an effect if [member corner_size] is used.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
