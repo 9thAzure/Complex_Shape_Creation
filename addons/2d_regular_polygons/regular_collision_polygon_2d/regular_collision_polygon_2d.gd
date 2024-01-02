@@ -164,7 +164,7 @@ func regenerate() -> void:
 			return
 		
 		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
-		var multiplier := corner_size / size if corner_size <= size else 1.0
+		var multiplier := corner_size / size if corner_size < size else 0.999999
 		var array := PackedVector2Array()
 		array.resize((smoothness + 2) * 2)
 		array[0] = point1
