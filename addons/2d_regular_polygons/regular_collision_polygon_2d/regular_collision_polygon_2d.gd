@@ -163,6 +163,17 @@ func regenerate() -> void:
 			shape = lines
 			return
 		
+		if is_equal_approx(PI, abs(drawn_arc)):
+			var array := PackedVector2Array()
+			array.resize(2)
+			array[0] = point2
+			array[1] = Vector2.ZERO
+			if width > 0:
+				widen_lines(array, width, false)
+			lines.segments = array
+			shape = lines
+			return
+		
 		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
 		var multiplier := corner_size / size if corner_size < size else 0.999999
 		var array := PackedVector2Array()
