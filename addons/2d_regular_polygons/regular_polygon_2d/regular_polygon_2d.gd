@@ -75,7 +75,7 @@ var width : float = -0.001:
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]For lines, this property rotates the top half of the line.
-## [b]Note[/b]: this leaves a gap between the 2 lines on the outer angle. This can be resolved by using [member corner_size].
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -87,7 +87,7 @@ var drawn_arc_degrees : float = 360:
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
 ## [br][br]For lines, this property rotates the top half of the line.
-## [b]Note[/b]: this leaves a gap between the 2 lines on the outer angle. This can be resolved by using [member corner_size].
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360, 0.01, "radians") 
 var drawn_arc : float = TAU:
