@@ -168,7 +168,7 @@ func regenerate() -> void:
 			array[2] = Vector2.ZERO
 			array[3] = point2
 			if width > 0:
-				widen_lines(array, width, false)
+				widen_line(array, width, false)
 				array.resize(16)
 				array[12] = array[2]
 				array[13] = array[7]
@@ -184,7 +184,7 @@ func regenerate() -> void:
 			array[0] = point2
 			array[1] = Vector2.ZERO
 			if width > 0:
-				widen_lines(array, width, false)
+				widen_line(array, width, false)
 			lines.segments = array
 			shape = lines
 			return
@@ -203,7 +203,7 @@ func regenerate() -> void:
 			array[i * 2 + 1] = RegularPolygon2D.quadratic_bezier_interpolate(array[1], Vector2.ZERO, array[-2], i / (smoothness as float))
 			i += 1
 		if width > 0:
-			widen_lines(array, width, true)
+			widen_line(array, width, true)
 		lines.segments = array
 		shape = lines
 		return
@@ -298,7 +298,11 @@ func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
 
-static func widen_lines(segments : PackedVector2Array, width : float, join_perimeter : bool) -> void:
+## Modifies [param segments] to form an outline of the line with the given [param width]. It closes the ends of the line.
+## [param join_perimeter] controls whether the function should extend (or shorten) line segments to form a propery closed shape.
+## [br][br][param segments] should contain pairs of points for each segment (see [property ConcavePolygonShape2D.segments]),
+## and the function asssumes that it forms a single line.
+static func widen_line(segments : PackedVector2Array, width : float, join_perimeter : bool) -> void:
 	assert(segments.size() & 1 == 0, "parameter 'segments' should be an even size (was %s)." % segments.size())
 	var original_size := segments.size()
 	var size := original_size * 2 + 4
