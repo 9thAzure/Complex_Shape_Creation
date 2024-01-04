@@ -154,7 +154,6 @@ func regenerate() -> void:
 			array[1] = point1 + tangent
 			array[2] = -point1 + tangent
 			array[3] = -point1 - tangent
-			# widen_lines(array, width, false)
 			line.points = array
 			shape = line
 			return
@@ -170,6 +169,11 @@ func regenerate() -> void:
 			array[3] = point2
 			if width > 0:
 				widen_lines(array, width, false)
+				array.resize(16)
+				array[12] = array[2]
+				array[13] = array[7]
+				array[14] = array[1]
+				array[15] = array[8]
 			lines.segments = array
 			shape = lines
 			return
