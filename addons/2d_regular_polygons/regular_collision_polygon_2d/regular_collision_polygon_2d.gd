@@ -292,6 +292,7 @@ func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0
 		self.corner_smoothness = corner_smoothness
 
 static func widen_lines(segments : PackedVector2Array, width : float, join_perimeter : bool) -> void:
+	assert(segments.size() & 1 == 0, "parameter 'segments' should be an even size (was %s)." % segments.size())
 	var original_size := segments.size()
 	var size := original_size * 2 + 4
 	segments.resize(size)
