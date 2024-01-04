@@ -146,13 +146,16 @@ func regenerate() -> void:
 				shape = rect_line
 				return
 			
-			var line := ConcavePolygonShape2D.new()
+			var line := ConvexPolygonShape2D.new()
 			var array := PackedVector2Array()
-			array.resize(2)
-			array[0] = point1
-			array[1] = -point1
-			widen_lines(array, width, false)
-			line.segments = array
+			array.resize(4)
+			var tangent := Vector2(point1.y, -point1.x).normalized() * width / 2
+			array[0] = point1 - tangent
+			array[1] = point1 + tangent
+			array[2] = -point1 + tangent
+			array[3] = -point1 - tangent
+			# widen_lines(array, width, false)
+			line.points = array
 			shape = line
 			return
 		
