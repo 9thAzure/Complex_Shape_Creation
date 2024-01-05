@@ -128,7 +128,7 @@ public class RegularCollisionPolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     public static CollisionShape2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0,
         float width = 0, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
-        => GDScriptEquivalent.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
+    => GDScriptEquivalent.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
 
     /// <summary>
     /// Queues <see cref="Regenerate"/> for the next process frame. If this method is called multiple times, the shape is only regenerated once.
