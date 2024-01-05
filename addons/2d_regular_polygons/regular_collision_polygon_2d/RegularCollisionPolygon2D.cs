@@ -15,6 +15,7 @@ public class RegularCollisionPolygon2D
     public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
+    private static readonly Lazy<CollisionShape2D> _shared = new(() => GDScriptEquivalent.New().As<CollisionShape2D>());
 
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public CollisionShape2D Instance { get; }
@@ -141,6 +142,12 @@ public class RegularCollisionPolygon2D
     /// </summary>
     public void Regenerate()
     => Instance.Call(MethodName.Regenerate);
+
+    public static Vector2[] WidenPolyline(Vector2[] segments, float width, bool joinPerimeter)
+    => _shared.Value.Call(MethodName.WidenPolyline, segments, width, joinPerimeter).AsVector2Array();
+
+    public static Vector2[] WidenMultiLine(Vector2[] segments, float width)
+    => _shared.Value.Call(MethodName.WidenMultiline, segments, width).AsVector2Array();
 
     public static implicit operator CollisionShape2D(RegularCollisionPolygon2D instance) => instance.Instance;
     public static explicit operator RegularCollisionPolygon2D(CollisionShape2D instance) => new(instance);
