@@ -168,12 +168,7 @@ func regenerate() -> void:
 			array[2] = Vector2.ZERO
 			array[3] = point2
 			if width > 0:
-				widen_line(array, width, false)
-				array.resize(16)
-				array[12] = array[2]
-				array[13] = array[7]
-				array[14] = array[1]
-				array[15] = array[8]
+				widen_multiline(array, width)
 			lines.segments = array
 			shape = lines
 			return
@@ -336,3 +331,27 @@ static func widen_line(segments : PackedVector2Array, width : float, join_perime
 	segments[-2] = segments[-3]
 	segments[original_size] = segments[original_size - 1]
 	segments[original_size + 1] = segments[original_size + 2]
+
+static func widen_multiline(segments : PackedVector2Array, width : float) -> void:
+	var original_size := segments.size()
+	segments.resize(original_size * 4)
+
+	for i in original_size / 2:
+		var index := original_size / 2 - i - 1
+
+		var point1 := segments[index * 2]
+		var point2 := segments[index * 2 + 1]
+		var slope := point2 - point1
+		var tangent := Vector2(slope.y, -slope.x).normalized() * width / 2
+
+		segments[index * 8 + 7] = point1 + tangent
+		segments[index * 8    ] = point1 + tangent
+
+		segments[index * 8 + 1] = point2 + tangent
+		segments[index * 8 + 2] = point2 + tangent
+
+		segments[index * 8 + 3] = point2 - tangent
+		segments[index * 8 + 4] = point2 - tangent
+
+		segments[index * 8 + 5] = point1 - tangent
+		segments[index * 8 + 6] = point1 - tangent
