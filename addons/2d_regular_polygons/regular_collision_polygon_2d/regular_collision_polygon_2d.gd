@@ -332,6 +332,9 @@ static func widen_polyline(segments : PackedVector2Array, width : float, join_pe
 	segments[original_size] = segments[original_size - 1]
 	segments[original_size + 1] = segments[original_size + 2]
 
+## modifies [param segements] to to form the outlines of each disconnected segment with the given [param width].
+## For interconnected segments, use [method widen_polyline].
+## [br][br][param segments] should contain pairs of points for each segment (see [property ConcavePolygonShape2D.segments]),
 static func widen_multiline(segments : PackedVector2Array, width : float) -> void:
 	var original_size := segments.size()
 	segments.resize(original_size * 4)
