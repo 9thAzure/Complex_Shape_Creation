@@ -360,10 +360,10 @@ static func widen_multiline(segments : PackedVector2Array, width : float) -> voi
 		segments[index * 8 + 6] = point1 - tangent
 
 # functions for c# interop.
-static func _widen_polyline(segments : PackedVector2Array, width : float, join_perimeter : bool) -> PackedVector2Array:
+static func _widen_polyline_result(segments : PackedVector2Array, width : float, join_perimeter : bool) -> PackedVector2Array:
 	widen_polyline(segments, width, join_perimeter)
 	return segments
 
-static func _widen_multiline(segments : PackedVector2Array, width : float) -> PackedVector2Array:
+static func _widen_multiline_result(segments : PackedVector2Array, width : float) -> PackedVector2Array:
 	widen_multiline(segments, width)
 	return segments
