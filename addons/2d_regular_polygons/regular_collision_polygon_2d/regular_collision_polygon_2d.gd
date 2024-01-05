@@ -293,10 +293,10 @@ func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
 
-## Modifies [param segments] to form an outline of the line with the given [param width]. It closes the ends of the line.
+## Modifies [param segments] to form an outline of the interconnected segments with the given [param width].
 ## [param join_perimeter] controls whether the function should extend (or shorten) line segments to form a propery closed shape.
-## [br][br][param segments] should contain pairs of points for each segment (see [property ConcavePolygonShape2D.segments]),
-## and the function asssumes that it forms a single line.
+## For disconnected segments, use [method widen_polyline].
+## [br][br][param segments] should contain pairs of points for each segment (see [property ConcavePolygonShape2D.segments]).
 static func widen_polyline(segments : PackedVector2Array, width : float, join_perimeter : bool) -> void:
 	assert(segments.size() & 1 == 0, "parameter 'segments' should be an even size (was %s)." % segments.size())
 	var original_size := segments.size()
