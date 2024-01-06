@@ -143,9 +143,26 @@ public class RegularCollisionPolygon2D
     public void Regenerate()
     => Instance.Call(MethodName.Regenerate);
 
+    /// <summary>
+    /// Returns a modified copy of <paramref name="segments"/> to form an outline of the interconnected segments with the given <paramref name="width"/>.
+    /// </summary>
+    /// <remarks>
+    /// For disconnected segments, use <see cref="WidenMultiLine"/>.
+    /// </remarks>
+    /// <param name="segments">The pairs of points representing each segment (see <seealso cref="ConcavePolygonShape2D.Segments"/>).</param>
+    /// <param name="width">The width of each segment</param>
+    /// <param name="joinPerimeter">Controls whether the function should extend (or shorten) line segments to form a propery closed shape.</param>
     public static Vector2[] WidenPolyline(Vector2[] segments, float width, bool joinPerimeter)
     => _shared.Value.Call(MethodName.WidenPolyline, segments, width, joinPerimeter).AsVector2Array();
 
+    /// <summary>
+    /// Returns a modified copy of <paramref name="segments"/> to form an outline of every disconnected segment with the given <paramref name="width"/>.
+    /// </summary>
+    /// <remarks>
+    /// For interconnected segments, use <see cref="WidenPolyline"/>.
+    /// </remarks>
+    /// <param name="segments">The pairs of points representing each segment (see <seealso cref="ConcavePolygonShape2D.Segments"/>).</param>
+    /// <param name="width">The width of each segment</param>
     public static Vector2[] WidenMultiLine(Vector2[] segments, float width)
     => _shared.Value.Call(MethodName.WidenMultiline, segments, width).AsVector2Array();
 
