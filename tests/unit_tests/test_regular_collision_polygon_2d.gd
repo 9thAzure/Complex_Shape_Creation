@@ -4,6 +4,10 @@ var class_script := preload("res://addons/2d_regular_polygons/regular_collision_
 
 func before_each():
 	ignore_method_when_doubling(class_script, "_init")
+	ignore_method_when_doubling(class_script, "widen_polyline")
+	ignore_method_when_doubling(class_script, "widen_multiline")
+	ignore_method_when_doubling(class_script, "_widen_polyline_result")
+	ignore_method_when_doubling(class_script, "_widen_multiline_result");
 
 func test_init__filled_params__assigned_to_vars():
 	var shape : RegularCollisionPolygon2D
