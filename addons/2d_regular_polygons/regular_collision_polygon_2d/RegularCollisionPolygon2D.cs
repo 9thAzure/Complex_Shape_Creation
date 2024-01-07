@@ -15,6 +15,7 @@ public class RegularCollisionPolygon2D
     public const string GDScriptEquivalentPath = "res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
+    private static readonly Lazy<CollisionShape2D> _shared = new(() => GDScriptEquivalent.New().As<CollisionShape2D>());
 
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public CollisionShape2D Instance { get; }
@@ -47,6 +48,7 @@ public class RegularCollisionPolygon2D
     /// <remarks>
     /// It only has an effect with values greater than <c>0</c>.
     /// Values greater than or equal to <see cref="size"/> force the usage of <see cref="ConvexPolygonShape2D"/>.
+    /// <br/><br/><b>Note</b>: using this property with lines may not produce the same shape as <see cref="RegularPolygon2D"/>.
     /// </remarks>
     public float Width
     {
@@ -126,7 +128,7 @@ public class RegularCollisionPolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     public static CollisionShape2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0,
         float width = 0, float drawnArc = Mathf.Tau, float cornerSize = 0, int cornerSmoothness = 0)
-        => GDScriptEquivalent.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
+    => GDScriptEquivalent.New(verticesCount, size, offsetRotation, width, drawnArc, cornerSize, cornerSmoothness).As<CollisionShape2D>();
 
     /// <summary>
     /// Queues <see cref="Regenerate"/> for the next process frame. If this method is called multiple times, the shape is only regenerated once.
@@ -140,6 +142,29 @@ public class RegularCollisionPolygon2D
     /// </summary>
     public void Regenerate()
     => Instance.Call(MethodName.Regenerate);
+
+    /// <summary>
+    /// Returns a modified copy of <paramref name="segments"/> to form an outline of the interconnected segments with the given <paramref name="width"/>.
+    /// </summary>
+    /// <remarks>
+    /// For disconnected segments, use <see cref="WidenMultiline"/>.
+    /// </remarks>
+    /// <param name="segments">The pairs of points representing each segment (see <seealso cref="ConcavePolygonShape2D.Segments"/>).</param>
+    /// <param name="width">The width of each segment</param>
+    /// <param name="joinPerimeter">Controls whether the function should extend (or shorten) line segments to form a propery closed shape.</param>
+    public static Vector2[] WidenPolyline(Vector2[] segments, float width, bool joinPerimeter)
+    => _shared.Value.Call(MethodName.WidenPolyline, segments, width, joinPerimeter).AsVector2Array();
+
+    /// <summary>
+    /// Returns a modified copy of <paramref name="segments"/> to form an outline of every disconnected segment with the given <paramref name="width"/>.
+    /// </summary>
+    /// <remarks>
+    /// For interconnected segments, use <see cref="WidenPolyline"/>.
+    /// </remarks>
+    /// <param name="segments">The pairs of points representing each segment (see <seealso cref="ConcavePolygonShape2D.Segments"/>).</param>
+    /// <param name="width">The width of each segment</param>
+    public static Vector2[] WidenMultiline(Vector2[] segments, float width)
+    => _shared.Value.Call(MethodName.WidenMultiline, segments, width).AsVector2Array();
 
     public static implicit operator CollisionShape2D(RegularCollisionPolygon2D instance) => instance.Instance;
     public static explicit operator RegularCollisionPolygon2D(CollisionShape2D instance) => new(instance);

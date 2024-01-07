@@ -7,7 +7,7 @@ extends Polygon2D
 ##
 ## A node that draws regular shapes, with some complex properties.
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
-## Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
+## Certain properties with circles will use a 32-sided polygon instead.
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
 ## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
@@ -16,7 +16,7 @@ extends Polygon2D
 ## This can be worked around by slightly altering properties, like subtracting [code]0.01[/code] from [member width] or [member drawn_arc].
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
-## [br][br]Some properties don't affect circles and lines, and some properties will have a 32-sided shape used instead of a circle.
+## [br][br]Certain properties with circles will use a 32-sided polygon instead.
 @export_range(1, 2000, 1) 
 var vertices_count : int = 1:
 	set(value):
@@ -56,6 +56,7 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
+## [br][br]If a line is drawn, [method CanvasItem.draw_line] will always be used, with this property corrasponding to the [param width] parameter.
 @export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
 var width : float = -0.001:
 	set(value):
@@ -73,6 +74,8 @@ var width : float = -0.001:
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]For lines, this property rotates the top half of the line.
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -83,6 +86,8 @@ var drawn_arc_degrees : float = 360:
 ## The arc of the drawn shape, in radians, cutting off beyond that arc. 
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]For lines, this property rotates the top half of the line.
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360, 0.01, "radians") 
 var drawn_arc : float = TAU:
@@ -92,6 +97,8 @@ var drawn_arc : float = TAU:
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
+## [br][br]This only has an effect on lines if [member drawn_arc] is also used.
+## The maximum possible distance is the ends of the line from the middle.
 @export_range(0.0, 5, 0.001, "or_greater", "hide_slider") 
 var corner_size : float = 0.0:
 	set(value):
@@ -100,6 +107,7 @@ var corner_size : float = 0.0:
 		_pre_redraw()
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
+## This only has an effect if [member corner_size] is used.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
@@ -141,8 +149,31 @@ func _draw() -> void:
 		return
 	
 	if vertices_count == 2:
-		var point = Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
-		draw_line(point + offset, -point + offset, color, -1.0, antialiased)
+		var point := _get_vertices(offset_rotation, size)
+		var width_value = width if width != 0 else -1
+		if not _uses_drawn_arc():
+			draw_line(point + offset, -point + offset, color, width_value, antialiased)
+			return
+
+		var point2 := _get_vertices(offset_rotation + drawn_arc + PI, size)
+		if is_zero_approx(corner_size):
+			draw_line(point + offset, offset, color, width_value, antialiased)
+			draw_line(point2 + offset, offset, color, width_value, antialiased)
+			return
+		
+		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
+		var multiplier := corner_size / size if corner_size <= size else 1.0
+		var line := PackedVector2Array()
+		line.resize(3 + smoothness)
+		line[0] = point + offset
+		line[1] = point * multiplier + offset
+		line[-2] = point2 * multiplier + offset
+		line[-1] = point2 + offset
+		var i := 1
+		while i < smoothness:
+			line[i + 1] = quadratic_bezier_interpolate(line[1], offset, line[-2], i / (smoothness as float))
+			i += 1
+		draw_polyline(line, color, width_value, antialiased)
 		return
 		
 	if (vertices_count == 4 
