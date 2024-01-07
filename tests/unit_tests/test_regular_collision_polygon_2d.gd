@@ -72,6 +72,8 @@ func test_regenerate__line_with_width_offset_rotation_multiples_of_PI__shape_rec
 	shape.regenerate()
 
 	assert_true(shape.shape is RectangleShape2D, "Property 'shape' should be type RectangleShape2D.")
+	if is_failing(): 
+		return
 	assert_gt(shape.shape.size.y, shape.shape.size.x, "Property 'shape' should be taller than wide")
 
 func test_regenerate__line_with_width_offset_rotation_multiples_of_PI_plus_PI_over_2__shape_rectangle_wider_than_tall(p = use_parameters([PI / 2, -PI * 3 / 2, PI * 5 / 2])):
@@ -83,6 +85,8 @@ func test_regenerate__line_with_width_offset_rotation_multiples_of_PI_plus_PI_ov
 	shape.regenerate()
 
 	assert_true(shape.shape is RectangleShape2D, "Property 'shape' should be type RectangleShape2D.")
+	if is_failing(): 
+		return
 	assert_gt(shape.shape.size.x, shape.shape.size.y, "Property 'shape' should be wider than tall")
 
 func test_regnerate__line_with_width_offset_rotation_not_multiple_of_PI_over_2__shape_4_point_convex_shape(p = use_parameters([1, -3, 5])):
@@ -94,6 +98,8 @@ func test_regnerate__line_with_width_offset_rotation_not_multiple_of_PI_over_2__
 	shape.regenerate()
 
 	assert_true(shape.shape is ConvexPolygonShape2D, "Property 'shape' should be type ConvexPolygonShape2D")
+	if is_failing(): 
+		return
 	assert_eq(shape.shape.points.size(), 4, "Property 'shape.points' should have 4 points")
 
 func test_regnerate__line_with_width_uses_drawn_arc__shape_16_point_concave_shape(p = use_parameters([2, PI, -1])):
@@ -105,6 +111,8 @@ func test_regnerate__line_with_width_uses_drawn_arc__shape_16_point_concave_shap
 	shape.regenerate()
 
 	assert_true(shape.shape is ConcavePolygonShape2D, "Property 'shape' should be type ConcavePolygonShape2D")
+	if is_failing(): 
+		return
 	assert_eq(shape.shape.segments.size(), 16, "Property 'shape.segments' should have 16 points")
 
 func test_regenerate__line_with_width_uses_drawn_arc_and_corner_size__shape_76_point_concave_shape():
@@ -117,6 +125,8 @@ func test_regenerate__line_with_width_uses_drawn_arc_and_corner_size__shape_76_p
 	shape.regenerate()
 
 	assert_true(shape.shape is ConcavePolygonShape2D, "Property 'shape' should be type ConcavePolygonShape2D")
+	if is_failing(): 
+		return
 	assert_eq(shape.shape.segments.size(), 76, "Property 'shape.segments' should have 76 points")
 
 func test_regenerate__line_with_width_drawn_arc_PI_uses_corner_size__shape_8_point_concave_shape():
@@ -129,6 +139,8 @@ func test_regenerate__line_with_width_drawn_arc_PI_uses_corner_size__shape_8_poi
 	shape.regenerate()
 
 	assert_true(shape.shape is ConcavePolygonShape2D, "Property 'shape' should be type ConcavePolygonShape2D")
+	if is_failing(): 
+		return
 	assert_eq(shape.shape.segments.size(), 8, "Property 'shape.segments' should have 8 points")
 
 func test_regenerate__uses_width__shape_concave_shape():
