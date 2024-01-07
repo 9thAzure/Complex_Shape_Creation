@@ -125,7 +125,7 @@ public class RegularCollisionPolygon2DTests : TestClass
     {
         Vector2[] array = { new(0, 0), new(0, 1), new(0, 1), new(1, 1) };
 
-        var result = RegularCollisionPolygon2D.WidenMultiLine(array, 1);
+        var result = RegularCollisionPolygon2D.WidenMultiline(array, 1);
 
         result.Length.ShouldBe(16);
     }

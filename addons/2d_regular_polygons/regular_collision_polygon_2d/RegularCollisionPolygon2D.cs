@@ -147,7 +147,7 @@ public class RegularCollisionPolygon2D
     /// Returns a modified copy of <paramref name="segments"/> to form an outline of the interconnected segments with the given <paramref name="width"/>.
     /// </summary>
     /// <remarks>
-    /// For disconnected segments, use <see cref="WidenMultiLine"/>.
+    /// For disconnected segments, use <see cref="WidenMultiline"/>.
     /// </remarks>
     /// <param name="segments">The pairs of points representing each segment (see <seealso cref="ConcavePolygonShape2D.Segments"/>).</param>
     /// <param name="width">The width of each segment</param>
@@ -163,7 +163,7 @@ public class RegularCollisionPolygon2D
     /// </remarks>
     /// <param name="segments">The pairs of points representing each segment (see <seealso cref="ConcavePolygonShape2D.Segments"/>).</param>
     /// <param name="width">The width of each segment</param>
-    public static Vector2[] WidenMultiLine(Vector2[] segments, float width)
+    public static Vector2[] WidenMultiline(Vector2[] segments, float width)
     => _shared.Value.Call(MethodName.WidenMultiline, segments, width).AsVector2Array();
 
     public static implicit operator CollisionShape2D(RegularCollisionPolygon2D instance) => instance.Instance;
