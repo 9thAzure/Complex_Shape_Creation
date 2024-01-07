@@ -47,13 +47,13 @@ public class StarPolygon2D
         get => (float)Instance.Get(PropertyName.InnerSize);
         set => Instance.Set(PropertyName.InnerSize, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetRotationDegrees"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetRotationDegrees"/>
     public float OffsetRotationDegrees
     {
         get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetRotation"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetRotation"/>
     public float OffsetRotation
     {
         get => (float)Instance.Get(PropertyName.OffsetRotation);
@@ -92,37 +92,37 @@ public class StarPolygon2D
         get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.Color"/>
+    /// <inheritdoc cref="SimplePolygon2D.Color"/>
     public Color Color
     {
         get => Instance.Color;
         set => Instance.Color = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetPosition"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetPosition"/>
     public Vector2 OffsetPosition
     {
         get => Instance.Offset;
         set => Instance.Offset = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Position"/>
+    /// <inheritdoc cref="SimplePolygon2D.Position"/>
     public Vector2 Position
     {
         get => Instance.Position;
         set => Instance.Position = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Rotation"/>
+    /// <inheritdoc cref="SimplePolygon2D.Rotation"/>
     public float Rotation
     {
         get => Instance.Rotation;
         set => Instance.Rotation = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.RotationDegrees"/>
+    /// <inheritdoc cref="SimplePolygon2D.RotationDegrees"/>
     public float RotationDegrees
     {
         get => Instance.RotationDegrees;
         set => Instance.RotationDegrees = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Scale"/>
+    /// <inheritdoc cref="SimplePolygon2D.Scale"/>
     public Vector2 Scale
     {
         get => Instance.Scale;
