@@ -109,4 +109,24 @@ public class RegularCollisionPolygon2DTests : TestClass
         TestScene.RemoveChild(polygon);
         polygon.Instance.Shape.ShouldNotBeNull();
     }
+
+    [Test]
+    public void WidenPolyline_4LengthArray_Returns12LengthArray()
+    {
+        Vector2[] array = { new(0, 0), new(0, 1), new(0, 1), new(1, 1) };
+
+        var result = RegularCollisionPolygon2D.WidenPolyline(array, 1, true);
+
+        result.Length.ShouldBe(12);
+    }
+
+    [Test]
+    public void WidenMultiline_4LengthArray_Returns16LengthArray()
+    {
+        Vector2[] array = { new(0, 0), new(0, 1), new(0, 1), new(1, 1) };
+
+        var result = RegularCollisionPolygon2D.WidenMultiLine(array, 1);
+
+        result.Length.ShouldBe(16);
+    }
 }
