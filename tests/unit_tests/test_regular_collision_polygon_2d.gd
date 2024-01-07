@@ -63,6 +63,17 @@ func test_regenerate__vertices_count_2__shape_segment_shape():
 
 	assert_true(shape.shape is SegmentShape2D, "Property 'shape' should be type SegmentShape2D.")
 
+func test_regenerate__line_with_width_offset_rotation_multiples_of_180__shape_rectangle_taller_than_wide(p = use_parameters([0, 180, -180, 360])):
+	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
+	shape.vertices_count = 2
+	shape.width = 5
+	shape.offset_rotation = p
+
+	shape.regenerate()
+
+	assert_true(shape.shape is RectangleShape2D, "Property 'shape' should be type RectangleShape2D.")
+	assert_gt(shape.shape.y, shape.shape.x, "Property 'shape' should be taller than wide")
+
 func test_regenerate__uses_width__shape_concave_shape():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.width = 5
