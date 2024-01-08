@@ -94,6 +94,7 @@ var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
 		_pre_redraw()
+		update_configuration_warnings()
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
@@ -272,6 +273,11 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
 	
+func _get_configuration_warnings() -> PackedStringArray:
+	if drawn_arc == 0:
+		return ["nothing will be drawn when 'drawn_arc' is 0."]
+	return []
+
 ## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
 func uses_polygon_member() -> bool:
 	return (
