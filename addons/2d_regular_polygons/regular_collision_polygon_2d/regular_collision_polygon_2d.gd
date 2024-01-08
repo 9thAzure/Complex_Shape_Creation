@@ -75,6 +75,7 @@ var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
 		queue_regenerate()
+		update_configuration_warnings()
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
@@ -292,6 +293,11 @@ func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0
 		self.corner_size = corner_size
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
+
+func _get_configuration_warnings() -> PackedStringArray:
+	if drawn_arc == 0:
+		return ["Collision shapes will not be regenerated when 'drawn_arc' is 0."]
+	return []
 
 ## Modifies [param segments] to form an outline of the interconnected segments with the given [param width].
 ## [param join_perimeter] controls whether the function should extend (or shorten) line segments to form a propery closed shape.
