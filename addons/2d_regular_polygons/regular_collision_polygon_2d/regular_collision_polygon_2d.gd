@@ -287,7 +287,12 @@ func regenerate() -> void:
 		shape = square
 		return
 	
-	var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+	var points : PackedVector2Array
+	if uses_inner_size:
+		points = StarPolygon2D.get_star_vertices(vertices_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc)
+	else:
+		points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+
 	if uses_rounded_corners:
 		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 	
