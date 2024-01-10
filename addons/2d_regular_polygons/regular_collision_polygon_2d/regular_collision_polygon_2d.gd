@@ -134,7 +134,7 @@ func regenerate() -> void:
 	_is_queued = false
 	var uses_inner_size := inner_size > 0
 
-	if vertices_count == 2 != uses_inner_size or vertices_count == 1 and uses_inner_size:
+	if vertices_count == 2 and not uses_inner_size or vertices_count == 1 and uses_inner_size:
 		var point1 := SimplePolygon2D._get_vertices(offset_rotation) * size
 		var point2 := -point1
 		if uses_inner_size:
