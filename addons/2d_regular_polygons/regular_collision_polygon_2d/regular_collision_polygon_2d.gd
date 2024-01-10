@@ -43,6 +43,15 @@ var offset_rotation : float = 0:
 
 @export_group("complex")
 
+## The length of the inner vertices between each normal vertices to the center of the shape. If set to [code]0[/code], it is ignored.
+## [br][br]For lines, it determines the length of the bottem part.
+@export_range(0, 10, 0.001, "or_greater", "hide_slider")
+var inner_size : float = 0.0:
+	set(value):
+		assert(value >= 0, "property 'inner_size' must be greater than 0");
+		inner_size = value
+		queue_regenerate()
+
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
 ## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D], except for lines.
 ## [br][br][b]Note[/b]: using this property with lines may not produce the same shape as [RegularPolygon2D].
