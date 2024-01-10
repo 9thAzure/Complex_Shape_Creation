@@ -132,29 +132,36 @@ func _enter_tree() -> void:
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
 func regenerate() -> void:
 	_is_queued = false
+	var uses_inner_size := inner_size > 0
+
 	if vertices_count == 2:
-		var point1 = SimplePolygon2D._get_vertices(offset_rotation) * size
+		var point1 := SimplePolygon2D._get_vertices(offset_rotation) * size
+		var point2 := -point1
+		if uses_inner_size:
+			point1 *= inner_size / size
+
 		if drawn_arc <= -TAU or drawn_arc >= TAU:
 			if width <= 0:
 				var line := SegmentShape2D.new()
 				line.a = point1
-				line.b = -line.a
+				line.b = point2
 				shape = line
 				return
 			
-			if is_zero_approx(point1.x):
-				var rect_line := RectangleShape2D.new()
-				rect_line.size.y = size * 2
-				rect_line.size.x = width
-				shape = rect_line
-				return
+			if not uses_inner_size:
+				if is_zero_approx(point1.x):
+					var rect_line := RectangleShape2D.new()
+					rect_line.size.y = size * 2
+					rect_line.size.x = width
+					shape = rect_line
+					return
 
-			if is_zero_approx(point1.y):
-				var rect_line := RectangleShape2D.new()
-				rect_line.size.y = width
-				rect_line.size.x = size * 2
-				shape = rect_line
-				return
+				if is_zero_approx(point1.y):
+					var rect_line := RectangleShape2D.new()
+					rect_line.size.y = width
+					rect_line.size.x = size * 2
+					shape = rect_line
+					return
 			
 			var line := ConvexPolygonShape2D.new()
 			var array := PackedVector2Array()
@@ -162,13 +169,13 @@ func regenerate() -> void:
 			var tangent := Vector2(point1.y, -point1.x).normalized() * width / 2
 			array[0] = point1 - tangent
 			array[1] = point1 + tangent
-			array[2] = -point1 + tangent
-			array[3] = -point1 - tangent
+			array[2] = point2 + tangent
+			array[3] = point2 - tangent
 			line.points = array
 			shape = line
 			return
 		
-		var point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
+		point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
 		var lines := ConcavePolygonShape2D.new()
 		if is_zero_approx(corner_size):
 			var array := PackedVector2Array()
