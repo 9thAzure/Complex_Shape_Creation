@@ -12,6 +12,7 @@ extends CollisionShape2D
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Certain properties with circles will use a 32-sided polygon instead.
+## [br][br][b]Note[/b]: [member inner_size] affects the values required for circles and lines.
 @export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):
@@ -43,8 +44,17 @@ var offset_rotation : float = 0:
 
 @export_group("complex")
 
+## The length of the inner vertices between each normal vertices to the center of the shape. If set to [code]0[/code], it is ignored.
+## [br][br]If used, [member vertices_count] must be set to [code]1[/code] to generate lines, and circles cannot be generated.
+## It determines the length of the bottem segment of the line.
+@export_range(0, 10, 0.001, "or_greater", "hide_slider")
+var inner_size : float = 0.0:
+	set(value):
+		assert(value >= 0, "property 'inner_size' must be greater than 0");
+		inner_size = value
+		queue_regenerate()
+
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
-## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D], except for lines.
 ## [br][br][b]Note[/b]: using this property with lines may not produce the same shape as [RegularPolygon2D].
 @export_range(0, 10, 0.001, "or_greater", "hide_slider") 
 var width : float = 0:
@@ -123,29 +133,40 @@ func _enter_tree() -> void:
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
 func regenerate() -> void:
 	_is_queued = false
-	if vertices_count == 2:
-		var point1 = SimplePolygon2D._get_vertices(offset_rotation) * size
+	
+	if drawn_arc == 0:
+		return
+	
+	var uses_inner_size := inner_size > 0
+
+	if vertices_count == 2 and not uses_inner_size or vertices_count == 1 and uses_inner_size:
+		var point1 := SimplePolygon2D._get_vertices(offset_rotation) * size
+		var point2 := -point1
+		if uses_inner_size:
+			point1 *= inner_size / size
+
 		if drawn_arc <= -TAU or drawn_arc >= TAU:
 			if width <= 0:
 				var line := SegmentShape2D.new()
 				line.a = point1
-				line.b = -line.a
+				line.b = point2
 				shape = line
 				return
 			
-			if is_zero_approx(point1.x):
-				var rect_line := RectangleShape2D.new()
-				rect_line.size.y = size * 2
-				rect_line.size.x = width
-				shape = rect_line
-				return
+			if not uses_inner_size:
+				if is_zero_approx(point1.x):
+					var rect_line := RectangleShape2D.new()
+					rect_line.size.y = size * 2
+					rect_line.size.x = width
+					shape = rect_line
+					return
 
-			if is_zero_approx(point1.y):
-				var rect_line := RectangleShape2D.new()
-				rect_line.size.y = width
-				rect_line.size.x = size * 2
-				shape = rect_line
-				return
+				if is_zero_approx(point1.y):
+					var rect_line := RectangleShape2D.new()
+					rect_line.size.y = width
+					rect_line.size.x = size * 2
+					shape = rect_line
+					return
 			
 			var line := ConvexPolygonShape2D.new()
 			var array := PackedVector2Array()
@@ -153,13 +174,13 @@ func regenerate() -> void:
 			var tangent := Vector2(point1.y, -point1.x).normalized() * width / 2
 			array[0] = point1 - tangent
 			array[1] = point1 + tangent
-			array[2] = -point1 + tangent
-			array[3] = -point1 - tangent
+			array[2] = point2 + tangent
+			array[3] = point2 - tangent
 			line.points = array
 			shape = line
 			return
 		
-		var point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
+		point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
 		var lines := ConcavePolygonShape2D.new()
 		if is_zero_approx(corner_size):
 			var array := PackedVector2Array()
@@ -186,12 +207,16 @@ func regenerate() -> void:
 			return
 		
 		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
-		var multiplier := corner_size / size if corner_size < size else 0.999999
+		var multiplier1 := corner_size / size if corner_size < size else 0.999999
+		var multiplier2 := multiplier1
+		if uses_inner_size:
+			multiplier1 = corner_size / inner_size if corner_size < inner_size else 0.999999
+
 		var array := PackedVector2Array()
 		array.resize((smoothness + 2) * 2)
 		array[0] = point1
-		array[1] = point1 * multiplier
-		array[-2] = point2 * multiplier
+		array[1] = point1 * multiplier1
+		array[-2] = point2 * multiplier2
 		array[-1] = point2
 		var i := 1
 		while i <= smoothness:
@@ -204,17 +229,16 @@ func regenerate() -> void:
 		shape = lines
 		return
 	
-	if drawn_arc == 0:
-		return
-	
 	var uses_rounded_corners := not is_zero_approx(corner_size)
 	var uses_width := width > 0 and width < size
 	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
 	if uses_width:
 		var polygon := ConcavePolygonShape2D.new()
-		var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
-		if uses_width and width >= size:
-			uses_width = false
+		var points : PackedVector2Array
+		if uses_inner_size:
+			points = StarPolygon2D.get_star_vertices(vertices_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		else:	
+			points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
 		
 		if uses_width and uses_drawn_arc:
 			RegularPolygon2D.add_hole_to_points(points, 1 - width / size, false)
@@ -260,18 +284,23 @@ func regenerate() -> void:
 		shape = circle
 		return
 	
-	if vertices_count == 4 and is_zero_approx(offset_rotation) and not uses_rounded_corners and not uses_drawn_arc:
+	if vertices_count == 4 and not uses_inner_size and is_zero_approx(offset_rotation) and not uses_rounded_corners and not uses_drawn_arc:
 		const sqrt_two_over_two := 0.707106781
 		var square := RectangleShape2D.new()
 		square.size = size / sqrt_two_over_two * Vector2.ONE
 		shape = square
 		return
 	
-	var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+	var points : PackedVector2Array
+	if uses_inner_size:
+		points = StarPolygon2D.get_star_vertices(vertices_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc)
+	else:
+		points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+
 	if uses_rounded_corners:
 		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 	
-	if uses_drawn_arc and (drawn_arc > PI or drawn_arc < -PI):
+	if uses_drawn_arc and (drawn_arc > PI or drawn_arc < -PI) or uses_inner_size and vertices_count > 2:
 		var lines := ConcavePolygonShape2D.new()
 		lines.segments = convert_to_line_segments(points)
 		shape = lines
