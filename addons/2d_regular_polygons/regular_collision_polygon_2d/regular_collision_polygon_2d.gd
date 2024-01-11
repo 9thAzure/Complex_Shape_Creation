@@ -53,7 +53,6 @@ var inner_size : float = 0.0:
 		queue_regenerate()
 
 ## Determines the width of the shape. It only has an effect with values greater than [code]0[/code].
-## Values greater than or equal to [member size] force the usage of [ConvexPolygonShape2D], except for lines.
 ## [br][br][b]Note[/b]: using this property with lines may not produce the same shape as [RegularPolygon2D].
 @export_range(0, 10, 0.001, "or_greater", "hide_slider") 
 var width : float = 0:
