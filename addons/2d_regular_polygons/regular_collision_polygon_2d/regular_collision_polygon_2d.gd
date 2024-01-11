@@ -238,9 +238,6 @@ func regenerate() -> void:
 		else:	
 			points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
 		
-		if uses_width and width >= size:
-			uses_width = false
-		
 		if uses_width and uses_drawn_arc:
 			RegularPolygon2D.add_hole_to_points(points, 1 - width / size, false)
 
