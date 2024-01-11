@@ -45,7 +45,7 @@ var offset_rotation : float = 0:
 @export_group("complex")
 
 ## The length of the inner vertices between each normal vertices to the center of the shape. If set to [code]0[/code], it is ignored.
-## [br][br]If used, [member point_count] must be set to [code]1[/code] to generate lines, and circles cannot be generated.
+## [br][br]If used, [member vertices_count] must be set to [code]1[/code] to generate lines, and circles cannot be generated.
 ## It determines the length of the bottem segment of the line.
 @export_range(0, 10, 0.001, "or_greater", "hide_slider")
 var inner_size : float = 0.0:
