@@ -273,16 +273,14 @@ func regenerate() -> void:
 		shape = polygon
 		return
 	
+	var vertices := vertices_count
 	if vertices_count == 1:
-		if -TAU < drawn_arc and drawn_arc < TAU:
-			var circle = ConvexPolygonShape2D.new()
-			circle.points = RegularPolygon2D.get_shape_vertices(32, size, offset_rotation, Vector2.ZERO, drawn_arc)
+		if drawn_arc >= TAU or drawn_arc <= -TAU:
+			var circle := CircleShape2D.new()
+			circle.radius = size
 			shape = circle
 			return
-		var circle := CircleShape2D.new()
-		circle.radius = size
-		shape = circle
-		return
+		vertices = 32
 	
 	if vertices_count == 4 and not uses_inner_size and is_zero_approx(offset_rotation) and not uses_rounded_corners and not uses_drawn_arc:
 		const sqrt_two_over_two := 0.707106781
@@ -293,12 +291,12 @@ func regenerate() -> void:
 	
 	var points : PackedVector2Array
 	if uses_inner_size:
-		points = StarPolygon2D.get_star_vertices(vertices_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc)
+		points = StarPolygon2D.get_star_vertices(vertices, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc)
 	else:
-		points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
+		points = RegularPolygon2D.get_shape_vertices(vertices, size, offset_rotation, Vector2.ZERO, drawn_arc)
 
 	if uses_rounded_corners:
-		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
+		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices)
 	
 	if uses_drawn_arc and (drawn_arc > PI or drawn_arc < -PI) or uses_inner_size and vertices_count > 2:
 		var lines := ConcavePolygonShape2D.new()
