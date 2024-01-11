@@ -232,7 +232,12 @@ func regenerate() -> void:
 	var uses_drawn_arc := -TAU < drawn_arc and drawn_arc < TAU
 	if uses_width:
 		var polygon := ConcavePolygonShape2D.new()
-		var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		var points : PackedVector2Array
+		if uses_inner_size:
+			points = StarPolygon2D.get_star_vertices(vertices_count, size, inner_size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		else:	
+			points = RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
+		
 		if uses_width and width >= size:
 			uses_width = false
 		
