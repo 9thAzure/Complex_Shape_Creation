@@ -267,11 +267,11 @@ func regenerate() -> void:
 		shape = square
 		return
 	
-	var polygon := ConvexPolygonShape2D.new()
 	var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if uses_rounded_corners:
 		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 	
+	var polygon := ConvexPolygonShape2D.new()
 	polygon.points = points 
 	shape = polygon
 
