@@ -271,6 +271,12 @@ func regenerate() -> void:
 	if uses_rounded_corners:
 		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 	
+	if uses_drawn_arc and (drawn_arc > PI or drawn_arc < -PI):
+		var lines := ConcavePolygonShape2D.new()
+		lines.segments = convert_to_line_segments(points)
+		shape = lines
+		return
+
 	var polygon := ConvexPolygonShape2D.new()
 	polygon.points = points 
 	shape = polygon
