@@ -132,6 +132,10 @@ func _enter_tree() -> void:
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
 func regenerate() -> void:
 	_is_queued = false
+	
+	if drawn_arc == 0:
+		return
+	
 	var uses_inner_size := inner_size > 0
 
 	if vertices_count == 2 and not uses_inner_size or vertices_count == 1 and uses_inner_size:
@@ -222,9 +226,6 @@ func regenerate() -> void:
 			widen_polyline(array, width, true)
 		lines.segments = array
 		shape = lines
-		return
-	
-	if drawn_arc == 0:
 		return
 	
 	var uses_rounded_corners := not is_zero_approx(corner_size)
