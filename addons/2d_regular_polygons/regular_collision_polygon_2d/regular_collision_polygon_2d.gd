@@ -12,6 +12,7 @@ extends CollisionShape2D
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Certain properties with circles will use a 32-sided polygon instead.
+## [br][br][b]Note[/b]: [member inner_size] affects the values required for circles and lines.
 @export_range(1, 2000)
 var vertices_count : int = 1:
 	set(value):
@@ -44,7 +45,8 @@ var offset_rotation : float = 0:
 @export_group("complex")
 
 ## The length of the inner vertices between each normal vertices to the center of the shape. If set to [code]0[/code], it is ignored.
-## [br][br]For lines, it determines the length of the bottem part.
+## [br][br]If used, [member point_count] must be set to [code]1[/code] to generate lines, and circles cannot be generated.
+## It determines the length of the bottem segment of the line.
 @export_range(0, 10, 0.001, "or_greater", "hide_slider")
 var inner_size : float = 0.0:
 	set(value):
