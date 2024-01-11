@@ -267,11 +267,17 @@ func regenerate() -> void:
 		shape = square
 		return
 	
-	var polygon := ConvexPolygonShape2D.new()
 	var points := RegularPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc)
 	if uses_rounded_corners:
 		RegularPolygon2D.add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
 	
+	if uses_drawn_arc and (drawn_arc > PI or drawn_arc < -PI):
+		var lines := ConcavePolygonShape2D.new()
+		lines.segments = convert_to_line_segments(points)
+		shape = lines
+		return
+
+	var polygon := ConvexPolygonShape2D.new()
 	polygon.points = points 
 	shape = polygon
 
@@ -298,6 +304,20 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if drawn_arc == 0:
 		return ["Collision shapes will not be regenerated when 'drawn_arc' is 0."]
 	return []
+
+## Modifies and returns [param points] with the identical shape represented with line segments.
+static func convert_to_line_segments(points : PackedVector2Array) -> PackedVector2Array:
+	var original_size := points.size()
+	points.resize(original_size * 2)
+	
+	for i in original_size:
+		var index := original_size - i - 1
+		var point := points[index]
+
+		points[index * 2] = point
+		points[index * 2 - 1] = point
+
+	return points
 
 ## Modifies [param segments] to form an outline of the interconnected segments with the given [param width].
 ## [param join_perimeter] controls whether the function should extend (or shorten) line segments to form a propery closed shape.
