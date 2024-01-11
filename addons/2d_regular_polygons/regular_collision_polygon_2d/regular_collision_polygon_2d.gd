@@ -299,6 +299,19 @@ func _get_configuration_warnings() -> PackedStringArray:
 		return ["Collision shapes will not be regenerated when 'drawn_arc' is 0."]
 	return []
 
+static func convert_to_line_segments(points : PackedVector2Array) -> PackedVector2Array:
+	var original_size := points.size()
+	points.resize(original_size * 2)
+	
+	for i in original_size:
+		var index := original_size - i - 1
+		var point := points[index]
+
+		points[index * 2] = point
+		points[index * 2 - 1] = point
+
+	return points
+
 ## Modifies [param segments] to form an outline of the interconnected segments with the given [param width].
 ## [param join_perimeter] controls whether the function should extend (or shorten) line segments to form a propery closed shape.
 ## For disconnected segments, use [method widen_polyline].
