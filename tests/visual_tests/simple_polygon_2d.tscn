@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://bhc8ji06ksyak"]
+[gd_scene load_steps=9 format=3 uid="uid://bhc8ji06ksyak"]
 
 [ext_resource type="Script" path="res://addons/2d_regular_polygons/simple_polygon_2d/simple_polygon_2d.gd" id="1_nx66f"]
+[ext_resource type="Script" path="res://tests/visual_tests/random_modulate.gd" id="2_rp1v7"]
 
 [sub_resource type="Animation" id="Animation_wr35u"]
 length = 0.001
@@ -272,7 +273,7 @@ script = ExtResource("1_nx66f")
 [node name="Size" type="Node2D" parent="IndividualProperties"]
 position = Vector2(37, 12)
 script = ExtResource("1_nx66f")
-size = 5.33333
+size = 18.719
 
 [node name="OffsetRotation" type="Node2D" parent="IndividualProperties"]
 position = Vector2(68, 12)
@@ -296,3 +297,17 @@ libraries = {
 [node name="SimplePolygon2D" type="Node2D" parent="AllProperties"]
 position = Vector2(13, 40)
 script = ExtResource("1_nx66f")
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("2_rp1v7")
+node_path = NodePath("SimplePolygon2D")
+properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.001, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 1, 1)], ["offset_position", Vector2(-10, -10), Vector2(10, 10)]])
+max_time = 2.0
+
+[node name="SimplePolygon2D" type="Node2D" parent="Node"]
+position = Vector2(64, 46)
+script = ExtResource("1_nx66f")
+size = 6.1515
+offset_rotation = 4.62233
+color = Color(0.707713, 0.707713, 0.707713, 1)
+offset_position = Vector2(-9.21716, -9.21716)
