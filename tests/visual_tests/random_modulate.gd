@@ -61,7 +61,17 @@ func activate_tween_loop():
 	tween = get_tree().create_tween()
 	var property := properties[randi() % size]
 	var time := max_time * randf()
-	var final_value = (property[2] - property[1]) * randf() + property[1]
+
+	var chance := randf()
+	var final_value
+	if chance < 0.1:
+		final_value = property[1]
+	elif chance < 0.2:
+		final_value = property[2]
+	elif chance < 0.3 and typeof(property[1]) in [TYPE_INT, TYPE_FLOAT] and property[1] < 0 and property[2] > 0:
+		final_value = 0
+	else:
+		final_value = (property[2] - property[1]) * randf() + property[1]
 
 	tween.tween_property(node, property[0], final_value, time)
 	tween.finished.connect(activate_tween_loop)
