@@ -41,7 +41,9 @@ var max_time := 5.0
 var is_on := false:
 	set(value):
 		if node == null:
-			return
+			node = get_node(node_path)
+			if node == null:
+				return
 
 		is_on = value
 		if value:

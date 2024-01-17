@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://bhc8ji06ksyak"]
+[gd_scene load_steps=10 format=3 uid="uid://bhc8ji06ksyak"]
 
+[ext_resource type="Script" path="res://tests/visual_tests/animation_manager.gd" id="1_lggby"]
 [ext_resource type="Script" path="res://addons/2d_regular_polygons/simple_polygon_2d/simple_polygon_2d.gd" id="1_nx66f"]
 [ext_resource type="Script" path="res://tests/visual_tests/random_modulate.gd" id="2_rp1v7"]
 
@@ -260,6 +261,7 @@ _data = {
 }
 
 [node name="Root" type="Node"]
+script = ExtResource("1_lggby")
 
 [node name="IndividualProperties" type="AnimationPlayer" parent="."]
 libraries = {
@@ -273,7 +275,7 @@ script = ExtResource("1_nx66f")
 [node name="Size" type="Node2D" parent="IndividualProperties"]
 position = Vector2(37, 12)
 script = ExtResource("1_nx66f")
-size = 18.719
+size = 5.33333
 
 [node name="OffsetRotation" type="Node2D" parent="IndividualProperties"]
 position = Vector2(68, 12)
