@@ -4,57 +4,6 @@
 [ext_resource type="Script" path="res://addons/2d_regular_polygons/simple_polygon_2d/simple_polygon_2d.gd" id="1_nx66f"]
 [ext_resource type="Script" path="res://tests/visual_tests/random_modulate.gd" id="2_rp1v7"]
 
-[sub_resource type="Animation" id="Animation_wr35u"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("IndividualProperties/VerticesCount:vertices_count")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [1]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("IndividualProperties/OffsetRotation:offset_rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("IndividualProperties/Color:color")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("IndividualProperties/OffsetPosition:offset_position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, 0)]
-}
-
 [sub_resource type="Animation" id="Animation_8jjdu"]
 resource_name = "IndividualProperties"
 length = 6.0
@@ -120,10 +69,124 @@ tracks/4/keys = {
 "values": [Vector2(0, 0), Vector2(4.667, 10), Vector2(10, 0), Vector2(-10, 0), Vector2(0, -10)]
 }
 
+[sub_resource type="Animation" id="Animation_wr35u"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualProperties/VerticesCount:vertices_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualProperties/OffsetRotation:offset_rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualProperties/Color:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualProperties/OffsetPosition:offset_position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_miyoh"]
 _data = {
 "IndividualProperties": SubResource("Animation_8jjdu"),
 "RESET": SubResource("Animation_wr35u")
+}
+
+[sub_resource type="Animation" id="Animation_cluts"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AllProperties/SimplePolygon2D:vertices_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AllProperties/SimplePolygon2D:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [10.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AllProperties/SimplePolygon2D:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AllProperties/SimplePolygon2D:color")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("AllProperties/SimplePolygon2D:offset_position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_pe1id"]
@@ -191,69 +254,6 @@ tracks/4/keys = {
 "values": [Vector2(0, 0), Vector2(10, 10), Vector2(-10, 5)]
 }
 
-[sub_resource type="Animation" id="Animation_cluts"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AllProperties/SimplePolygon2D:vertices_count")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [1]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("AllProperties/SimplePolygon2D:size")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [10.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AllProperties/SimplePolygon2D:offset_rotation")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("AllProperties/SimplePolygon2D:color")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("AllProperties/SimplePolygon2D:offset_position")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_htms3"]
 _data = {
 "RESET": SubResource("Animation_cluts"),
@@ -269,25 +269,25 @@ libraries = {
 }
 
 [node name="VerticesCount" type="Node2D" parent="IndividualProperties"]
-position = Vector2(13, 12)
+position = Vector2(15, 15)
 script = ExtResource("1_nx66f")
 
 [node name="Size" type="Node2D" parent="IndividualProperties"]
-position = Vector2(37, 12)
+position = Vector2(45, 15)
 script = ExtResource("1_nx66f")
-size = 5.33333
+size = 12.3587
 
 [node name="OffsetRotation" type="Node2D" parent="IndividualProperties"]
-position = Vector2(68, 12)
+position = Vector2(75, 16)
 script = ExtResource("1_nx66f")
 vertices_count = 3
 
 [node name="Color" type="Node2D" parent="IndividualProperties"]
-position = Vector2(91, 12)
+position = Vector2(105, 15)
 script = ExtResource("1_nx66f")
 
 [node name="OffsetPosition" type="Node2D" parent="IndividualProperties"]
-position = Vector2(118, 12)
+position = Vector2(135, 15)
 script = ExtResource("1_nx66f")
 vertices_count = 3
 
@@ -297,19 +297,34 @@ libraries = {
 }
 
 [node name="SimplePolygon2D" type="Node2D" parent="AllProperties"]
-position = Vector2(13, 40)
+position = Vector2(15, 45)
 script = ExtResource("1_nx66f")
 
-[node name="Node" type="Node" parent="."]
+[node name="AllPropertiesIndividually" type="Node" parent="."]
 script = ExtResource("2_rp1v7")
 node_path = NodePath("SimplePolygon2D")
-properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.001, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 1, 1)], ["offset_position", Vector2(-10, -10), Vector2(10, 10)]])
+properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.001, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset_position:x", -10, 10], ["offset_position:y", -10, 10]])
 max_time = 2.0
 
-[node name="SimplePolygon2D" type="Node2D" parent="Node"]
-position = Vector2(64, 46)
+[node name="SimplePolygon2D" type="Node2D" parent="AllPropertiesIndividually"]
+position = Vector2(45, 45)
 script = ExtResource("1_nx66f")
-size = 6.1515
-offset_rotation = 4.62233
-color = Color(0.707713, 0.707713, 0.707713, 1)
-offset_position = Vector2(-9.21716, -9.21716)
+vertices_count = 5
+size = 9.89992
+offset_rotation = -2.66272
+color = Color(1, 1, 0, 1)
+offset_position = Vector2(5.20759, -1.40664)
+
+[node name="SquareMostProperties" type="Node" parent="."]
+script = ExtResource("2_rp1v7")
+node_path = NodePath("SimplePolygon2D")
+properties = Array[Array]([["size", 0.001, 20.0], ["color", Color(0, 0, 0, 1), Color(0, 1, 1, 1)], ["offset_position:x", -10, 10], ["offset_position:y", -10, 10]])
+max_time = 2.0
+
+[node name="SimplePolygon2D" type="Node2D" parent="SquareMostProperties"]
+position = Vector2(75, 45)
+script = ExtResource("1_nx66f")
+vertices_count = 4
+size = 10.8525
+color = Color(0, 0.367573, 0.367573, 1)
+offset_position = Vector2(6.71137, -9.99156)
