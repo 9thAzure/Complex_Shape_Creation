@@ -63,7 +63,7 @@ func activate_tween_loop():
 	var size := properties.size()
 	tween = get_tree().create_tween()
 	var property := properties[randi() % size]
-	var time := max_time * randf()
+	var time := (max_time  - 0.5) * randf() + 0.5
 
 	var chance := randf()
 	var final_value
