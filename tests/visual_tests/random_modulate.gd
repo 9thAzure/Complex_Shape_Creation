@@ -30,7 +30,10 @@ var properties : Array[Array]:
 			
 			var property = array[0]
 			if typeof(property) != TYPE_STRING and typeof(property) != TYPE_NODE_PATH:
-				array[0] = ""
+				array[0] = StringName()
+			
+			if array[1] != null and typeof(array[1]) != typeof(array[2]):
+				array[2] = array[1]
 		
 		properties = value
 
