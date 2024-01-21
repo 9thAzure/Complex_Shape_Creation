@@ -29,8 +29,8 @@ var properties : Array[Array]:
 				array.resize(3)
 			
 			var property = array[0]
-			if typeof(property) != TYPE_STRING and typeof(property) != TYPE_NODE_PATH:
-				array[0] = StringName()
+			if typeof(property) != TYPE_STRING:
+				array[0] = ""
 			
 			if array[1] != null and typeof(array[1]) != typeof(array[2]):
 				array[2] = array[1]
