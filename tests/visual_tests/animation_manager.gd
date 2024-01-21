@@ -10,6 +10,7 @@ var enable_all := false:
 		for child in get_children():
 			if child is AnimationPlayer:
 				if value:
+					child.advance(-child.current_animation_position)
 					child.play()
 				else:
 					child.pause()
