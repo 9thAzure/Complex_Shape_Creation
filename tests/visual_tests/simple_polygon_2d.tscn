@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://bhc8ji06ksyak"]
+[gd_scene load_steps=11 format=3 uid="uid://bhc8ji06ksyak"]
 
 [ext_resource type="Script" path="res://tests/visual_tests/animation_manager.gd" id="1_lggby"]
 [ext_resource type="Script" path="res://addons/2d_regular_polygons/simple_polygon_2d/simple_polygon_2d.gd" id="1_nx66f"]
 [ext_resource type="Script" path="res://tests/visual_tests/random_modulate.gd" id="2_rp1v7"]
+[ext_resource type="Script" path="res://tests/visual_tests/table_display.gd" id="4_ocwss"]
 
 [sub_resource type="Animation" id="Animation_8jjdu"]
 resource_name = "IndividualProperties"
@@ -328,3 +329,13 @@ vertices_count = 4
 size = 10.8525
 color = Color(0, 0.367573, 0.367573, 1)
 offset_position = Vector2(6.71137, -9.99156)
+
+[node name="Table" type="Node2D" parent="."]
+position = Vector2(15, 75)
+script = ExtResource("4_ocwss")
+test_script = ExtResource("1_nx66f")
+max_time = null
+properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.001, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset_position", Vector2(-10, -10), Vector2(10, 10)]])
+defaults = {
+"vertices_count": 4
+}
