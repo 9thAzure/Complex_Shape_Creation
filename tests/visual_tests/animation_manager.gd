@@ -2,6 +2,7 @@
 extends Node
 
 const modulator_script := preload("res://tests/visual_tests/random_modulate.gd")
+const table_script := preload("res://tests/visual_tests/table_display.gd")
 
 @export
 var enable_all := false:
@@ -24,6 +25,9 @@ var enable_all := false:
 			
 			if child.get_script() == modulator_script:
 				child.is_on = value
+				continue
+			
+			if child.get_script() == table_script:
 				continue
 			
 			print(child, "was an unexpected node.")
