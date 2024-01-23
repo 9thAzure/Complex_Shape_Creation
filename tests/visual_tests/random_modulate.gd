@@ -38,7 +38,7 @@ var properties : Array[Array]:
 		properties = value
 
 @export_range(0, 10, 0.1, "or_greater")
-var max_time := 5.0
+var max_time := 2.0
 
 @export
 var is_on := false:
@@ -59,24 +59,29 @@ var is_on := false:
 
 var tween : Tween
 
-func activate_tween_loop():
+func activate_tween_loop() -> void:
 	var size := properties.size()
 	tween = get_tree().create_tween()
 	var property := properties[randi() % size]
-	var time := (max_time  - 0.5) * randf() + 0.5
+	var time : float = lerp(0.5, max_time, randf())
 
-	var chance := randf()
-	var final_value
-	if chance < 0.1:
-		final_value = property[1]
-	elif chance < 0.2:
-		final_value = property[2]
-	elif chance < 0.3 and typeof(property[1]) in [TYPE_INT, TYPE_FLOAT] and property[1] < 0 and property[2] > 0:
-		final_value = 0
-	else:
-		final_value = (property[2] - property[1]) * randf() + property[1]
+	var final_value = random_property(property[1], property[2])
 
 	tween.tween_property(node, property[0], final_value, time)
 	tween.finished.connect(activate_tween_loop)
 
 
+func random_property(start, end):
+	assert(typeof(start) == typeof(end))
+	if randf() < 1.0 / 10.0:
+		return start
+	if randf() < 1.0 / 9.0:
+		return end
+	if typeof(start) in [TYPE_INT, TYPE_FLOAT] and start < 0 and end > 0 and randf() < 1.0 / 8.0:
+		return 0
+	if typeof(start) == TYPE_VECTOR2:
+		return Vector2(random_property(start.x, end.x), random_property(start.y, end.y))
+	if typeof(start) == TYPE_COLOR:
+		return Color(random_property(start.r, end.r), random_property(start.g, end.g), random_property(start.b, end.b), random_property(start.a, end.a))
+	return lerp(start, end, randf())
+	
