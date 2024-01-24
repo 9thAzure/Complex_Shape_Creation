@@ -54,6 +54,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	
+	assert(test_script != null)
 	var size := properties.size()
 
 	for x in size:
