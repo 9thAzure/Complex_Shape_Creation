@@ -276,7 +276,7 @@ script = ExtResource("1_nx66f")
 [node name="Size" type="Node2D" parent="IndividualProperties"]
 position = Vector2(45, 15)
 script = ExtResource("1_nx66f")
-size = 12.3587
+size = 5.33333
 
 [node name="OffsetRotation" type="Node2D" parent="IndividualProperties"]
 position = Vector2(75, 16)
@@ -304,31 +304,28 @@ script = ExtResource("1_nx66f")
 [node name="AllPropertiesIndividually" type="Node" parent="."]
 script = ExtResource("2_rp1v7")
 node_path = NodePath("SimplePolygon2D")
-properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.001, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset_position:x", -10, 10], ["offset_position:y", -10, 10]])
-max_time = 2.0
+properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.1, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset_position", Vector2(-10, -10), Vector2(10, 10)]])
 
 [node name="SimplePolygon2D" type="Node2D" parent="AllPropertiesIndividually"]
 position = Vector2(45, 45)
 script = ExtResource("1_nx66f")
-vertices_count = 5
-size = 9.89992
-offset_rotation = -2.66272
-color = Color(1, 1, 0, 1)
-offset_position = Vector2(5.20759, -1.40664)
+vertices_count = 3
+size = 1.62393
+offset_rotation = -0.217985
+color = Color(0.136278, 0, 0, 1)
+offset_position = Vector2(-8.53376, 0)
 
 [node name="SquareMostProperties" type="Node" parent="."]
 script = ExtResource("2_rp1v7")
 node_path = NodePath("SimplePolygon2D")
-properties = Array[Array]([["size", 0.001, 20.0], ["color", Color(0, 0, 0, 1), Color(0, 1, 1, 1)], ["offset_position:x", -10, 10], ["offset_position:y", -10, 10]])
-max_time = 2.0
+properties = Array[Array]([["size", 0.001, 20.0], ["color", Color(0, 0, 0, 1), Color(0, 1, 1, 1)], ["offset_position", Vector2(-10, -10), Vector2(10, 10)]])
 
 [node name="SimplePolygon2D" type="Node2D" parent="SquareMostProperties"]
 position = Vector2(75, 45)
 script = ExtResource("1_nx66f")
 vertices_count = 4
-size = 10.8525
-color = Color(0, 0.367573, 0.367573, 1)
-offset_position = Vector2(6.71137, -9.99156)
+size = 18.624
+offset_position = Vector2(-1.91252, -5.06176)
 
 [node name="Table" type="Node2D" parent="."]
 position = Vector2(15, 75)
