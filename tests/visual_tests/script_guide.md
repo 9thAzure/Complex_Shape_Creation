@@ -19,15 +19,21 @@ If enabling an `AnimationPlayer` node, it will play the first animation that isn
 
 ### reset
 
-Attempts to reset all nodes under its children to their default state.
+Attempts to reset all nodes under its children to their default state. It always returns `false`.
 
 For `AnimationPlayer`s, it will set the animation to the beggining of the track.
 
 For [random_modulate], it will reset properties in mentioned `random_modulate.properties` to their default value.
 If it cannot obtain a value (for instance, a non-script variable), it will use an alternate value:
 - `0` if there is no script
-- `Color.White` if the variable is of type `Color`
+- `Color.WHITE` if the variable is of type `Color`
+- `Vector2.ZERO` if the variable is of type `Vector2`
 - the starting value of `random_modulate.properties`
+
+> [!NOTE]
+> `reset` does not set the animations of `AnimationPlayers`to a valid state like `enable_all` does,
+> and may fail to reset it if no animation is selected.
+> enable and disable `enable_all` before using `reset` to fix this.
 
 ### auto_play
 

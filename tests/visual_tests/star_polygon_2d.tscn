@@ -1003,7 +1003,6 @@ properties = Array[Array]([["point_count", 1, 8], ["size", 1.0, 20.0], ["inner_s
 
 [node name="RegularPolygon2D" type="Polygon2D" parent="AllPropertiesIndividually"]
 position = Vector2(315, 15)
-offset = Vector2(-10, -10)
 script = ExtResource("2_6ln1t")
 offset_rotation = -6.28319
 
@@ -1014,7 +1013,6 @@ properties = Array[Array]([["size", 1.0, 20.0], ["inner_size", 1.0, 15.0], ["off
 
 [node name="RegularPolygon2D" type="Polygon2D" parent="AllPropertiesIndividuallyLine"]
 position = Vector2(315, 75)
-offset = Vector2(-10, -10)
 script = ExtResource("2_6ln1t")
 point_count = 1
 offset_rotation = -6.28319

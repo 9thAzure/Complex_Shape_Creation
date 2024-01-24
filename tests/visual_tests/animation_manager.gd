@@ -63,6 +63,8 @@ var reset := false:
 							node.set(property_name, value)
 						elif typeof(property[1]) == TYPE_COLOR:
 							node.set(property_name, Color.WHITE)
+						elif typeof(property[1]) == TYPE_VECTOR2:
+							node.set(property_name, Vector2.ZERO)
 						else:
 							node.set(property_name, property[1])
 				continue
