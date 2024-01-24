@@ -71,6 +71,6 @@ var reset := false:
 var auto_start := true
 
 func _ready() -> void:
-	if Engine.is_editor_hint() and auto_start:
+	if not Engine.is_editor_hint() and auto_start:
 		enable_all = true
 		
