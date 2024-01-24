@@ -307,8 +307,9 @@ func regenerate() -> void:
 	polygon.points = points
 	_set_shape(polygon)
 
-func _set_shape(new_shape : Shape2D):
-	new_shape.custom_solver_bias = shape.custom_solver_bias
+func _set_shape(new_shape : Shape2D) -> void:
+	if shape != null:
+		new_shape.custom_solver_bias = shape.custom_solver_bias
 	shape = new_shape
 
 func _uses_drawn_arc() -> bool:
