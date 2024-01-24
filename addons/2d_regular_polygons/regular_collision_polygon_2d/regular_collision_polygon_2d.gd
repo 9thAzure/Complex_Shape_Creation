@@ -308,6 +308,10 @@ func regenerate() -> void:
 	polygon.points = points 
 	shape = polygon
 
+func _set_shape(new_shape : Shape2D):
+	new_shape.custom_solver_bias = shape.custom_solver_bias
+	shape = new_shape
+
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
