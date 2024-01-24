@@ -23,6 +23,7 @@ public class StarPolygon2D
     /// <summary>
     /// The number of points the star has.
     /// </summary>
+    /// <remarks>If set to <c>1</c>, a line is drawn.</remarks>
     public int PointCount
     {
         get => (int)Instance.Get(PropertyName.PointCount);
@@ -31,6 +32,7 @@ public class StarPolygon2D
     /// <summary>
     /// The length of each point to the center of the star.
     /// </summary>
+    /// <remarks>For lines, it determines the length of the top part.</remarks>
     public float Size
     {
         get => (float)Instance.Get(PropertyName.Size);
@@ -39,30 +41,25 @@ public class StarPolygon2D
     /// <summary>
     /// The length of the inner vertices to the center of the star.
     /// </summary>
+    /// <remakrs>For lines, it determines the length of the bottem part.</remarks>
     public float InnerSize
     {
         get => (float)Instance.Get(PropertyName.InnerSize);
         set => Instance.Set(PropertyName.InnerSize, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetRotationDegrees"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetRotationDegrees"/>
     public float OffsetRotationDegrees
     {
         get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetRotation"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetRotation"/>
     public float OffsetRotation
     {
         get => (float)Instance.Get(PropertyName.OffsetRotation);
         set => Instance.Set(PropertyName.OffsetRotation, value);
     }
-    /// <summary>Determines the width of the shape and whether is uses Draw* methods or <see cref="Polygon2D.Polygon"/>.</summary>
-    /// <remarks>
-    /// A value of <c>0</c> outlines the shape with lines, and a value smaller than <c>0</c> ignores this effect.
-    /// Values greater than <c>0</c> will have <see cref="Polygon2D.Polygon"/> used,
-    /// and value greater than <see cref="size"/> also ignores this effect while still using <see cref="Polygon2D.Polygon"/>.
-    /// Note: A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c> when running in the editor.
-    /// </remarks>
+    /// <inheritdoc cref="RegularPolygon2D.Width"/>
     public float Width
     {
         get => (float)Instance.Get(PropertyName.Width);
@@ -95,37 +92,37 @@ public class StarPolygon2D
         get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.Color"/>
+    /// <inheritdoc cref="SimplePolygon2D.Color"/>
     public Color Color
     {
         get => Instance.Color;
         set => Instance.Color = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetPosition"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetPosition"/>
     public Vector2 OffsetPosition
     {
         get => Instance.Offset;
         set => Instance.Offset = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Position"/>
+    /// <inheritdoc cref="SimplePolygon2D.Position"/>
     public Vector2 Position
     {
         get => Instance.Position;
         set => Instance.Position = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Rotation"/>
+    /// <inheritdoc cref="SimplePolygon2D.Rotation"/>
     public float Rotation
     {
         get => Instance.Rotation;
         set => Instance.Rotation = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.RotationDegrees"/>
+    /// <inheritdoc cref="SimplePolygon2D.RotationDegrees"/>
     public float RotationDegrees
     {
         get => Instance.RotationDegrees;
         set => Instance.RotationDegrees = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Scale"/>
+    /// <inheritdoc cref="SimplePolygon2D.Scale"/>
     public Vector2 Scale
     {
         get => Instance.Scale;

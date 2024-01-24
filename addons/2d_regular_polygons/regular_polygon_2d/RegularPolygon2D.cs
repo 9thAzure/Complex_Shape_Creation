@@ -32,13 +32,13 @@ public class RegularPolygon2D
         get => (float)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetRotationDegrees"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetRotationDegrees"/>
     public float OffsetRotationDegrees
     {
         get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetRotation"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetRotation"/>
     public float OffsetRotation
     {
         get => (float)Instance.Get(PropertyName.OffsetRotation);
@@ -49,6 +49,8 @@ public class RegularPolygon2D
     /// A value of <c>0</c> outlines the shape with lines, and a value smaller than <c>0</c> ignores this effect.
     /// Values greater than <c>0</c> will have <see cref="Polygon2D.Polygon"/> used,
     /// and value greater than <see cref="size"/> also ignores this effect while still using <see cref="Polygon2D.Polygon"/>.
+    /// <br/><br/>For lines, <see cref="CanvasItem.DrawLine(Vector2, Vector2, Color, float, bool)"/> is always used, and this property 
+    /// corresponds to the <c>width</c> parameter.
     /// Note: A value between <c>0</c> and <c>0.01</c> is converted to <c>0</c> when running in the editor.
     /// </remarks>
     public float Width
@@ -60,6 +62,8 @@ public class RegularPolygon2D
     /// <remarks>
     /// Values greater than <c>360</c> or <c>-360</c> draws a full shape. It starts in the middle of the bottom edge of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+    /// <br/><br/>For lines, this property rotates the top half of the line.
+    /// <b>Note</b>: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
     /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
     public float DrawnArcDegrees
@@ -71,6 +75,8 @@ public class RegularPolygon2D
     /// <remarks>
     /// Values greater than <see cref="Mathf.Tau"/> or -<see cref="Mathf.Tau"/> draws a full shape. It starts in the middle of the bottom edge of the shapes. 
     /// The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+    /// <br/><br/>For lines, this property rotates the top half of the line.
+    /// <b>Note</b>: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
     /// A value of <c>0</c> makes the node not draw anything.
     /// </remarks>
     public float DrawnArc
@@ -80,50 +86,57 @@ public class RegularPolygon2D
     }
 
     /// <summary>The distance from each vertex along the edge to the point where the rounded corner starts.</summary>
-    /// <remarks>If this value is over half of the edge length, the mid-point of the edge is used instead.</remarks>
+    /// <remarks>
+    /// If this value is over half of the edge length, the mid-point of the edge is used instead.
+    /// <br/><br/>This only has an effect on lines if [member drawn_arc] is also used.
+    /// The maximum possible distance is the ends of the line from the middle.
+    /// </remarks>
     public float CornerSize
     {
         get => (float)Instance.Get(PropertyName.CornerSize);
         set => Instance.Set(PropertyName.CornerSize, value);
     }
     /// <summary>How many lines make up each corner</summary>
-    /// <remarks>A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="VerticesCount"/>.</remarks>
+    /// <remarks>
+    /// A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="VerticesCount"/>. 
+    /// This only has an effect if [member corner_size] is used.
+    /// </remarks>
     public int CornerSmoothness
     {
         get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
-    /// <inherit doc cref="SimplePolygon2D.Color"/>
+    /// <inheritdoc cref="SimplePolygon2D.Color"/>
     public Color Color
     {
         get => Instance.Color;
         set => Instance.Color = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.OffsetPosition"/>
+    /// <inheritdoc cref="SimplePolygon2D.OffsetPosition"/>
     public Vector2 OffsetPosition
     {
         get => Instance.Offset;
         set => Instance.Offset = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Position"/>
+    /// <inheritdoc cref="SimplePolygon2D.Position"/>
     public Vector2 Position
     {
         get => Instance.Position; 
         set => Instance.Position = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Rotation"/>
+    /// <inheritdoc cref="SimplePolygon2D.Rotation"/>
     public float Rotation
     {
         get => Instance.Rotation;
         set => Instance.Rotation = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.RotationDegrees"/>
+    /// <inheritdoc cref="SimplePolygon2D.RotationDegrees"/>
     public float RotationDegrees
     {
         get => Instance.RotationDegrees;
         set => Instance.RotationDegrees = value;
     }
-    /// <inherit doc cref="SimplePolygon2D.Scale"/>
+    /// <inheritdoc cref="SimplePolygon2D.Scale"/>
     public Vector2 Scale
     {
         get => Instance.Scale;

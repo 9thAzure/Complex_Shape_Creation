@@ -12,14 +12,19 @@ class_name StarPolygon2D
 ## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
 
 ## The number of points the star has.
-@export_range(2, 2000)
+## [br][br]If set to [code]1[/code], a line is drawn.
+@export_range(1, 2000)
 var point_count : int = 5:
 	set(value):
-		assert(value > 1, "property 'point_count' must be greater than 1")
+		assert(value > 0, "property 'point_count' must be greater than 0")
 		point_count = value
+		if point_count == 1 and width > 0:
+			polygon = PackedVector2Array()
+			return
 		_pre_redraw()
 		
 ## The length of each point to the center of the star.
+## [br][br]For lines, it determines the length of the top part.
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10.0:
 	set(value):
@@ -28,6 +33,7 @@ var size : float = 10.0:
 		_pre_redraw()
 
 ## The length of the inner vertices to the center of the star.
+## [br][br]For lines, it determines the length of the bottem part.
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var inner_size : float = 5.0:
 	set(value):
@@ -55,6 +61,7 @@ var offset_rotation : float = 0:
 ## Determines the width of the star. A value of [code]0[/code] outlines the star with lines, and a value smaller than [code]0[/code] ignores this effect.
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
+## [br][br]If a line is drawn, [method CanvasItem.draw_line] will always be used, with this property corrasponding to the [param width] parameter.
 @export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
 var width : float = -0.001:
 	set(value):
@@ -72,6 +79,8 @@ var width : float = -0.001:
 ## The arc of the drawn star, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full star. It starts at the top point.
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]For lines, this property rotates the top half of the line.
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 var drawn_arc_degrees : float = 360:
 	set(value):
@@ -82,15 +91,20 @@ var drawn_arc_degrees : float = 360:
 ## The arc of the drawn star, in radians, cutting off beyond that arc. 
 ## Values greater than [constant @GDScript.TAU] or -[constant @GDScript.TAU] draws a full star. It starts at the top point
 ## The direction of the arc is clockwise with positive values and counterclockwise with negative values.
+## [br][br]For lines, this property rotates the top half of the line.
+## [b]Note[/b]: if [member width] is used, this leaves a gap between the 2 lines on the outer angle. Using [member corner_size] fills it in.
 ## [br][br]A value of [code]0[/code] makes the node not draw anything.
 @export_range(-360, 360, 0.01, "radians") 
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
 		_pre_redraw()
+		update_configuration_warnings()
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
 ## If this value is over half of the edge length, the mid-point of the edge is used instead.
+## [br][br]This only has an effect on lines if [member drawn_arc] is also used.
+## The maximum possible distance is the ends of the line from the middle.
 @export_range(0.0, 5, 0.001, "or_greater", "hide_slider") 
 var corner_size : float = 0.0:
 	set(value):
@@ -99,6 +113,7 @@ var corner_size : float = 0.0:
 		_pre_redraw()
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member point_count].
+## This only has an effect if [member corner_size] is used.
 @export_range(0, 8, 1, "or_greater") 
 var corner_smoothness : int = 0:
 	set(value):
@@ -141,6 +156,35 @@ func _enter_tree() -> void:
 
 func _draw():
 	if uses_polygon_member() or drawn_arc == 0:
+		return
+	
+	if point_count == 1:
+		var point := -_get_vertices(offset_rotation + drawn_arc, size)
+		var width_value = width if width != 0 else -1
+		if drawn_arc <= -TAU or drawn_arc >= TAU:
+			draw_line(point + offset, -point * inner_size / size + offset, color, width_value, antialiased)
+			return
+		
+		var point2 := _get_vertices(offset_rotation, inner_size)
+		if is_zero_approx(corner_size):
+			draw_line(point + offset, offset, color, width_value, antialiased)
+			draw_line(point2 + offset, offset, color, width_value, antialiased)
+			return
+		
+		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
+		var multiplier1 := corner_size / size if corner_size <= size else 1.0
+		var multiplier2 := corner_size / inner_size if corner_size <= inner_size else 1.0
+		var line := PackedVector2Array()
+		line.resize(3 + smoothness)
+		line[0] = point + offset
+		line[1] = point * multiplier1 + offset
+		line[-2] = point2 * multiplier2 + offset
+		line[-1] = point2 + offset
+		var i := 1
+		while i < smoothness:
+			line[i + 1] = RegularPolygon2D.quadratic_bezier_interpolate(line[1], offset, line[-2], i / (smoothness as float))
+			i += 1
+		draw_polyline(line, color, width_value, antialiased)
 		return
 	
 	var points := get_star_vertices(point_count, size, inner_size, offset_rotation, offset, drawn_arc)
@@ -218,10 +262,16 @@ func _init(vertices_count : int = 1, size := 10.0, inner_size := 5.0, offset_rot
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
 
+func _get_configuration_warnings() -> PackedStringArray:
+	if drawn_arc == 0:
+		return ["Nothing will be drawn when 'drawn_arc' is 0."]
+	return []
+
 ## Checks whether the current properties of this node will have it use [member Polygon2d.polygon].
 func uses_polygon_member() -> bool:
 	return (
 		width > 0
+		and point_count != 1
 	)
 
 ## Returns a [PackedVector2Array] with points for forming the specified star.

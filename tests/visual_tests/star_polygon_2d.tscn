@@ -1,0 +1,1028 @@
+[gd_scene load_steps=15 format=3 uid="uid://et6ia1vpk1x4"]
+
+[ext_resource type="Script" path="res://tests/visual_tests/animation_manager.gd" id="1_0xcni"]
+[ext_resource type="Script" path="res://addons/2d_regular_polygons/star_polygon_2d/star_polygon_2d.gd" id="2_6ln1t"]
+[ext_resource type="Script" path="res://tests/visual_tests/random_modulate.gd" id="3_wrn76"]
+[ext_resource type="Script" path="res://tests/visual_tests/table_display.gd" id="4_74omj"]
+
+[sub_resource type="Animation" id="Animation_8jjdu"]
+resource_name = "IndividualProperties"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualProperties/VerticesCount:point_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1, 8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualProperties/Size:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualProperties/OffsetRotation:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualProperties/Color:color")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 1), Color(0, 1, 0.0156863, 1), Color(0, 0, 1, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 1), Color(0, 0.607843, 0.403922, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IndividualProperties/Offset:offset")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.5, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(4.667, 10), Vector2(10, 0), Vector2(-10, 0), Vector2(0, -10)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IndividualProperties/Width:width")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.5, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [-0.001, 0.0, 0.0, 11.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IndividualProperties/DrawnArc:drawn_arc")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("IndividualProperties/CornerSize:corner_size")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("IndividualProperties/CornerSmoothness:corner_smoothness")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("IndividualProperties/Size:inner_size")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(1.5, 4.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 15.0]
+}
+
+[sub_resource type="Animation" id="Animation_wr35u"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualProperties/VerticesCount:point_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualProperties/OffsetRotation:offset_rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualProperties/Color:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualProperties/Offset:offset")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IndividualProperties/Width:width")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.001]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IndividualProperties/DrawnArc:drawn_arc")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [6.28319]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IndividualProperties/CornerSize:corner_size")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("IndividualProperties/CornerSmoothness:corner_smoothness")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_miyoh"]
+_data = {
+"IndividualProperties": SubResource("Animation_8jjdu"),
+"RESET": SubResource("Animation_wr35u")
+}
+
+[sub_resource type="Animation" id="Animation_3cxhu"]
+resource_name = "IndividualPropertiesWithPolygon"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualPropertiesWithPolygon/VerticesCount:point_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1, 8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualPropertiesWithPolygon/Size:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualPropertiesWithPolygon/OffsetRotation:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualPropertiesWithPolygon/Color:color")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 1), Color(0, 1, 0.0156863, 1), Color(0, 0, 1, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 1), Color(0, 0.607843, 0.403922, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IndividualPropertiesWithPolygon/Offset:offset")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.5, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(4.667, 10), Vector2(10, 0), Vector2(-10, 0), Vector2(0, -10)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IndividualPropertiesWithPolygon/DrawnArc:drawn_arc")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IndividualPropertiesWithPolygon/CornerSize:corner_size")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("IndividualPropertiesWithPolygon/CornerSmoothness:corner_smoothness")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("IndividualPropertiesWithPolygon/Size:inner_size")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.5, 4.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 15.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ic44h"]
+_data = {
+"IndividualPropertiesWithPolygon": SubResource("Animation_3cxhu")
+}
+
+[sub_resource type="Animation" id="Animation_7g6x3"]
+resource_name = "IndividualPropertiesWithLines"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualPropertiesWithLines/Size:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualPropertiesWithLines/OffsetRotation:offset_rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualPropertiesWithLines/Color:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 1), Color(0, 1, 0.0156863, 1), Color(0, 0, 1, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 1), Color(0, 0.607843, 0.403922, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualPropertiesWithLines/Offset:offset")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.5, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(4.667, 10), Vector2(10, 0), Vector2(-10, 0), Vector2(0, -10)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IndividualPropertiesWithLines/DrawnArc:drawn_arc")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IndividualPropertiesWithLines/CornerSize:corner_size")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IndividualPropertiesWithLines/CornerSmoothness:corner_smoothness")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("IndividualPropertiesWithLines/Size:width")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("IndividualPropertiesWithLines/OffsetRotation:width")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("IndividualPropertiesWithLines/Color:width")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("IndividualPropertiesWithLines/Offset:width")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("IndividualPropertiesWithLines/DrawnArc:width")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("IndividualPropertiesWithLines/CornerSize:width")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("IndividualPropertiesWithLines/CornerSmoothness:width")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("IndividualPropertiesWithLines/Size:inner_size")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(1.5, 4.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 15.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_du5bi"]
+_data = {
+"IndividualPropertiesWithLines": SubResource("Animation_7g6x3")
+}
+
+[sub_resource type="Animation" id="Animation_n5rx6"]
+resource_name = "AllProperties"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AllProperties/RegularPolygon2D:point_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1, 8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AllProperties/RegularPolygon2D:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AllProperties/RegularPolygon2D:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AllProperties/RegularPolygon2D:color")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 1), Color(0, 1, 0.0156863, 1), Color(0, 0, 1, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 1), Color(0, 0.607843, 0.403922, 0.478431)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("AllProperties/RegularPolygon2D:offset")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.5, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(4.667, 10), Vector2(10, 0), Vector2(-10, 0), Vector2(0, -10)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("AllProperties/RegularPolygon2D:width")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.5, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [-0.001, 0.0, 0.0, 11.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AllProperties/RegularPolygon2D:drawn_arc")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AllProperties/RegularPolygon2D:corner_size")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("AllProperties/RegularPolygon2D:corner_smoothness")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("AllProperties/RegularPolygon2D2:size")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("AllProperties/RegularPolygon2D2:offset_rotation")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("AllProperties/RegularPolygon2D2:color")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 1), Color(0, 1, 0.0156863, 1), Color(0, 0, 1, 1), Color(1, 1, 1, 1), Color(0, 0, 0, 1), Color(0, 0.607843, 0.403922, 0.545098)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("AllProperties/RegularPolygon2D2:offset")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.5, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(4.667, 10), Vector2(10, 0), Vector2(-10, 0), Vector2(0, -10)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("AllProperties/RegularPolygon2D2:width")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("AllProperties/RegularPolygon2D2:drawn_arc")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("AllProperties/RegularPolygon2D2:corner_size")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("AllProperties/RegularPolygon2D2:corner_smoothness")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("AllProperties/RegularPolygon2D:inner_size")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(1.5, 4.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 15.0]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("AllProperties/RegularPolygon2D2:inner_size")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(1.5, 4.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 15.0]
+}
+
+[sub_resource type="Animation" id="Animation_khpwa"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AllProperties/RegularPolygon2D2:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [5.33333]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kbxjh"]
+_data = {
+"AllProperties": SubResource("Animation_n5rx6"),
+"RESET": SubResource("Animation_khpwa")
+}
+
+[node name="Root2" type="Node"]
+script = ExtResource("1_0xcni")
+
+[node name="IndividualProperties" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_miyoh")
+}
+
+[node name="VerticesCount" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(15, 15)
+script = ExtResource("2_6ln1t")
+point_count = 1
+
+[node name="Size" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(45, 15)
+script = ExtResource("2_6ln1t")
+point_count = 3
+size = 1e-06
+inner_size = 7.5
+
+[node name="OffsetRotation" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(75, 16)
+script = ExtResource("2_6ln1t")
+point_count = 3
+
+[node name="Color" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(105, 15)
+script = ExtResource("2_6ln1t")
+
+[node name="Offset" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(135, 15)
+script = ExtResource("2_6ln1t")
+
+[node name="Width" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(165, 15)
+script = ExtResource("2_6ln1t")
+point_count = 4
+
+[node name="DrawnArc" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(195, 15)
+script = ExtResource("2_6ln1t")
+point_count = 3
+
+[node name="CornerSize" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(225, 15)
+script = ExtResource("2_6ln1t")
+point_count = 3
+
+[node name="CornerSmoothness" type="Polygon2D" parent="IndividualProperties"]
+position = Vector2(255, 15)
+script = ExtResource("2_6ln1t")
+point_count = 3
+corner_size = 5.0
+
+[node name="IndividualPropertiesWithPolygon" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ic44h")
+}
+
+[node name="VerticesCount" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(15, 45)
+script = ExtResource("2_6ln1t")
+point_count = 1
+width = 10.0
+
+[node name="Size" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(45, 45)
+polygon = PackedVector2Array(-1.22465e-22, -1e-06, 6.49519, -3.75, 8.66025e-07, 5e-07, 8.49831e-15, 7.5, -8.66025e-07, 5e-07, -6.49519, -3.75)
+script = ExtResource("2_6ln1t")
+point_count = 3
+size = 1e-06
+inner_size = 7.5
+width = 10.0
+
+[node name="OffsetRotation" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(75, 46)
+polygon = PackedVector2Array(-4.46638e-05, -10, 4.33012, -2.50002, 8.66028, 4.99996, 2.23319e-05, 5, -8.66023, 5.00004, -4.33014, -2.49998)
+script = ExtResource("2_6ln1t")
+point_count = 3
+offset_rotation = -6.28319
+width = 10.0
+
+[node name="Color" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(105, 45)
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(0.980171, 9.95185, -0.980171, 9.95185, -2.90285, 9.5694, -4.71397, 8.81921, -6.34393, 7.7301, -7.7301, 6.34393, -8.81921, 4.71397, -9.5694, 2.90285, -9.95185, 0.980171, -9.95185, -0.980171, -9.5694, -2.90285, -8.81921, -4.71397, -7.7301, -6.34393, -6.34393, -7.7301, -4.71397, -8.81921, -2.90285, -9.5694, -0.980171, -9.95185, 0.980171, -9.95185, 2.90285, -9.5694, 4.71397, -8.81921, 6.34393, -7.7301, 7.7301, -6.34393, 8.81921, -4.71397, 9.5694, -2.90285, 9.95185, -0.980171, 9.95185, 0.980171, 9.5694, 2.90285, 8.81921, 4.71397, 7.7301, 6.34393, 6.34393, 7.7301, 4.71397, 8.81921, 2.90285, 9.5694)
+script = ExtResource("2_6ln1t")
+width = 10.0
+
+[node name="Offset" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(135, 45)
+polygon = PackedVector2Array(0.980171, 9.95185, -0.980171, 9.95185, -2.90285, 9.5694, -4.71397, 8.81921, -6.34393, 7.7301, -7.7301, 6.34393, -8.81921, 4.71397, -9.5694, 2.90285, -9.95185, 0.980171, -9.95185, -0.980171, -9.5694, -2.90285, -8.81921, -4.71397, -7.7301, -6.34393, -6.34393, -7.7301, -4.71397, -8.81921, -2.90285, -9.5694, -0.980171, -9.95185, 0.980171, -9.95185, 2.90285, -9.5694, 4.71397, -8.81921, 6.34393, -7.7301, 7.7301, -6.34393, 8.81921, -4.71397, 9.5694, -2.90285, 9.95185, -0.980171, 9.95185, 0.980171, 9.5694, 2.90285, 8.81921, 4.71397, 7.7301, 6.34393, 6.34393, 7.7301, 4.71397, 8.81921, 2.90285, 9.5694)
+script = ExtResource("2_6ln1t")
+width = 10.0
+
+[node name="DrawnArc" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(195, 45)
+polygon = PackedVector2Array(-1.22465e-15, -10, 4.33013, -2.5, 8.66025, 5, 5.66554e-15, 5, -8.66025, 5, -4.33013, -2.5)
+script = ExtResource("2_6ln1t")
+point_count = 3
+width = 10.0
+drawn_arc = -6.28319
+
+[node name="CornerSize" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(225, 45)
+polygon = PackedVector2Array(-1.22465e-15, -10, 4.33013, -2.5, 8.66025, 5, 5.66554e-15, 5, -8.66025, 5, -4.33013, -2.5)
+script = ExtResource("2_6ln1t")
+point_count = 3
+width = 10.0
+
+[node name="CornerSmoothness" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(255, 45)
+polygon = PackedVector2Array(-2.16506, -6.25, -1.73205, -6.925, -1.29904, -7.45, -0.866025, -7.825, -0.433013, -8.05, 0, -8.125, 0.433013, -8.05, 0.866025, -7.825, 1.29904, -7.45, 1.73205, -6.925, 2.16506, -6.25, 2.16506, -6.25, 2.59808, -5.5, 3.03109, -4.75, 3.4641, -4, 3.89711, -3.25, 4.33013, -2.5, 4.76314, -1.75, 5.19615, -1, 5.62916, -0.25, 6.06218, 0.5, 6.49519, 1.25, 6.49519, 1.25, 6.86325, 1.9625, 7.10141, 2.6, 7.20966, 3.1625, 7.18801, 3.65, 7.03646, 4.0625, 6.755, 4.4, 6.34364, 4.6625, 5.80237, 4.85, 5.1312, 4.9625, 4.33013, 5, 4.33013, 5, 3.4641, 5, 2.59808, 5, 1.73205, 5, 0.866025, 5, 0, 5, -0.866025, 5, -1.73205, 5, -2.59808, 5, -3.4641, 5, -4.33013, 5, -4.33013, 5, -5.1312, 4.9625, -5.80237, 4.85, -6.34364, 4.6625, -6.755, 4.4, -7.03646, 4.0625, -7.18801, 3.65, -7.20966, 3.1625, -7.10141, 2.6, -6.86325, 1.9625, -6.49519, 1.25, -6.49519, 1.25, -6.06218, 0.5, -5.62916, -0.25, -5.19615, -1, -4.76314, -1.75, -4.33013, -2.5, -3.89711, -3.25, -3.4641, -4, -3.03109, -4.75, -2.59808, -5.5, -2.16506, -6.25)
+script = ExtResource("2_6ln1t")
+point_count = 3
+width = 10.0
+corner_size = 5.0
+
+[node name="IndividualPropertiesWithLines" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_du5bi")
+}
+
+[node name="Size" type="Polygon2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(45, 75)
+script = ExtResource("2_6ln1t")
+point_count = 1
+size = 1e-06
+inner_size = 7.5
+width = 10.0
+
+[node name="OffsetRotation" type="Polygon2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(75, 75)
+script = ExtResource("2_6ln1t")
+point_count = 1
+offset_rotation = -6.28319
+width = 10.0
+
+[node name="Color" type="Polygon2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(105, 75)
+color = Color(1, 0, 0, 1)
+script = ExtResource("2_6ln1t")
+point_count = 1
+width = 10.0
+
+[node name="Offset" type="Polygon2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(135, 75)
+script = ExtResource("2_6ln1t")
+point_count = 1
+width = 10.0
+
+[node name="DrawnArc" type="Polygon2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(195, 75)
+script = ExtResource("2_6ln1t")
+point_count = 1
+width = 10.0
+drawn_arc = -6.28319
+
+[node name="CornerSize" type="Polygon2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(225, 75)
+script = ExtResource("2_6ln1t")
+point_count = 1
+width = 10.0
+drawn_arc = 1.5708
+
+[node name="CornerSmoothness" type="Polygon2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(255, 75)
+script = ExtResource("2_6ln1t")
+point_count = 1
+width = 10.0
+drawn_arc = 1.5708
+corner_size = 5.0
+
+[node name="AllProperties" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_kbxjh")
+}
+
+[node name="RegularPolygon2D" type="Polygon2D" parent="AllProperties"]
+position = Vector2(285, 15)
+color = Color(1, 0, 0, 1)
+script = ExtResource("2_6ln1t")
+point_count = 1
+size = 1e-06
+inner_size = 7.5
+offset_rotation = -6.28319
+drawn_arc = -6.28319
+
+[node name="RegularPolygon2D2" type="Polygon2D" parent="AllProperties"]
+position = Vector2(285, 75)
+color = Color(1, 0, 0, 1)
+script = ExtResource("2_6ln1t")
+point_count = 1
+size = 5.33333
+inner_size = 7.5
+offset_rotation = -6.28319
+width = 10.0
+drawn_arc = -6.28319
+
+[node name="AllPropertiesIndividually" type="Node" parent="."]
+script = ExtResource("3_wrn76")
+node_path = NodePath("RegularPolygon2D")
+properties = Array[Array]([["point_count", 1, 8], ["size", 1.0, 20.0], ["inner_size", 1.0, 15.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset", Vector2(-10, -10), Vector2(10, 10)], ["width", -0.001, 10.0], ["drawn_arc", 0.001, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8], ["drawn_arc", -3.142, -0.001]])
+
+[node name="RegularPolygon2D" type="Polygon2D" parent="AllPropertiesIndividually"]
+position = Vector2(315, 15)
+script = ExtResource("2_6ln1t")
+offset_rotation = -6.28319
+
+[node name="AllPropertiesIndividuallyLine" type="Node" parent="."]
+script = ExtResource("3_wrn76")
+node_path = NodePath("RegularPolygon2D")
+properties = Array[Array]([["size", 1.0, 20.0], ["inner_size", 1.0, 15.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset", Vector2(-10, -10), Vector2(10, 10)], ["width", -0.001, 10.0], ["drawn_arc", 0.001, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8], ["drawn_arc", -3.142, -0.001]])
+
+[node name="RegularPolygon2D" type="Polygon2D" parent="AllPropertiesIndividuallyLine"]
+position = Vector2(315, 75)
+script = ExtResource("2_6ln1t")
+point_count = 1
+offset_rotation = -6.28319
+
+[node name="Table" type="Node2D" parent="."]
+position = Vector2(345, 15)
+scale = Vector2(2.5, 2.5)
+script = ExtResource("4_74omj")
+test_script = ExtResource("2_6ln1t")
+properties = Array[Array]([["point_count", 1, 8], ["size", 1.0, 20.0], ["inner_size", 1.0, 15.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset", Vector2(-10, -10), Vector2(10, 10)], ["width", -0.001, 10.0], ["drawn_arc", -3.142, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8]])
+defaults = {
+"corner_size": [&"corner_smoothness", 6]
+}
