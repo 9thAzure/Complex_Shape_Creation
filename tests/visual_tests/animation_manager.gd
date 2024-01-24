@@ -24,7 +24,8 @@ var enable_all := false:
 				continue
 			
 			if child.get_script() == modulator_script:
-				child.is_on = value
+				if child.is_on != value:
+					child.is_on = value
 				continue
 			
 			if child.get_script() == table_script:
@@ -65,3 +66,11 @@ var reset := false:
 						else:
 							node.set(property_name, property[1])
 				continue
+
+@export
+var auto_start := true
+
+func _ready() -> void:
+	if auto_start:
+		enable_all = true
+		
