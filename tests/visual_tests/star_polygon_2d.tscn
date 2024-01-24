@@ -942,6 +942,7 @@ corner_smoothness = 4
 position = Vector2(285, 75)
 color = Color(0, 0.153866, 0.102247, 0.884849)
 offset = Vector2(-7.46866, -2.53134)
+polygon = PackedVector2Array(2.40799, -1.43273, 3.31907, -1.8581, 3.87691, -1.83987, 4.08151, -1.37804, 3.93287, -0.472607, 3.93287, -0.472607, 3.5509, 0.460861, 3.05551, 1.00681, 2.44669, 1.16523, 1.72446, 0.936136, 1.72446, 0.936136, 1.04494, 0.558985, 0.564289, 0.273248, 0.2825, 0.0789259, 0.199574, -0.0239825, 0.199574, -0.0239825, 0.349979, -0.15493, 0.768183, -0.43337, 1.45419, -0.859302, 2.40799, -1.43273)
 script = ExtResource("2_6ln1t")
 point_count = 2
 size = 5.33333
@@ -989,6 +990,7 @@ corner_smoothness = 8
 
 [node name="Table" type="Node2D" parent="."]
 position = Vector2(15, 105)
+scale = Vector2(2.5, 2.5)
 script = ExtResource("4_74omj")
 test_script = ExtResource("2_6ln1t")
 properties = Array[Array]([["point_count", 1, 8], ["size", 1.0, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset", Vector2(-10, -10), Vector2(10, 10)], ["width", -0.001, 10.0], ["drawn_arc", -3.142, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8]])

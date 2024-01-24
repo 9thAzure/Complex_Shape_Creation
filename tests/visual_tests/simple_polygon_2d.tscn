@@ -329,6 +329,7 @@ offset_position = Vector2(-1.91252, -5.06176)
 
 [node name="Table" type="Node2D" parent="."]
 position = Vector2(15, 75)
+scale = Vector2(2.5, 2.5)
 script = ExtResource("4_ocwss")
 test_script = ExtResource("1_nx66f")
 max_time = null
