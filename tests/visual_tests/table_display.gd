@@ -65,7 +65,16 @@ func _ready() -> void:
 			var node : Node2D = test_script.new()
 			node.position = Vector2(spacing.x * x, spacing.y * y)
 			for key in defaults:
-				node.set(key, defaults[key])
+				var value = defaults[key]
+				if value is Array and value.size() == 2 and typeof(value[0]) in [TYPE_INT, TYPE_STRING, TYPE_STRING_NAME]:
+					if value[0] in [x, y]:
+						value = value[1]
+					elif value[0] in [properties[x][0], properties[y][0]]:
+						value = value[1]
+					else:
+						continue
+					
+				node.set(key, value)
 			add_child(node)
 	
 	modulate_properties()
