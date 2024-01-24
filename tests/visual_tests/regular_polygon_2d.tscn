@@ -984,7 +984,9 @@ corner_smoothness = 8
 position = Vector2(15, 105)
 script = ExtResource("4_uo0ld")
 test_script = ExtResource("2_1qxsu")
-properties = Array[Array]([["vertices_count", 1, 8], ["size", 1.0, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset", Vector2(-10, -10), Vector2(10, 10)], ["width", -0.001, 10.0], ["drawn_arc", 0.001, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8], ["drawn_arc", -3.142, -0.001]])
+properties = Array[Array]([["vertices_count", 1, 8], ["size", 1.0, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset", Vector2(-10, -10), Vector2(10, 10)], ["width", -0.001, 10.0], ["drawn_arc", -3.142, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8]])
 defaults = {
+"corner_size": 3.0,
+"corner_smoothness": 1,
 "vertices_count": 4
 }

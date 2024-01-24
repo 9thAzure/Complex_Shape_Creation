@@ -1,0 +1,766 @@
+[gd_scene load_steps=37 format=3 uid="uid://dfpm3jcohi0is"]
+
+[ext_resource type="Script" path="res://tests/visual_tests/animation_manager.gd" id="1_sfqof"]
+[ext_resource type="Script" path="res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd" id="2_okbtb"]
+[ext_resource type="Script" path="res://tests/visual_tests/random_modulate.gd" id="3_ddpku"]
+[ext_resource type="Script" path="res://tests/visual_tests/table_display.gd" id="4_pyexj"]
+
+[sub_resource type="Animation" id="Animation_8jjdu"]
+resource_name = "IndividualProperties"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualProperties/VerticesCount:vertices_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1, 8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualProperties/Size:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualProperties/OffsetRotation:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualProperties/Width:width")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [-0.001, 0.0, 0.0, 11.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IndividualProperties/DrawnArc:drawn_arc")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IndividualProperties/CornerSize:corner_size")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IndividualProperties/CornerSmoothness:corner_smoothness")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+
+[sub_resource type="Animation" id="Animation_wr35u"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualProperties/VerticesCount:vertices_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualProperties/OffsetRotation:offset_rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_miyoh"]
+_data = {
+"IndividualProperties": SubResource("Animation_8jjdu"),
+"RESET": SubResource("Animation_wr35u")
+}
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_ht6ch"]
+points = PackedVector2Array(8.66025, 5, -8.66025, 5, -1.22465e-15, -10)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_i8tev"]
+points = PackedVector2Array(7.20825, 4.16168, -7.20825, 4.16168, -1.01932e-15, -8.32337)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_meaw6"]
+points = PackedVector2Array(8.62877, -5.05413, 0.0626205, 9.9998, -8.69139, -4.94567)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_wico1"]
+segments = PackedVector2Array(7.07107, 7.07107, -7.07107, 7.07107, -7.07107, 7.07107, -7.07107, -7.07107, -7.07107, -7.07107, 7.07107, -7.07107, 7.07107, -7.07107, 7.07107, 7.07107, 3.83445, 3.83445, 3.83445, -3.83445, 3.83445, -3.83445, -3.83445, -3.83445, -3.83445, -3.83445, -3.83445, 3.83445, -3.83445, 3.83445, 3.83445, 3.83445)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_a3qal"]
+points = PackedVector2Array(0, 5, 8.66025, 5, 8.5983, 4.8927, 0, 0)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_n02p7"]
+points = PackedVector2Array(6.7875, 1.75629, 7.10587, 2.37259, 7.31187, 2.92402, 7.40551, 3.41058, 7.38678, 3.83226, 7.25569, 4.18907, 7.01223, 4.48101, 6.6564, 4.70807, 6.18821, 4.87025, 5.60766, 4.96756, 4.91474, 5, -4.91474, 5, -5.60766, 4.96756, -6.18821, 4.87025, -6.6564, 4.70807, -7.01223, 4.48101, -7.25569, 4.18907, -7.38678, 3.83226, -7.40551, 3.41058, -7.31187, 2.92402, -7.10586, 2.37259, -6.7875, 1.75629, -1.87276, -6.75629, -1.49821, -7.34016, -1.12365, -7.79428, -0.749103, -8.11865, -0.374552, -8.31327, 0, -8.37814, 0.374552, -8.31327, 0.749103, -8.11865, 1.12365, -7.79428, 1.49821, -7.34016, 1.87276, -6.75629)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_2c16l"]
+points = PackedVector2Array(6.16025, 0.669873, 6.99359, 3.0755, 6.16025, 4.51887, 3.66025, 5, -3.66025, 5, -6.16025, 4.51887, -6.99359, 3.0755, -6.16025, 0.669873, -2.5, -5.66987, -0.833333, -7.59437, 0.833333, -7.59437, 2.5, -5.66987)
+
+[sub_resource type="Animation" id="Animation_3cxhu"]
+resource_name = "IndividualPropertiesWithPolygon"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualPropertiesWithPolygon/VerticesCount:vertices_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1, 8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualPropertiesWithPolygon/Size:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualPropertiesWithPolygon/OffsetRotation:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualPropertiesWithPolygon/DrawnArc:drawn_arc")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IndividualPropertiesWithPolygon/CornerSize:corner_size")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IndividualPropertiesWithPolygon/CornerSmoothness:corner_smoothness")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ic44h"]
+_data = {
+"IndividualPropertiesWithPolygon": SubResource("Animation_3cxhu")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_twjsl"]
+size = Vector2(10, 20)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_jgkql"]
+points = PackedVector2Array(2.58945, 1.49502, -2.58945, 1.49502, -3.66174e-16, -2.99004)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_ghexd"]
+points = PackedVector2Array(-7.38938, 6.73773, -2.14035, -9.76826, 9.52974, 3.03053)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_3gw76"]
+segments = PackedVector2Array(0, 5, 8.66025, 5, 8.66025, 5, 1.22465e-15, -10, 1.22465e-15, -10, -4.87791, -1.55121, -4.87791, -1.55121, 0, 0, 0, 0, 0, 5)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_krywx"]
+points = PackedVector2Array(7.9875, 3.83475, 8.10186, 4.05615, 8.17587, 4.25424, 8.20951, 4.42903, 8.20278, 4.58051, 8.15569, 4.70869, 8.06823, 4.81356, 7.9404, 4.89513, 7.77221, 4.95339, 7.56366, 4.98835, 7.31474, 5, -7.31474, 5, -7.56366, 4.98835, -7.77221, 4.95339, -7.9404, 4.89513, -8.06823, 4.81356, -8.15569, 4.70869, -8.20278, 4.58051, -8.20951, 4.42903, -8.17587, 4.25424, -8.10186, 4.05615, -7.9875, 3.83475, -0.672758, -8.83475, -0.538206, -9.04449, -0.403655, -9.20763, -0.269103, -9.32415, -0.134552, -9.39407, 0, -9.41737, 0.134552, -9.39407, 0.269103, -9.32415, 0.403655, -9.20763, 0.538206, -9.04449, 0.672758, -8.83475)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_c7u60"]
+points = PackedVector2Array(6.16025, 0.669873, 3.66025, 5, -3.66025, 5, -6.16025, 0.669873, -2.5, -5.66987, 2.5, -5.66987)
+
+[sub_resource type="Animation" id="Animation_7g6x3"]
+resource_name = "IndividualPropertiesWithLines"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IndividualPropertiesWithLines/Size:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IndividualPropertiesWithLines/OffsetRotation:offset_rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IndividualPropertiesWithLines/OffsetRotation:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IndividualPropertiesWithLines/DrawnArc:drawn_arc")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IndividualPropertiesWithLines/CornerSize:corner_size")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IndividualPropertiesWithLines/CornerSmoothness:corner_smoothness")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_du5bi"]
+_data = {
+"IndividualPropertiesWithLines": SubResource("Animation_7g6x3")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rgppb"]
+size = Vector2(5.06269, 12.8224)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_jcsnb"]
+points = PackedVector2Array(9.34955, -4.35817, 6.14998, -8.28164, -9.34955, 4.35817, -6.14998, 8.28164)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_puhjh"]
+segments = PackedVector2Array(-2.53134, 10, -2.53134, 0, -2.53134, 0, 2.53134, 0, 2.53134, 0, 2.53134, 10, 2.53134, 10, -2.53134, 10, 1.59979, 1.96173, -6.14998, 8.28164, -6.14998, 8.28164, -9.34955, 4.35817, -9.34955, 4.35817, -1.59979, -1.96173, -1.59979, -1.96173, 1.59979, 1.96173)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_8fd3v"]
+segments = PackedVector2Array(-2.53134, 10, -2.53134, 2.84421, -2.53134, 2.84421, -2.51587, 2.36442, -2.51587, 2.36442, -2.4624, 1.84758, -2.4624, 1.84758, -2.36687, 1.33169, -2.36687, 1.33169, -2.22313, 0.818351, -2.22313, 0.818351, -2.02499, 0.31199, -2.02499, 0.31199, -1.76753, -0.179526, -1.76753, -0.179526, -1.44895, -0.645138, -1.44895, -0.645138, -1.07216, -1.07216, -1.07216, -1.07216, -0.645131, -1.44896, -0.645131, -1.44896, -0.179521, -1.76753, -0.179521, -1.76753, 0.311998, -2.02499, 0.311998, -2.02499, 0.818358, -2.22313, 0.818358, -2.22313, 1.3317, -2.36686, 1.3317, -2.36686, 1.84758, -2.46239, 1.84758, -2.46239, 2.36443, -2.51586, 2.36443, -2.51586, 2.84423, -2.53133, 2.84423, -2.53133, 10, -2.53131, 10, -2.53131, 9.99999, 2.53138, 9.99999, 2.53138, 2.92585, 2.53136, 2.92585, 2.53136, 2.70692, 2.53842, 2.70692, 2.53842, 2.57013, 2.55257, 2.57013, 2.55257, 2.47745, 2.56973, 2.47745, 2.56973, 2.42731, 2.58377, 2.42731, 2.58377, 2.41526, 2.58848, 2.41526, 2.58848, 2.43345, 2.57895, 2.43345, 2.57895, 2.47082, 2.55339, 2.47082, 2.55339, 2.51468, 2.51469, 2.51468, 2.51469, 2.55338, 2.47083, 2.55338, 2.47083, 2.57895, 2.43346, 2.57895, 2.43346, 2.58847, 2.41527, 2.58847, 2.41527, 2.58376, 2.42732, 2.58376, 2.42732, 2.56972, 2.47746, 2.56972, 2.47746, 2.55256, 2.57014, 2.55256, 2.57014, 2.53841, 2.70693, 2.53841, 2.70693, 2.53134, 2.92586, 2.53134, 2.92586, 2.53134, 10, 2.53134, 10, -2.53134, 10)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_8low1"]
+segments = PackedVector2Array(-2.53134, 10, -2.53134, 4.58922, -2.53134, 4.58922, -0.751201, -0.751204, -0.751201, -0.751204, 4.58923, -2.53133, 4.58923, -2.53133, 10, -2.53131, 10, -2.53131, 9.99999, 2.53138, 9.99999, 2.53138, 5.41077, 2.53136, 5.41077, 2.53136, 3.2512, 3.25121, 3.2512, 3.25121, 2.53134, 5.41078, 2.53134, 5.41078, 2.53134, 10, 2.53134, 10, -2.53134, 10)
+
+[sub_resource type="Animation" id="Animation_n5rx6"]
+resource_name = "AllProperties"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AllProperties/RegularPolygon2D:vertices_count")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1, 8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AllProperties/RegularPolygon2D:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AllProperties/RegularPolygon2D:offset_rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AllProperties/RegularPolygon2D:width")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [-0.001, 0.0, 0.0, 11.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("AllProperties/RegularPolygon2D:drawn_arc")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("AllProperties/RegularPolygon2D:corner_size")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AllProperties/RegularPolygon2D:corner_smoothness")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("AllProperties/RegularPolygon2D2:size")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1e-06, 20.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("AllProperties/RegularPolygon2D2:offset_rotation")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("AllProperties/RegularPolygon2D2:width")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("AllProperties/RegularPolygon2D2:drawn_arc")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-6.28319, 6.28319]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("AllProperties/RegularPolygon2D2:corner_size")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 9.0]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("AllProperties/RegularPolygon2D2:corner_smoothness")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 8]
+}
+
+[sub_resource type="Animation" id="Animation_khpwa"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AllProperties/RegularPolygon2D2:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [5.33333]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kbxjh"]
+_data = {
+"AllProperties": SubResource("Animation_n5rx6"),
+"RESET": SubResource("Animation_khpwa")
+}
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_d0dle"]
+segments = PackedVector2Array(-0.815299, 0.445472, -1.44821, 0.886458, -1.44821, 0.886458, -1.44821, 0.886458, -1.44821, 0.886458, -1.30102, 1.08789, -1.30102, 1.08789, -1.30102, 1.08789, -1.30102, 1.08789, -1.06378, 1.3208, -1.06378, 1.3208, -1.06378, 1.3208, -1.06378, 1.3208, -0.785666, 1.50295, -0.785666, 1.50295, -0.785666, 1.50295, -0.785666, 1.50295, -0.477358, 1.62735, -0.477358, 1.62735, -0.477358, 1.62735, -0.477358, 1.62735, -0.150705, 1.68921, -0.150705, 1.68921, -0.150705, 1.68921, -0.150705, 1.68921, 0.181739, 1.68615, 0.181739, 1.68615, 0.181739, 1.68615, 0.181739, 1.68615, 0.507199, 1.6183, 0.507199, 1.6183, 0.507199, 1.6183, 0.507199, 1.6183, 0.813168, 1.48825, 0.813168, 1.48825, 0.813168, 1.48825, 0.813168, 1.48825, 1.08789, 1.30102, 1.08789, 1.30102, 1.08789, 1.30102, 1.08789, 1.30102, 1.3208, 1.06378, 1.3208, 1.06378, 1.3208, 1.06378, 1.3208, 1.06378, 1.50295, 0.785666, 1.50295, 0.785666, 1.50295, 0.785666, 1.50295, 0.785666, 1.62735, 0.477358, 1.62735, 0.477358, 1.62735, 0.477358, 1.62735, 0.477358, 1.68921, 0.150705, 1.68921, 0.150705, 1.68921, 0.150705, 1.68921, 0.150705, 1.68615, -0.181739, 1.68615, -0.181739, 1.68615, -0.181739, 1.68615, -0.181739, 1.6183, -0.507199, 1.6183, -0.507199, 1.6183, -0.507199, 1.6183, -0.507199, 1.48825, -0.813168, 1.48825, -0.813168, 1.48825, -0.813168, 1.48825, -0.813168, 1.30102, -1.08789, 1.30102, -1.08789, 1.30102, -1.08789, 1.30102, -1.08789, 1.06378, -1.3208, 1.06378, -1.3208, 1.06378, -1.3208, 1.06378, -1.3208, 0.785666, -1.50295, 0.785666, -1.50295, 0.785666, -1.50295, 0.785666, -1.50295, 0.477358, -1.62735, 0.477358, -1.62735, 0.477358, -1.62735, 0.477358, -1.62735, 0.150705, -1.68921, 0.150705, -1.68921, 0.150705, -1.68921, 0.150705, -1.68921, -0.181739, -1.68615, -0.181739, -1.68615, -0.181739, -1.68615, -0.181739, -1.68615, -0.507199, -1.6183, -0.507199, -1.6183, -0.507199, -1.6183, -0.507199, -1.6183, -0.813168, -1.48825, -0.813168, -1.48825, -0.813168, -1.48825, -0.813168, -1.48825, -1.08789, -1.30102, -1.08789, -1.30102, -1.08789, -1.30102, -1.08789, -1.30102, -1.3208, -1.06378, -1.3208, -1.06378, -1.3208, -1.06378, -1.3208, -1.06378, -1.42922, -0.926724, -1.42922, -0.926724, -1.42922, -0.926724, -1.42922, -0.926724, -0.787516, -0.505508, -0.787516, -0.505508, -0.645343, -0.414246, -0.645343, -0.414246, -0.672954, 0.367696, -0.672954, 0.367696, -0.815299, 0.445472)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_3sh1f"]
+segments = PackedVector2Array(-2.66723, -1.32747, -1.81484, -1.79321, -1.81484, -1.79321, -1.63693, -1.88407, -1.63693, -1.88407, -1.41851, -1.97999, -1.41851, -1.97999, -1.18914, -2.06421, -1.18914, -2.06421, -0.949483, -2.13487, -0.949483, -2.13487, -0.700762, -2.19013, -0.700762, -2.19013, -0.444762, -2.22829, -0.444762, -2.22829, -0.183801, -2.24802, -0.183801, -2.24802, 0.0793985, -2.24848, 0.0793985, -2.24848, 0.341907, -2.22946, 0.341907, -2.22946, 0.60082, -2.19137, 0.60082, -2.19137, 0.8535, -2.13525, 0.8535, -2.13525, 1.0977, -2.06259, 1.0977, -2.06259, 1.33177, -1.97519, 1.33177, -1.97519, 1.55463, -1.875, 1.55463, -1.875, 1.76573, -1.76392, 1.76573, -1.76392, 1.9368, -1.66073, 1.9368, -1.66073, 2.75422, -1.13603, 2.75422, -1.13603, 0.113976, 2.97713, 0.113976, 2.97713, -0.646118, 2.48922, -0.646118, 2.48922, -0.6366, 2.49496, -0.6366, 2.49496, -0.587481, 2.52081, -0.587481, 2.52081, -0.527038, 2.54798, -0.527038, 2.54798, -0.45581, 2.57458, -0.45581, 2.57458, -0.374886, 2.59865, -0.374886, 2.59865, -0.285915, 2.61842, -0.285915, 2.61842, -0.191142, 2.63236, -0.191142, 2.63236, -0.0932042, 2.63946, -0.0932042, 2.63946, 0.00499292, 2.63928, 0.00499292, 2.63928, 0.100519, 2.63206, 0.100519, 2.63206, 0.190654, 2.61862, 0.190654, 2.61862, 0.273084, 2.60031, 0.273084, 2.60031, 0.346002, 2.57881, 0.346002, 2.57881, 0.408212, 2.55597, 0.408212, 2.55597, 0.459039, 2.53365, 0.459039, 2.53365, 0.468928, 2.5286, 0.468928, 2.5286, -0.323682, 2.96167, -0.323682, 2.96167, -2.66723, -1.32747)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_mpurx"]
+segments = PackedVector2Array(0, 3.20196, 0, 3.40001, 0, 3.40001, -5.88899, 3.40001, -5.88899, 3.40001, 8.32762e-16, -6.80002, 8.32762e-16, -6.80002, 0.00276801, -6.79523, 0.00276801, -6.79523, 0.00260677, -6.3994, 0.00260677, -6.3994, 7.84253e-16, -6.40391, 7.84253e-16, -6.40391, -5.54595, 3.20196, -5.54595, 3.20196, 0, 3.20196)
+
+[sub_resource type="ConcavePolygonShape2D" id="ConcavePolygonShape2D_g6ork"]
+segments = PackedVector2Array(-13.8569, 10.0961, -10.1375, 5.38374, -10.1375, 5.38374, -10.9849, 3.32938, -10.9849, 3.32938, -16.945, 2.60988, -16.945, 2.60988, -15.8371, -6.56735, -15.8371, -6.56735, -4.50355, -5.19916, -4.50355, -5.19916, 0.471853, 6.86226, 0.471853, 6.86226, -6.60089, 15.8232, -6.60089, 15.8232, -13.8569, 10.0961)
+
+[node name="Root" type="Node"]
+script = ExtResource("1_sfqof")
+auto_start = false
+
+[node name="IndividualProperties" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_miyoh")
+}
+
+[node name="VerticesCount" type="CollisionShape2D" parent="IndividualProperties"]
+position = Vector2(15, 15)
+shape = SubResource("ConvexPolygonShape2D_ht6ch")
+script = ExtResource("2_okbtb")
+
+[node name="Size" type="CollisionShape2D" parent="IndividualProperties"]
+position = Vector2(45, 15)
+shape = SubResource("ConvexPolygonShape2D_i8tev")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+size = 8.32337
+
+[node name="OffsetRotation" type="CollisionShape2D" parent="IndividualProperties"]
+position = Vector2(75, 16)
+shape = SubResource("ConvexPolygonShape2D_meaw6")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+
+[node name="Width" type="CollisionShape2D" parent="IndividualProperties"]
+position = Vector2(165, 15)
+shape = SubResource("ConcavePolygonShape2D_wico1")
+script = ExtResource("2_okbtb")
+vertices_count = 4
+width = 4.57727
+
+[node name="DrawnArc" type="CollisionShape2D" parent="IndividualProperties"]
+position = Vector2(195, 15)
+shape = SubResource("ConvexPolygonShape2D_a3qal")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+drawn_arc = -1.05346
+
+[node name="CornerSize" type="CollisionShape2D" parent="IndividualProperties"]
+position = Vector2(225, 15)
+shape = SubResource("ConvexPolygonShape2D_n02p7")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+corner_size = 3.74552
+
+[node name="CornerSmoothness" type="CollisionShape2D" parent="IndividualProperties"]
+position = Vector2(255, 15)
+shape = SubResource("ConvexPolygonShape2D_2c16l")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+corner_size = 5.0
+corner_smoothness = 3
+
+[node name="IndividualPropertiesWithPolygon" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ic44h")
+}
+
+[node name="VerticesCount" type="CollisionShape2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(15, 45)
+shape = SubResource("RectangleShape2D_twjsl")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+width = 10.0
+
+[node name="Size" type="CollisionShape2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(45, 45)
+shape = SubResource("ConvexPolygonShape2D_jgkql")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+size = 2.99004
+width = 10.0
+
+[node name="OffsetRotation" type="CollisionShape2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(75, 46)
+shape = SubResource("ConvexPolygonShape2D_ghexd")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+offset_rotation = -4.40449
+width = 10.0
+
+[node name="DrawnArc" type="CollisionShape2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(195, 45)
+shape = SubResource("ConcavePolygonShape2D_3gw76")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+width = 10.0
+drawn_arc = -4.40449
+
+[node name="CornerSize" type="CollisionShape2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(225, 45)
+shape = SubResource("ConvexPolygonShape2D_krywx")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+width = 10.0
+corner_size = 1.34552
+
+[node name="CornerSmoothness" type="CollisionShape2D" parent="IndividualPropertiesWithPolygon"]
+position = Vector2(255, 45)
+shape = SubResource("ConvexPolygonShape2D_c7u60")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+width = 10.0
+corner_size = 5.0
+corner_smoothness = 1
+
+[node name="IndividualPropertiesWithLines" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_du5bi")
+}
+
+[node name="Size" type="CollisionShape2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(45, 75)
+shape = SubResource("RectangleShape2D_rgppb")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+size = 6.41119
+width = 5.06269
+
+[node name="OffsetRotation" type="CollisionShape2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(75, 75)
+shape = SubResource("ConvexPolygonShape2D_jcsnb")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+offset_rotation = -2.25492
+width = 5.06269
+
+[node name="DrawnArc" type="CollisionShape2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(195, 75)
+shape = SubResource("ConcavePolygonShape2D_puhjh")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+width = 5.06269
+drawn_arc = -2.25492
+
+[node name="CornerSize" type="CollisionShape2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(225, 75)
+shape = SubResource("ConcavePolygonShape2D_8fd3v")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+width = 5.06269
+drawn_arc = 1.5708
+corner_size = 2.88504
+
+[node name="CornerSmoothness" type="CollisionShape2D" parent="IndividualPropertiesWithLines"]
+position = Vector2(255, 75)
+shape = SubResource("ConcavePolygonShape2D_8low1")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+width = 5.06269
+drawn_arc = 1.5708
+corner_size = 5.0
+corner_smoothness = 2
+
+[node name="AllProperties" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_kbxjh")
+}
+
+[node name="RegularPolygon2D" type="CollisionShape2D" parent="AllProperties"]
+position = Vector2(285, 15)
+shape = SubResource("ConcavePolygonShape2D_d0dle")
+script = ExtResource("2_okbtb")
+size = 1.70412
+offset_rotation = -5.21246
+width = -0.000488763
+drawn_arc = -5.21246
+corner_size = 0.766856
+
+[node name="RegularPolygon2D2" type="CollisionShape2D" parent="AllProperties"]
+position = Vector2(285, 75)
+shape = SubResource("ConcavePolygonShape2D_3sh1f")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+size = 5.33333
+offset_rotation = -5.21246
+width = 4.88763
+drawn_arc = -5.21246
+corner_size = 0.766856
+
+[node name="AllPropertiesIndividually" type="Node" parent="."]
+script = ExtResource("3_ddpku")
+node_path = NodePath("RegularPolygon2D")
+properties = Array[Array]([["vertices_count", 1, 8], ["size", 1.0, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["width", -0.001, 10.0], ["drawn_arc", 0.001, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8], ["drawn_arc", -3.142, -0.001]])
+
+[node name="RegularPolygon2D" type="CollisionShape2D" parent="AllPropertiesIndividually"]
+position = Vector2(315, 15)
+shape = SubResource("ConcavePolygonShape2D_mpurx")
+script = ExtResource("2_okbtb")
+vertices_count = 3
+size = 6.80002
+offset_rotation = -6.28319
+width = 0.396107
+drawn_arc = 3.142
+
+[node name="AllPropertiesIndividuallyLine" type="Node" parent="."]
+script = ExtResource("3_ddpku")
+node_path = NodePath("RegularPolygon2D")
+properties = Array[Array]([["size", 1.0, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["width", -0.001, 10.0], ["drawn_arc", 0.001, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8], ["drawn_arc", -3.142, -0.001]])
+
+[node name="RegularPolygon2D" type="CollisionShape2D" parent="AllPropertiesIndividuallyLine"]
+position = Vector2(315, 75)
+shape = SubResource("ConcavePolygonShape2D_g6ork")
+script = ExtResource("2_okbtb")
+vertices_count = 2
+size = 16.51
+offset_rotation = 0.668176
+width = 9.24386
+drawn_arc = -2.11883
+corner_size = 7.80047
+corner_smoothness = 1
+
+[node name="Table" type="Node2D" parent="."]
+position = Vector2(15, 105)
+script = ExtResource("4_pyexj")
+test_script = ExtResource("2_okbtb")
+properties = Array[Array]([["vertices_count", 1, 8], ["size", 1.0, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["width", -0.001, 10.0], ["drawn_arc", -3.142, 3.142], ["corner_size", 0.0, 8.0], ["corner_smoothness", 0, 8]])
+defaults = {
+"corner_size": 3.0,
+"corner_smoothness": 1,
+"vertices_count": 4
+}
