@@ -111,7 +111,9 @@ var _is_queued := true
 
 ## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
 ## [br][br]If this method is called when the node is outside the [SceneTree], [member Shape2D.shape] will be set to [code]null[/code]
-## and initialization will be delayed to when the node enters the tree. Call [method regenerate] directly to force initialization.
+## and initialization will be delayed to when the node enters the tree.
+## This also means that [member Shape2D.custom_solver_bias] won't be maintained and will be reset to [code]0[/code].
+## Call [method regenerate] directly to force initialization.
 func queue_regenerate() -> void:
 	if _is_queued:
 		return
@@ -131,6 +133,7 @@ func _enter_tree() -> void:
 	_is_queued = false
 
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
+## [br][br]The value of [member Shape2D.custom_solver_bias] of the new [Shape2D] will be the same a the previous, if [member shape] isn't [value]null[/value].
 func regenerate() -> void:
 	_is_queued = false
 	
