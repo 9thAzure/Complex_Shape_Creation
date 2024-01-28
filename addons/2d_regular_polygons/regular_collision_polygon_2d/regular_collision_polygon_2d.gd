@@ -111,7 +111,9 @@ var _is_queued := true
 
 ## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
 ## [br][br]If this method is called when the node is outside the [SceneTree], [member Shape2D.shape] will be set to [code]null[/code]
-## and initialization will be delayed to when the node enters the tree. Call [method regenerate] directly to force initialization.
+## and initialization will be delayed to when the node enters the tree.
+## This also means that [member Shape2D.custom_solver_bias] won't be maintained and will be reset to [code]0[/code].
+## Call [method regenerate] directly to force initialization.
 func queue_regenerate() -> void:
 	if _is_queued:
 		return
@@ -131,6 +133,7 @@ func _enter_tree() -> void:
 	_is_queued = false
 
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
+## [br][br]The value of [member Shape2D.custom_solver_bias] of the new [Shape2D] will be the same a the previous, if [member shape] isn't [value]null[/value].
 func regenerate() -> void:
 	_is_queued = false
 	
@@ -150,7 +153,7 @@ func regenerate() -> void:
 				var line := SegmentShape2D.new()
 				line.a = point1
 				line.b = point2
-				shape = line
+				_set_shape(line)
 				return
 			
 			if not uses_inner_size:
@@ -158,14 +161,14 @@ func regenerate() -> void:
 					var rect_line := RectangleShape2D.new()
 					rect_line.size.y = size * 2
 					rect_line.size.x = width
-					shape = rect_line
+					_set_shape(rect_line)
 					return
 
 				if is_zero_approx(point1.y):
 					var rect_line := RectangleShape2D.new()
 					rect_line.size.y = width
 					rect_line.size.x = size * 2
-					shape = rect_line
+					_set_shape(rect_line)
 					return
 			
 			var line := ConvexPolygonShape2D.new()
@@ -177,7 +180,7 @@ func regenerate() -> void:
 			array[2] = point2 + tangent
 			array[3] = point2 - tangent
 			line.points = array
-			shape = line
+			_set_shape(line)
 			return
 		
 		point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
@@ -192,7 +195,7 @@ func regenerate() -> void:
 			if width > 0:
 				widen_multiline(array, width)
 			lines.segments = array
-			shape = lines
+			_set_shape(lines)
 			return
 		
 		if is_equal_approx(PI, abs(drawn_arc)):
@@ -203,7 +206,7 @@ func regenerate() -> void:
 			if width > 0:
 				widen_polyline(array, width, false)
 			lines.segments = array
-			shape = lines
+			_set_shape(lines)
 			return
 		
 		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
@@ -226,7 +229,7 @@ func regenerate() -> void:
 		if width > 0:
 			widen_polyline(array, width, true)
 		lines.segments = array
-		shape = lines
+		_set_shape(lines)
 		return
 	
 	var uses_rounded_corners := not is_zero_approx(corner_size)
@@ -269,8 +272,7 @@ func regenerate() -> void:
 			segments[(modified_size - i) * 2 - 2] = points[original_size - i - 2 - offset]
 		
 		polygon.segments = segments 
-		
-		shape = polygon
+		_set_shape(polygon)
 		return
 	
 	var vertices := vertices_count
@@ -278,7 +280,7 @@ func regenerate() -> void:
 		if drawn_arc >= TAU or drawn_arc <= -TAU:
 			var circle := CircleShape2D.new()
 			circle.radius = size
-			shape = circle
+			_set_shape(circle)
 			return
 		vertices = 32
 	
@@ -286,7 +288,7 @@ func regenerate() -> void:
 		const sqrt_two_over_two := 0.707106781
 		var square := RectangleShape2D.new()
 		square.size = size / sqrt_two_over_two * Vector2.ONE
-		shape = square
+		_set_shape(square)
 		return
 	
 	var points : PackedVector2Array
@@ -301,12 +303,17 @@ func regenerate() -> void:
 	if uses_drawn_arc and (drawn_arc > PI or drawn_arc < -PI) or uses_inner_size and vertices_count > 2:
 		var lines := ConcavePolygonShape2D.new()
 		lines.segments = convert_to_line_segments(points)
-		shape = lines
+		_set_shape(lines)
 		return
 
 	var polygon := ConvexPolygonShape2D.new()
-	polygon.points = points 
-	shape = polygon
+	polygon.points = points
+	_set_shape(polygon)
+
+func _set_shape(new_shape : Shape2D) -> void:
+	if shape != null:
+		new_shape.custom_solver_bias = shape.custom_solver_bias
+	shape = new_shape
 
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
