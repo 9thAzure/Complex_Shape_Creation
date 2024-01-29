@@ -55,7 +55,7 @@ var offset_position : Vector2 = Vector2.ZERO:
 
 func _draw() -> void:
 	if (vertices_count == 1):
-		draw_circle(Vector2.ZERO, size, color)
+		draw_circle(offset_position, size, color)
 		return
 	
 	if (vertices_count == 2):
