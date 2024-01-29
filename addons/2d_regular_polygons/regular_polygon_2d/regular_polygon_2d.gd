@@ -403,12 +403,12 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 		var starting_point : Vector2
 		var ending_point : Vector2
 		if starting_slope.length_squared() / 4 < corner_size_squared:
-			starting_point = current_point - starting_slope / 2
+			starting_point = current_point - starting_slope / 2.001
 		else:
 			starting_point = current_point - starting_slope.normalized() * corner_size
 		
 		if ending_slope.length_squared() / 4 < corner_size_squared:
-			ending_point = current_point - ending_slope / 2
+			ending_point = current_point - ending_slope / 2.001
 		else:
 			ending_point = current_point - ending_slope.normalized() * corner_size
 
