@@ -55,7 +55,7 @@ var offset_position : Vector2 = Vector2.ZERO:
 
 func _draw() -> void:
 	if (vertices_count == 1):
-		draw_circle(Vector2.ZERO, size, color)
+		draw_circle(offset_position, size, color)
 		return
 	
 	if (vertices_count == 2):
@@ -69,7 +69,7 @@ func _draw() -> void:
 	
 	if (vertices_count == 4 && offset_rotation == 0):
 		const sqrt_two_over_two := 0.707106781
-		draw_rect(Rect2(-Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+		draw_rect(Rect2(offset_position - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 		
 	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation, offset_position), color)
