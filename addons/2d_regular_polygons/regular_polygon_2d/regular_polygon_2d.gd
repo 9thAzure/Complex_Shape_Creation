@@ -194,7 +194,7 @@ func _draw() -> void:
 	
 	var points : PackedVector2Array
 	if vertices_count == 1:
-		if (drawn_arc >= TAU or drawn_arc <= -TAU) and texture == null:
+		if (drawn_arc >= TAU or drawn_arc <= -TAU) and texture == null and width < 0:
 			draw_circle(offset, size, color)
 			return
 		points = get_shape_vertices(32, size, offset_rotation, offset, drawn_arc)
