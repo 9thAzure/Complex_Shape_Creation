@@ -444,6 +444,11 @@ static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float,
 
 	for i in original_size:
 		points[-i - 1] = points[i] * hole_scaler
+	
+	if close_shape:
+		var slope := (points[original_size - 2] - points[original_size - 1]).normalized() * 0.0005
+		points[original_size - 1] += slope
+		points[original_size] += slope
 
 # these functions are for c# interop, as changes to an argument are not transferred.
 static func _add_rounded_corners_result(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
