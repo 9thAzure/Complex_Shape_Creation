@@ -107,7 +107,12 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		queue_regenerate()
 
-var _is_queued := true
+# "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
+const _NOT_QUEUED = 0
+const _IS_QUEUED = 1
+const _BLOCK_QUEUE = 2
+
+var _queue_status : int = _NOT_QUEUED 
 
 ## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
 ## [br][br]If this method is called when the node is outside the [SceneTree], [member Shape2D.shape] will be set to [code]null[/code]
@@ -115,27 +120,26 @@ var _is_queued := true
 ## This also means that [member Shape2D.custom_solver_bias] won't be maintained and will be reset to [code]0[/code].
 ## Call [method regenerate] directly to force initialization.
 func queue_regenerate() -> void:
-	if _is_queued:
+	if _queue_status != _NOT_QUEUED:
 		return
 	
-	_is_queued = true
+	_queue_status = _IS_QUEUED
 	if not is_inside_tree():
-		shape = null
 		return
 	
 	await get_tree().process_frame
-	# _is_queued = false # regenerate already sets this variable to false.
+	# __is_queued = false # regenerate already sets this variable to false.
 	regenerate()
 
 func _enter_tree() -> void:
-	if _is_queued and shape == null:
+	if _queue_status == _IS_QUEUED:
 		regenerate()
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
 ## [br][br]The value of [member Shape2D.custom_solver_bias] of the new [Shape2D] will be the same a the previous, if [member shape] isn't [value]null[/value].
 func regenerate() -> void:
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	
 	if drawn_arc == 0:
 		return
@@ -319,6 +323,9 @@ func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
 func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0.0, drawn_arc := TAU, corner_size := 0.0, corner_smoothness : int = 0):
+	if shape != null:
+		_queue_status = _BLOCK_QUEUE
+
 	if vertices_count != 1:
 		self.vertices_count = vertices_count
 	if size != 10.0:
