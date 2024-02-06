@@ -116,7 +116,12 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		_pre_redraw()
 
-var _is_queued := true
+# "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
+const _NOT_QUEUED = 0
+const _IS_QUEUED = 1
+const _BLOCK_QUEUE = 2
+
+var _queue_status : int = _NOT_QUEUED 
 
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 # queue-like functionality - pauses, and only 1 call.
@@ -126,24 +131,24 @@ func _pre_redraw() -> void:
 		queue_redraw()
 		return
 	
-	if _is_queued:
+	if _queue_status != _NOT_QUEUED:
 		return
 	
-	_is_queued = true
+	_queue_status = _IS_QUEUED
 	if not is_inside_tree():
 		polygon = PackedVector2Array()
 		return
 
 	await get_tree().process_frame
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	if not uses_polygon_member():
 		return
 	regenerate_polygon()
 
 func _enter_tree() -> void:
-	if _is_queued and uses_polygon_member() and polygon.is_empty():
+	if _queue_status == _IS_QUEUED and uses_polygon_member():
 		regenerate_polygon()
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 
 func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
@@ -233,7 +238,7 @@ func _draw() -> void:
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force the regeneration of [member Polygon2D.polygon].
 func regenerate_polygon() -> void:
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
@@ -254,6 +259,9 @@ func regenerate_polygon() -> void:
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
 	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
+	if not polygon.is_empty():
+		_queue_status = _BLOCK_QUEUE
+
 	if vertices_count != 1:
 		self.vertices_count = vertices_count
 	if size != 10.0:

@@ -127,7 +127,12 @@ func set_point_angle(angle : float) -> void:
 	angle /= 2
 	inner_size = size * sin(angle / (sin(PI - angle - TAU / point_count / 2)))
 
-var _is_queued = true
+# "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
+const _NOT_QUEUED = 0
+const _IS_QUEUED = 1
+const _BLOCK_QUEUE = 2
+
+var _queue_status : int = _NOT_QUEUED 
 
 func _pre_redraw() -> void:
 	if not uses_polygon_member():
@@ -135,24 +140,24 @@ func _pre_redraw() -> void:
 		queue_redraw()
 		return
 	
-	if _is_queued:
+	if _queue_status != _NOT_QUEUED:
 		return
 	
-	_is_queued = true
+	_queue_status = _IS_QUEUED
 	if not is_inside_tree():
 		polygon = PackedVector2Array()
 		return
 
 	await get_tree().process_frame
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	if not uses_polygon_member():
 		return
 	regenerate_polygon()
 
 func _enter_tree() -> void:
-	if _is_queued and uses_polygon_member() and polygon.is_empty():
+	if _queue_status == _IS_QUEUED and uses_polygon_member():
 		regenerate_polygon()
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 
 func _draw():
 	if uses_polygon_member() or drawn_arc == 0:
@@ -220,7 +225,7 @@ func _draw():
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force this, and ignores the result of [method uses_polygon_member].
 func regenerate_polygon():
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
@@ -241,6 +246,9 @@ func regenerate_polygon():
 	
 func _init(vertices_count : int = 1, size := 10.0, inner_size := 5.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
 	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
+	if not polygon.is_empty():
+		_queue_status = _BLOCK_QUEUE
+
 	if vertices_count != 1:
 		self.point_count = vertices_count
 	if size != 10.0:
