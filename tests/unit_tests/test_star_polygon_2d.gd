@@ -33,6 +33,13 @@ func test_enter_tree__blocked_queue__regenerate_not_called_not_queued():
 	shape._enter_tree()
 
 	assert_not_called(shape, "regenerate_polygon") # does not accept a custom message.
+
+func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([StarPolygon2D._IS_QUEUED, StarPolygon2D._BLOCK_QUEUE])):
+	var shape : StarPolygon2D = partial_double(class_script).new()
+	shape._queue_status = p
+
+	shape._enter_tree()
+
 	assert_eq(shape._queue_status, StarPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
 func test_pre_redraw__not_queued__is_queued():

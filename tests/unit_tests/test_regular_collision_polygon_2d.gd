@@ -23,7 +23,7 @@ func test_init__filled_params__assigned_to_vars():
 	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
-func test_enter_tree__queue_blocked__regenerate_not_called_not_queued():
+func test_enter_tree__blocked_queue__regenerate_not_called_not_queued():
 	var shape : RegularCollisionPolygon2D = partial_double(class_script).new() 
 	stub(shape, "regenerate").to_do_nothing()
 	shape.shape = RectangleShape2D.new()
@@ -32,6 +32,13 @@ func test_enter_tree__queue_blocked__regenerate_not_called_not_queued():
 	shape._enter_tree()
 
 	assert_not_called(shape, "regenerate")
+
+func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularCollisionPolygon2D._IS_QUEUED, RegularCollisionPolygon2D._BLOCK_QUEUE])):
+	var shape : RegularCollisionPolygon2D = partial_double(class_script).new()
+	shape._queue_status = p
+
+	shape._enter_tree()
+
 	assert_eq(shape._queue_status, RegularCollisionPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
 func test_queue_regenerate__not_queued__is_queued():

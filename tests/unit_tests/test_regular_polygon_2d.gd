@@ -55,6 +55,14 @@ func test_enter_tree__blocked_queue__polygon_not_regenerated():
 
 	assert_not_called(shape, "regenerate_polygon")
 
+func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularPolygon2D._IS_QUEUED, RegularPolygon2D._BLOCK_QUEUE])):
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape._queue_status = p
+
+	shape._enter_tree()
+
+	assert_eq(shape._queue_status, RegularPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
+
 func test_regenerate_polygon__holed_shape_without_drawn_arc__ends_equal():
 	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
 	shape.vertices_count = 4
