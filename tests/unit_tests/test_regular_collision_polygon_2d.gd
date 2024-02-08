@@ -7,7 +7,8 @@ func before_each():
 	ignore_method_when_doubling(class_script, "widen_polyline")
 	ignore_method_when_doubling(class_script, "widen_multiline")
 	ignore_method_when_doubling(class_script, "_widen_polyline_result")
-	ignore_method_when_doubling(class_script, "_widen_multiline_result");
+	ignore_method_when_doubling(class_script, "_widen_multiline_result")
+	ignore_method_when_doubling(class_script, "convert_to_line_segments")
 
 func test_init__filled_params__assigned_to_vars():
 	var shape : RegularCollisionPolygon2D
@@ -22,30 +23,54 @@ func test_init__filled_params__assigned_to_vars():
 	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
-func test_enter_tree__shape_filled__regenerate_not_called():
+func test_init__shape_not_null__queue_blocked():
+	var shape := CollisionShape2D.new()
+	autoqfree(shape)
+	shape.shape = CircleShape2D.new()
+
+	shape.set_script(class_script)
+
+	assert_eq(shape._queue_status, RegularCollisionPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should be '_BLOCK_QUEUE' (2)")
+
+func test_init__shape_null__queue_not_blocked():
+	var shape := CollisionShape2D.new()
+	autoqfree(shape)
+	shape.shape = null
+
+	shape.set_script(class_script)
+
+	assert_ne(shape._queue_status, RegularCollisionPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should not be '_BLOCK_QUEUE' (2)")
+
+func test_enter_tree__blocked_queue__regenerate_not_called_not_queued():
 	var shape : RegularCollisionPolygon2D = partial_double(class_script).new() 
 	stub(shape, "regenerate").to_do_nothing()
 	shape.shape = RectangleShape2D.new()
-	shape._is_queued = true
+	shape._queue_status = RegularCollisionPolygon2D._BLOCK_QUEUE
 
 	shape._enter_tree()
 
 	assert_not_called(shape, "regenerate")
-	assert_false(shape._is_queued, "Variable '_is_queued' should be false (was %s)." % shape._is_queued)
 
-func test_queue_regenerate__shape_filled_outside_tree__shape_null():
+func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularCollisionPolygon2D._IS_QUEUED, RegularCollisionPolygon2D._BLOCK_QUEUE])):
+	var shape : RegularCollisionPolygon2D = partial_double(class_script).new()
+	shape._queue_status = p
+
+	shape._enter_tree()
+
+	assert_eq(shape._queue_status, RegularCollisionPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
+
+func test_queue_regenerate__not_queued__is_queued():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.shape = RectangleShape2D.new()
-	shape._is_queued = false
 
 	shape.queue_regenerate()
 
-	assert_null(shape.shape, "Property 'shape'.")
+	assert_eq(shape._queue_status, RegularCollisionPolygon2D._IS_QUEUED, "Property '_queue_status' should be '_IS_QUEUED' (1).")
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
 	var shape : RegularCollisionPolygon2D = partial_double(class_script).new()
-	shape._is_queued = false
 	stub(shape, "_enter_tree").to_do_nothing()
+	shape._queue_status = RegularCollisionPolygon2D._NOT_QUEUED
 	add_child(shape)
 
 	shape.queue_regenerate()
@@ -54,6 +79,7 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 	await wait_for_signal(get_tree().process_frame, 10)
 	await wait_frames(2)
 	assert_not_null(shape.shape, "Property 'shape'.")
+	assert_eq(shape._queue_status, RegularCollisionPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
 func test_regenerate__vertices_count_2__shape_segment_shape():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())

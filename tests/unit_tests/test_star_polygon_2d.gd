@@ -24,31 +24,56 @@ func test_init__params_filled__assigned_to_vars():
 	assert_eq(star.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(star.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
-func test_enter_tree__polygon_filled__regenerate_not_called():
+func test_init__polygon_not_empty__queue_blocked():
+	var star := Polygon2D.new()
+	autoqfree(star)
+	star.polygon = sample_polygon
+
+	star.set_script(class_script)
+
+	assert_eq(star._queue_status, StarPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should be '_BLOCK_QUEUE' (2)")
+
+func test_init__polygon_empty__queue_not_blocked():
+	var star := Polygon2D.new()
+	autoqfree(star)
+	star.polygon = PackedVector2Array()
+
+	star.set_script(class_script)
+
+	assert_ne(star._queue_status, StarPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should not be '_BLOCK_QUEUE' (2)")
+
+func test_enter_tree__blocked_queue__regenerate_not_called_not_queued():
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	stub(shape, "regenerate_polygon").to_do_nothing()
 	shape.polygon = sample_polygon
-	shape._is_queued = true
+	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
 
 	shape._enter_tree()
 
 	assert_not_called(shape, "regenerate_polygon") # does not accept a custom message.
-	assert_false(shape._is_queued, "Variable '_is_queued' should be false.")
 
-func test_pre_redraw__polygon_filled_outside_tree__polygon_empty():
+func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([StarPolygon2D._IS_QUEUED, StarPolygon2D._BLOCK_QUEUE])):
+	var shape : StarPolygon2D = partial_double(class_script).new()
+	shape._queue_status = p
+
+	shape._enter_tree()
+
+	assert_eq(shape._queue_status, StarPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
+
+func test_pre_redraw__not_queued__is_queued():
 	var star : StarPolygon2D = partial_double(class_script).new()
 	stub(star, "uses_polygon_member").to_return(true)
 	star.polygon = sample_polygon
-	star._is_queued = false
+	star._queue_status = StarPolygon2D._NOT_QUEUED
 
 	star._pre_redraw()
 
-	assert_true(star.polygon.is_empty(), "Variable 'polygon' should be an empty array.")
+	assert_eq(star._queue_status, StarPolygon2D._IS_QUEUED, "Property '_queue_status' should be '_IS_QUEUED' (1).")
 
 func test_queue_regenerate__in_tree__delayed_shape_filled():
 	var star : StarPolygon2D = partial_double(class_script).new()
 	star.width = 10
-	star._is_queued = false
+	star._queue_status = StarPolygon2D._NOT_QUEUED
 	stub(star, "_enter_tree").to_do_nothing()
 	add_child(star)
 
@@ -57,7 +82,8 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 	assert_true(star.polygon.is_empty(), "Variable 'polygon' should still be an empty array.")
 	await wait_for_signal(get_tree().process_frame, 10)
 	await wait_frames(2)
-	assert_false(star.polygon.is_empty(), "Variable 'polygon' should be a filled array at this point.")
+	assert_false(star.polygon.is_empty(), "Property 'polygon' should be a filled array at this point.")
+	assert_eq(star._queue_status, StarPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
 func test_get_star_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
 	var star : PackedVector2Array
