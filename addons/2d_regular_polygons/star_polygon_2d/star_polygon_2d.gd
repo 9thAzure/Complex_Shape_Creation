@@ -8,8 +8,7 @@ class_name StarPolygon2D
 ## A node that draws star, with complex properties.
 ## It uses [method CanvasItem.draw_colored_polygon], [method CanvasItem.draw_polyline], or [member Polygon2D.polygon]
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
-## [member Polygon2D.polygon] will be cleared and will be set when the node enters the [SceneTree].
-## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
+## regeneration will be delayed to when it enters it. Use [method regenerate_polygon] to force regeneration.
 
 ## The number of points the star has.
 ## [br][br]If set to [code]1[/code], a line is drawn.

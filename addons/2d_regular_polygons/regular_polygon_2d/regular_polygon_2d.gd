@@ -9,8 +9,7 @@ extends Polygon2D
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
 ## Certain properties with circles will use a 32-sided polygon instead.
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
-## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
-## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
+## regeneration will be delayed to when it enters it. Use [method regenerate_polygon] to force regeneration.
 ## [br][br][b]Warning[/b]: Specific values which use a value of [member width] between [code]0[/code] and [member size]
 ## (such as a hexagon with [member width] half of [member size]) will cause the node to fail to draw shape.
 ## This can be worked around by slightly altering properties, like subtracting [code]0.01[/code] from [member width] or [member drawn_arc].
