@@ -10,9 +10,6 @@ extends Polygon2D
 ## Certain properties with circles will use a 32-sided polygon instead.
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
 ## regeneration will be delayed to when it enters it. Use [method regenerate_polygon] to force regeneration.
-## [br][br][b]Warning[/b]: Specific values which use a value of [member width] between [code]0[/code] and [member size]
-## (such as a hexagon with [member width] half of [member size]) will cause the node to fail to draw shape.
-## This can be worked around by slightly altering properties, like subtracting [code]0.01[/code] from [member width] or [member drawn_arc].
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Certain properties with circles will use a 32-sided polygon instead.
