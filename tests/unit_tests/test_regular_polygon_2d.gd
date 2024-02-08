@@ -30,6 +30,24 @@ func test_init__filled__variables_assigned():
 	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
+func test_init__polygon_not_empty__queue_blocked():
+	var shape := Polygon2D.new()
+	autoqfree(shape)
+	shape.polygon = sample_polygon
+
+	shape.set_script(class_script)
+
+	assert_eq(shape._queue_status, RegularPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should be '_BLOCK_QUEUE' (2)")
+
+func test_init__polygon_empty__queue_not_blocked():
+	var shape := Polygon2D.new()
+	autoqfree(shape)
+	shape.polygon = PackedVector2Array()
+
+	shape.set_script(class_script)
+
+	assert_ne(shape._queue_status, RegularPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should not be '_BLOCK_QUEUE' (2)")
+
 func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
 	var shape : RegularPolygon2D = partial_double(class_script).new()
 	shape.width = 10

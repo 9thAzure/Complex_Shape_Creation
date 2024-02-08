@@ -23,6 +23,24 @@ func test_init__filled_params__assigned_to_vars():
 	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
+func test_init__shape_not_null__queue_blocked():
+	var shape := CollisionShape2D.new()
+	autoqfree(shape)
+	shape.shape = CircleShape2D.new()
+
+	shape.set_script(class_script)
+
+	assert_eq(shape._queue_status, RegularCollisionPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should be '_BLOCK_QUEUE' (2)")
+
+func test_init__shape_null__queue_not_blocked():
+	var shape := CollisionShape2D.new()
+	autoqfree(shape)
+	shape.shape = null
+
+	shape.set_script(class_script)
+
+	assert_ne(shape._queue_status, RegularCollisionPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should not be '_BLOCK_QUEUE' (2)")
+
 func test_enter_tree__blocked_queue__regenerate_not_called_not_queued():
 	var shape : RegularCollisionPolygon2D = partial_double(class_script).new() 
 	stub(shape, "regenerate").to_do_nothing()

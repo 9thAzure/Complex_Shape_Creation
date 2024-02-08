@@ -24,6 +24,24 @@ func test_init__params_filled__assigned_to_vars():
 	assert_eq(star.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(star.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
+func test_init__polygon_not_empty__queue_blocked():
+	var star := Polygon2D.new()
+	autoqfree(star)
+	star.polygon = sample_polygon
+
+	star.set_script(class_script)
+
+	assert_eq(star._queue_status, StarPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should be '_BLOCK_QUEUE' (2)")
+
+func test_init__polygon_empty__queue_not_blocked():
+	var star := Polygon2D.new()
+	autoqfree(star)
+	star.polygon = PackedVector2Array()
+
+	star.set_script(class_script)
+
+	assert_ne(star._queue_status, StarPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should not be '_BLOCK_QUEUE' (2)")
+
 func test_enter_tree__blocked_queue__regenerate_not_called_not_queued():
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	stub(shape, "regenerate_polygon").to_do_nothing()
