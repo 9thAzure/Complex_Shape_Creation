@@ -450,7 +450,7 @@ static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float,
 		points[-i - 1] = points[i] * hole_scaler
 	
 	if close_shape:
-		var slope := (points[original_size - 2] - points[original_size - 1]).normalized() * 0.0005
+		var slope := (points[original_size - 2] - points[original_size - 1]) / 4194304 # 2^22
 		points[original_size - 1] += slope
 		points[original_size] += slope
 
