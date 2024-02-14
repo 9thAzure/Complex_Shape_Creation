@@ -1,6 +1,6 @@
 # 2D Regular Polygons
 
-An addon for Godot which adds several functions for creating and modifying shapes,
+An addon for the  [Godot Engine](https://godotengine.org/) which adds several functions for creating and modifying shapes,
 and a few nodes that uses those functions for creating visuals or for creating collision shapes.
 
 These functions and nodes are written in GDScript to make them universally compatible.
