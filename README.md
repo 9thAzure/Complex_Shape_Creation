@@ -1,5 +1,10 @@
 # 2D Regular Polygons
 
+![GitHub Release](https://img.shields.io/github/v/release/9thAzure/2D_Regular_Polygons)
+![GitHub License](https://img.shields.io/github/license/9thAzure/2D_Regular_Polygons)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/9thAzure/2D_Regular_Polygons)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/9thAzure/2D_Regular_Polygons/total)
+
 An addon for the  [Godot Engine](https://godotengine.org/) which adds several functions for creating and modifying shapes,
 and a few nodes that uses those functions for creating visuals or for creating collision shapes.
 
