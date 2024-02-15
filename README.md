@@ -14,9 +14,9 @@ They are exposed to C# via wrapper classes.
 > [!NOTE]
 > Most of the functions for modifying shapes have a slightly different signature in C# compared to GDScript.
 > Since they rely on the shape being passed by reference, something that isn't maintained during interop,
-> the C# equivlents returns the shape instead.
+> the C# equivalents returns the shape instead.
 
-## Instalation
+## Installation
 
 There are 2 ways to download the plugin:
 
@@ -35,14 +35,14 @@ There are 2 ways to download the plugin:
 
 ***
 
-Once downladed, the addon can be enabled in `Project` > `Project Settings` > `Plugins`.
+Once downloaded, the addon can be enabled in `Project` > `Project Settings` > `Plugins`.
 
 ## Quick Tutorial
 
 This is a short introduction to how the addon works.
 
 More in depth documentation can be found the [wiki](https://github.com/9thAzure/2D_Regular_Polygons/wiki)
-or the documentation within the scripts, which is accesible within Godot editor's `Script` tab.
+or the documentation within the scripts, which is accessible within Godot editor's `Script` tab.
 
 ### Nodes
 
