@@ -23,15 +23,13 @@ They are exposed to C# via wrapper classes.
 There are 2 ways to download the plugin:
 
 ### Godot Asset Library download
-1. In the Godot editor, go to the `AssetLib` tab.
+1. In the Godot editor, go to the **AssetLib** tab.
 2. Search for the "2D Regular Polygons" addon.
-3. Select and click install.
-4. There will be a second install dialogue where you can choose what to download.
-    The addon is in the `addons/2d_regular_polygons` folder and should be the only thing that should be downloaded for most cases.
+3. Select and click `install` (and subsequent `install`s.).
 
 ### Zip-file download.
-1. Go to Releases.
-2. Download the `2d_regular_polygons.zip` file in assets section of the wanted release.
+1. Go to the **Releases** page.
+2. Download the zip file in **Assets** section of the wanted release.
 3. Extract the `2d_regular_polygon` folder from the zip file and put it in the `addons` folder in the target project.
     Create the `addons` folder if it does not exist yet project.
 
@@ -44,7 +42,7 @@ Once downloaded, the addon can be enabled in `Project` > `Project Settings` > `P
 This is a short introduction to how the addon works.
 
 More in depth documentation can be found the [wiki](https://github.com/9thAzure/2D_Regular_Polygons/wiki)
-or the documentation within the scripts, which is accessible within Godot editor's `Script` tab.
+or the documentation within the scripts, which is accessible within Godot editor's **Script** tab.
 
 ### Nodes
 
