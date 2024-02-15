@@ -5,3 +5,7 @@
 addons.zip
 /benchmarking/
 /testing/
+
+# ignore .DS_Stores
+.DS_Store
+*/.DS_Store
