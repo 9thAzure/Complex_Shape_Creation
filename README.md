@@ -1,5 +1,7 @@
 # 2D Regular Polygons
 
+![Regular Polygon 2D icon](/addons/2d_regular_polygons/regular_polygon_2d/regular_polygon_2d.svg)
+
 ![GitHub Release](https://img.shields.io/github/v/release/9thAzure/2D_Regular_Polygons)
 ![GitHub License](https://img.shields.io/github/license/9thAzure/2D_Regular_Polygons)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/9thAzure/2D_Regular_Polygons)
