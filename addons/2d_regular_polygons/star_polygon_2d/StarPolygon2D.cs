@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using Godot;
-using RegularPolygons2D.MemberNames;
+using ComplexShapeCreation.MemberNames;
 
-namespace RegularPolygons2D;
+namespace ComplexShapeCreation;
 
 /// <summary>
 /// A Wrapper for a <see cref="Polygon2D"/> which contains the script specified in <see cref="GDScriptEquivalent"/>.
@@ -41,7 +41,7 @@ public class StarPolygon2D
     /// <summary>
     /// The length of the inner vertices to the center of the star.
     /// </summary>
-    /// <remakrs>For lines, it determines the length of the bottem part.</remarks>
+    /// <remarks>For lines, it determines the length of the bottom part.</remarks>
     public float InnerSize
     {
         get => (float)Instance.Get(PropertyName.InnerSize);

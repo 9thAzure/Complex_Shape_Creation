@@ -52,7 +52,7 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
-## [br][br]If a line is drawn, [method CanvasItem.draw_line] will always be used, with this property corrasponding to the [param width] parameter.
+## [br][br]If a line is drawn, [method CanvasItem.draw_line] will always be used, with this property corresponding to the [param width] parameter.
 @export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
 var width : float = -0.001:
 	set(value):
