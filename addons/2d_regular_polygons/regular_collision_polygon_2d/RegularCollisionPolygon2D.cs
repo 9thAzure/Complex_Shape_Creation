@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using Godot;
-using RegularPolygons2D.MemberNames;
+using ComplexShapeCreation.MemberNames;
 
-namespace RegularPolygons2D;
+namespace ComplexShapeCreation;
 
 /// <summary>
 /// A Wrapper for a <see cref="CollisionShape2D"/> which contains the script specified in <see cref="GDScriptEquivalent"/>.
