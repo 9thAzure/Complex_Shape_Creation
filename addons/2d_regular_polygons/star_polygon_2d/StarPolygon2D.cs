@@ -41,7 +41,7 @@ public class StarPolygon2D
     /// <summary>
     /// The length of the inner vertices to the center of the star.
     /// </summary>
-    /// <remakrs>For lines, it determines the length of the bottem part.</remarks>
+    /// <remarks>For lines, it determines the length of the bottom part.</remarks>
     public float InnerSize
     {
         get => (float)Instance.Get(PropertyName.InnerSize);
