@@ -9,11 +9,7 @@ extends Polygon2D
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
 ## Certain properties with circles will use a 32-sided polygon instead.
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
-## [member Polygon2D.polygon] will be cleared and will be set when the node enters the tree.
-## Use [method regenerate_polygon] to force  [member Polygon2D.polygon] to be set outside the [SceneTree].
-## [br][br][b]Warning[/b]: Specific values which use a value of [member width] between [code]0[/code] and [member size]
-## (such as a hexagon with [member width] half of [member size]) will cause the node to fail to draw shape.
-## This can be worked around by slightly altering properties, like subtracting [code]0.01[/code] from [member width] or [member drawn_arc].
+## regeneration will be delayed to when it enters it. Use [method regenerate_polygon] to force regeneration.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Certain properties with circles will use a 32-sided polygon instead.
@@ -56,7 +52,7 @@ var offset_rotation : float = 0:
 ## Determines the width of the shape. A value of [code]0[/code] outlines the shape with lines, and a value smaller than [code]0[/code] ignores this effect.
 ## Values greater than [code]0[/code] will have [member Polygon2D.polygon] used,
 ## and value greater than [member size] also ignores this effect while still using [member Polygon2D.polygon].
-## [br][br]If a line is drawn, [method CanvasItem.draw_line] will always be used, with this property corrasponding to the [param width] parameter.
+## [br][br]If a line is drawn, [method CanvasItem.draw_line] will always be used, with this property corresponding to the [param width] parameter.
 @export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
 var width : float = -0.001:
 	set(value):
@@ -116,7 +112,12 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		_pre_redraw()
 
-var _is_queued := true
+# "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
+const _NOT_QUEUED = 0
+const _IS_QUEUED = 1
+const _BLOCK_QUEUE = 2
+
+var _queue_status : int = _NOT_QUEUED 
 
 # Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
 # queue-like functionality - pauses, and only 1 call.
@@ -126,24 +127,24 @@ func _pre_redraw() -> void:
 		queue_redraw()
 		return
 	
-	if _is_queued:
+	if _queue_status != _NOT_QUEUED:
 		return
 	
-	_is_queued = true
+	_queue_status = _IS_QUEUED
 	if not is_inside_tree():
 		polygon = PackedVector2Array()
 		return
 
 	await get_tree().process_frame
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	if not uses_polygon_member():
 		return
 	regenerate_polygon()
 
 func _enter_tree() -> void:
-	if _is_queued and uses_polygon_member() and polygon.is_empty():
+	if _queue_status == _IS_QUEUED and uses_polygon_member():
 		regenerate_polygon()
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 
 func _draw() -> void:
 	if uses_polygon_member() or drawn_arc == 0:
@@ -194,7 +195,7 @@ func _draw() -> void:
 	
 	var points : PackedVector2Array
 	if vertices_count == 1:
-		if (drawn_arc >= TAU or drawn_arc <= -TAU) and texture == null:
+		if (drawn_arc >= TAU or drawn_arc <= -TAU) and texture == null and width < 0:
 			draw_circle(offset, size, color)
 			return
 		points = get_shape_vertices(32, size, offset_rotation, offset, drawn_arc)
@@ -233,7 +234,7 @@ func _draw() -> void:
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force the regeneration of [member Polygon2D.polygon].
 func regenerate_polygon() -> void:
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
 		return
@@ -254,6 +255,9 @@ func regenerate_polygon() -> void:
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO,
 	width := -0.001, drawn_arc := TAU, corner_size := 0.0, corner_smoothness := 0):
+	if not polygon.is_empty():
+		_queue_status = _BLOCK_QUEUE
+
 	if vertices_count != 1:
 		self.vertices_count = vertices_count
 	if size != 10.0:
@@ -403,12 +407,12 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 		var starting_point : Vector2
 		var ending_point : Vector2
 		if starting_slope.length_squared() / 4 < corner_size_squared:
-			starting_point = current_point - starting_slope / 2
+			starting_point = current_point - starting_slope / 2.001
 		else:
 			starting_point = current_point - starting_slope.normalized() * corner_size
 		
 		if ending_slope.length_squared() / 4 < corner_size_squared:
-			ending_point = current_point - ending_slope / 2
+			ending_point = current_point - ending_slope / 2.001
 		else:
 			ending_point = current_point - ending_slope.normalized() * corner_size
 
@@ -444,6 +448,11 @@ static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float,
 
 	for i in original_size:
 		points[-i - 1] = points[i] * hole_scaler
+	
+	if close_shape:
+		var slope := (points[original_size - 2] - points[original_size - 1]) / 4194304 # 2^22
+		points[original_size - 1] += slope
+		points[original_size] += slope
 
 # these functions are for c# interop, as changes to an argument are not transferred.
 static func _add_rounded_corners_result(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:

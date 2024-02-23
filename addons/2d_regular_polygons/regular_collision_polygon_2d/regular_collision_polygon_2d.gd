@@ -7,8 +7,8 @@ extends CollisionShape2D
 ##
 ## A node with variables for generating 2d regular shapes for collision.
 ## It creates various shape inheriting [Shape2D] based on the values of its variables and sets it to [member CollisionShape2D.shape].
-## [br][br][b]Note[/b]: If properties are set when the node is outside the [SceneTree], the shape isn't generated instantly.
-## See [method queue_regenerate] for its effects.
+## [br][br][b]Note[/b]: If properties are set when the node is outside the [SceneTree],
+## regeneration will be delayed to when it enters one. Use [method regenerate] to force regeneration.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Certain properties with circles will use a 32-sided polygon instead.
@@ -107,32 +107,37 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		queue_regenerate()
 
-var _is_queued := true
+# "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
+const _NOT_QUEUED = 0
+const _IS_QUEUED = 1
+const _BLOCK_QUEUE = 2
+
+var _queue_status : int = _NOT_QUEUED 
 
 ## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
-## [br][br]If this method is called when the node is outside the [SceneTree], [member Shape2D.shape] will be set to [code]null[/code]
-## and initialization will be delayed to when the node enters the tree. Call [method regenerate] directly to force initialization.
+## [br][br]If this method is called when the node is outside the [SceneTree], regeneration will be delayed to when the node enters the tree.
+## Call [method regenerate] directly to force initialization.
 func queue_regenerate() -> void:
-	if _is_queued:
+	if _queue_status != _NOT_QUEUED:
 		return
 	
-	_is_queued = true
+	_queue_status = _IS_QUEUED
 	if not is_inside_tree():
-		shape = null
 		return
 	
 	await get_tree().process_frame
-	# _is_queued = false # regenerate already sets this variable to false.
+	# __is_queued = false # regenerate already sets this variable to false.
 	regenerate()
 
 func _enter_tree() -> void:
-	if _is_queued and shape == null:
+	if _queue_status == _IS_QUEUED:
 		regenerate()
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 
 ## Regenerates the [member CollisionShape2D.shape] using the properties of this node.
+## [br][br]The value of [member Shape2D.custom_solver_bias] of the new [Shape2D] will be the same a the previous, if [member shape] isn't [value]null[/value].
 func regenerate() -> void:
-	_is_queued = false
+	_queue_status = _NOT_QUEUED
 	
 	if drawn_arc == 0:
 		return
@@ -150,7 +155,7 @@ func regenerate() -> void:
 				var line := SegmentShape2D.new()
 				line.a = point1
 				line.b = point2
-				shape = line
+				_set_shape(line)
 				return
 			
 			if not uses_inner_size:
@@ -158,14 +163,14 @@ func regenerate() -> void:
 					var rect_line := RectangleShape2D.new()
 					rect_line.size.y = size * 2
 					rect_line.size.x = width
-					shape = rect_line
+					_set_shape(rect_line)
 					return
 
 				if is_zero_approx(point1.y):
 					var rect_line := RectangleShape2D.new()
 					rect_line.size.y = width
 					rect_line.size.x = size * 2
-					shape = rect_line
+					_set_shape(rect_line)
 					return
 			
 			var line := ConvexPolygonShape2D.new()
@@ -177,7 +182,7 @@ func regenerate() -> void:
 			array[2] = point2 + tangent
 			array[3] = point2 - tangent
 			line.points = array
-			shape = line
+			_set_shape(line)
 			return
 		
 		point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
@@ -192,7 +197,7 @@ func regenerate() -> void:
 			if width > 0:
 				widen_multiline(array, width)
 			lines.segments = array
-			shape = lines
+			_set_shape(lines)
 			return
 		
 		if is_equal_approx(PI, abs(drawn_arc)):
@@ -203,7 +208,7 @@ func regenerate() -> void:
 			if width > 0:
 				widen_polyline(array, width, false)
 			lines.segments = array
-			shape = lines
+			_set_shape(lines)
 			return
 		
 		var smoothness := corner_smoothness if corner_smoothness != 0 else 16
@@ -226,7 +231,7 @@ func regenerate() -> void:
 		if width > 0:
 			widen_polyline(array, width, true)
 		lines.segments = array
-		shape = lines
+		_set_shape(lines)
 		return
 	
 	var uses_rounded_corners := not is_zero_approx(corner_size)
@@ -269,8 +274,7 @@ func regenerate() -> void:
 			segments[(modified_size - i) * 2 - 2] = points[original_size - i - 2 - offset]
 		
 		polygon.segments = segments 
-		
-		shape = polygon
+		_set_shape(polygon)
 		return
 	
 	var vertices := vertices_count
@@ -278,7 +282,7 @@ func regenerate() -> void:
 		if drawn_arc >= TAU or drawn_arc <= -TAU:
 			var circle := CircleShape2D.new()
 			circle.radius = size
-			shape = circle
+			_set_shape(circle)
 			return
 		vertices = 32
 	
@@ -286,7 +290,7 @@ func regenerate() -> void:
 		const sqrt_two_over_two := 0.707106781
 		var square := RectangleShape2D.new()
 		square.size = size / sqrt_two_over_two * Vector2.ONE
-		shape = square
+		_set_shape(square)
 		return
 	
 	var points : PackedVector2Array
@@ -301,17 +305,25 @@ func regenerate() -> void:
 	if uses_drawn_arc and (drawn_arc > PI or drawn_arc < -PI) or uses_inner_size and vertices_count > 2:
 		var lines := ConcavePolygonShape2D.new()
 		lines.segments = convert_to_line_segments(points)
-		shape = lines
+		_set_shape(lines)
 		return
 
 	var polygon := ConvexPolygonShape2D.new()
-	polygon.points = points 
-	shape = polygon
+	polygon.points = points
+	_set_shape(polygon)
+
+func _set_shape(new_shape : Shape2D) -> void:
+	if shape != null:
+		new_shape.custom_solver_bias = shape.custom_solver_bias
+	shape = new_shape
 
 func _uses_drawn_arc() -> bool:
 	return -TAU < drawn_arc and drawn_arc < TAU
 
 func _init(vertices_count := 1, size := 10.0, offset_rotation := 0.0, width := 0.0, drawn_arc := TAU, corner_size := 0.0, corner_smoothness : int = 0):
+	if shape != null:
+		_queue_status = _BLOCK_QUEUE
+
 	if vertices_count != 1:
 		self.vertices_count = vertices_count
 	if size != 10.0:

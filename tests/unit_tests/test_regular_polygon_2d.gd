@@ -5,7 +5,6 @@ var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LE
 
 func before_each():
 	ignore_method_when_doubling(class_script, "_init")
-	# Gut cannot handle static methods when doubling.
 	ignore_method_when_doubling(class_script, "get_shape_vertices")
 	ignore_method_when_doubling(class_script, "_get_vertices")
 	ignore_method_when_doubling(class_script, "_find_intersection")
@@ -30,10 +29,28 @@ func test_init__filled__variables_assigned():
 	assert_eq(shape.corner_size, 1.0, "Property 'corner_size'.")
 	assert_eq(shape.corner_smoothness, 1, "Property 'corner_smoothness'.")
 
+func test_init__polygon_not_empty__queue_blocked():
+	var shape := Polygon2D.new()
+	autoqfree(shape)
+	shape.polygon = sample_polygon
+
+	shape.set_script(class_script)
+
+	assert_eq(shape._queue_status, RegularPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should be '_BLOCK_QUEUE' (2)")
+
+func test_init__polygon_empty__queue_not_blocked():
+	var shape := Polygon2D.new()
+	autoqfree(shape)
+	shape.polygon = PackedVector2Array()
+
+	shape.set_script(class_script)
+
+	assert_ne(shape._queue_status, RegularPolygon2D._BLOCK_QUEUE, "Property '_queue_status' should not be '_BLOCK_QUEUE' (2)")
+
 func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
 	var shape : RegularPolygon2D = partial_double(class_script).new()
 	shape.width = 10
-	shape._is_queued = false
+	shape._queue_status = RegularPolygon2D._NOT_QUEUED
 	stub(shape, "_enter_tree").to_do_nothing()
 	add_child(shape)
 
@@ -43,17 +60,25 @@ func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
 	await wait_for_signal(get_tree().process_frame, 10)
 	await wait_frames(2)
 	assert_false(shape.polygon.is_empty(), "Variable 'polygon' should be a filled array at this point.")
+	assert_eq(shape._queue_status, RegularPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
-func test_enter_tree__regenerate_requested_with_polygon_not_empty__polygon_not_regenerated():
+func test_enter_tree__blocked_queue__polygon_not_regenerated():
 	var shape : RegularPolygon2D = partial_double(class_script).new()
 	stub(shape, "uses_polygon_member").to_return(true)
 	stub(shape, "regenerate_polygon").to_do_nothing()
-	shape._is_queued = true
-	shape.polygon = sample_polygon
+	shape._queue_status = RegularPolygon2D._BLOCK_QUEUE
 
 	shape._enter_tree()
 
 	assert_not_called(shape, "regenerate_polygon")
+
+func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularPolygon2D._IS_QUEUED, RegularPolygon2D._BLOCK_QUEUE])):
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape._queue_status = p
+
+	shape._enter_tree()
+
+	assert_eq(shape._queue_status, RegularPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
 func test_regenerate_polygon__holed_shape_without_drawn_arc__ends_equal():
 	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
@@ -134,6 +159,6 @@ func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
 	RegularPolygon2D.add_hole_to_points(shape, 1, true)
 	var new_size := shape.size()
 
-	assert_eq(new_size, 2 * previous_size + 2, "Size of modifed array, 2 + 2 * the original size")
+	assert_eq(new_size, 2 * previous_size + 2, "Size of modified array, 2 + 2 * the original size")
 
 

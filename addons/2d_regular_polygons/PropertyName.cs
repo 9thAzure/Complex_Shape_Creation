@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace RegularPolygons2D.MemberNames;
+namespace ComplexShapeCreation.MemberNames;
 
 public static class PropertyName
 {

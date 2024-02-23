@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using Godot;
-using RegularPolygons2D.MemberNames;
+using ComplexShapeCreation.MemberNames;
 
-namespace RegularPolygons2D;
+namespace ComplexShapeCreation;
 
 /// <summary>
 /// A Wrapper for a <see cref="CollisionShape2D"/> which contains the script specified in <see cref="GDScriptEquivalent"/>.
@@ -151,7 +151,7 @@ public class RegularCollisionPolygon2D
     /// </remarks>
     /// <param name="segments">The pairs of points representing each segment (see <seealso cref="ConcavePolygonShape2D.Segments"/>).</param>
     /// <param name="width">The width of each segment</param>
-    /// <param name="joinPerimeter">Controls whether the function should extend (or shorten) line segments to form a propery closed shape.</param>
+    /// <param name="joinPerimeter">Controls whether the function should extend (or shorten) line segments to form a property closed shape.</param>
     public static Vector2[] WidenPolyline(Vector2[] segments, float width, bool joinPerimeter)
     => _shared.Value.Call(MethodName.WidenPolyline, segments, width, joinPerimeter).AsVector2Array();
 

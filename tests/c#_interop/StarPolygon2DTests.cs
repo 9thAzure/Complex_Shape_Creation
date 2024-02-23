@@ -2,10 +2,10 @@
 using Chickensoft.GoDotLog;
 using Chickensoft.GoDotTest;
 using Godot;
-using RegularPolygons2D;
+using ComplexShapeCreation;
 using Shouldly;
 
-namespace RegularPolygons2D.Tests;
+namespace ComplexShapeCreation.Tests;
 
 public class StarPolygon2DTests : TestClass
 {
