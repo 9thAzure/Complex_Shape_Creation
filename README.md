@@ -2,10 +2,10 @@
 
 ![Regular Polygon 2D icon](/addons/2d_regular_polygons/regular_polygon_2d/regular_polygon_2d.svg)
 
-![GitHub Release](https://img.shields.io/github/v/release/9thAzure/2D_Regular_Polygons)
-![GitHub License](https://img.shields.io/github/license/9thAzure/2D_Regular_Polygons)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/9thAzure/2D_Regular_Polygons)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/9thAzure/2D_Regular_Polygons/total)
+![GitHub Release](https://img.shields.io/github/v/release/9thAzure/Complex_Shape_Creation)
+![Static Badge (License, not detected by github because it is in sub folder)](https://img.shields.io/badge/License-MIT-orange)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/9thAzure/Complex_Shape_Creation)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/9thAzure/Complex_Shape_Creation/total)
 
 An addon for the  [Godot Engine](https://godotengine.org/) which adds several functions for creating and modifying shapes,
 and a few nodes that uses those functions for creating visuals or for creating collision shapes.
