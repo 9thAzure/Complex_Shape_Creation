@@ -17,7 +17,9 @@ The tests are organized into folders based on what they do.
 The proper unit tests, testing the functionality of the nodes and functions.
 
 To run, go to the `GUT` window of the terminal, then press `Run All`.
-More info can be found [here](https://gut.readthedocs.io/en/latest/Install.html#running-tests)
+More info can be found [here](https://gut.readthedocs.io/en/latest/Install.html#running-tests).
+
+(Also, the errors when running GUT is normal. Ignore them.)
 
 ### [c#_interop](/tests/c#_interop/)
 

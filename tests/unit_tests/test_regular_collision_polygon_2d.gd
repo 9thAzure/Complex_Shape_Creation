@@ -115,7 +115,7 @@ func test_regenerate__line_with_width_offset_rotation_multiples_of_PI_plus_PI_ov
 		return
 	assert_gt(shape.shape.size.x, shape.shape.size.y, "Property 'shape' should be wider than tall")
 
-func test_regnerate__line_with_width_offset_rotation_not_multiple_of_PI_over_2__shape_4_point_convex_shape(p = use_parameters([1, -3, 5])):
+func test_regenerate__line_with_width_offset_rotation_not_multiple_of_PI_over_2__shape_4_point_convex_shape(p = use_parameters([1, -3, 5])):
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.vertices_count = 2
 	shape.width = 5
@@ -128,7 +128,7 @@ func test_regnerate__line_with_width_offset_rotation_not_multiple_of_PI_over_2__
 		return
 	assert_eq(shape.shape.points.size(), 4, "Property 'shape.points' should have 4 points")
 
-func test_regnerate__line_with_width_uses_drawn_arc__shape_16_point_concave_shape(p = use_parameters([2, PI, -1])):
+func test_regenerate__line_with_width_uses_drawn_arc__shape_16_point_concave_shape(p = use_parameters([2, PI, -1])):
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.vertices_count = 2
 	shape.width = 5

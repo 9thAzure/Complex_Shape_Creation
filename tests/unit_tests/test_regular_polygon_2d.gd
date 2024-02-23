@@ -5,7 +5,6 @@ var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LE
 
 func before_each():
 	ignore_method_when_doubling(class_script, "_init")
-	# Gut cannot handle static methods when doubling.
 	ignore_method_when_doubling(class_script, "get_shape_vertices")
 	ignore_method_when_doubling(class_script, "_get_vertices")
 	ignore_method_when_doubling(class_script, "_find_intersection")
@@ -160,6 +159,6 @@ func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
 	RegularPolygon2D.add_hole_to_points(shape, 1, true)
 	var new_size := shape.size()
 
-	assert_eq(new_size, 2 * previous_size + 2, "Size of modifed array, 2 + 2 * the original size")
+	assert_eq(new_size, 2 * previous_size + 2, "Size of modified array, 2 + 2 * the original size")
 
 
