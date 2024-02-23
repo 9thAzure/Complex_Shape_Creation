@@ -3,7 +3,7 @@ using System.Reflection;
 using Chickensoft.GoDotTest;
 using Godot;
 
-namespace RegularPolygons2D.Tests;
+namespace ComplexShapeCreation.Tests;
 
 public partial class TestRunner : Node
 {
