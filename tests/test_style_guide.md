@@ -1,108 +1,40 @@
-# Test Style Guide
-this is the style guide for the tests written in the [/tests] folder. 
+# Test Guide
 
-### Testing plugins used
-gdscript:
-- [GUT]
+This is a short guide to using the tests in this [folder](/tests/).
 
-c# (as nuget packages):
-- [Chickensoft.GoDotTest](https://github.com/chickensoft-games/GoDotTest)
-- [shouldly](https://github.com/shouldly/shouldly)
+## Plugins Used
 
-## Format and Naming
-Files be in sub-folders within [/tests] folder
-and should named in the format: `test_class_name.gd`.
+- [GUT](https://github.com/bitwes/Gut) - GDScript unit testing
+- [Chickensoft.GoDotTest](https://github.com/chickensoft-games/GoDotTest) - C# unit testing
+- [Shouldly](https://github.com/shouldly/shouldly) - C# assertions
 
-Methods should be named in the format: 
-`test_method_name__scenario__expected_result`.
-The tests should be separated into 3 parts: *arrange, act, assert*.
+## Types of Tests
 
-Member variables are declared first, 
-then the methods `before_each`, `before_all`, etc,
-then the test methods.
-Preferably, the methods under test appear in the same order as in the class script.
-```swift
-# calculator.gd
-extends Node
+The tests are organized into folders based on what they do.
 
-func add(num1 : int, num2 : int) -> int:
-    return num1 + num2
+### [unit_tests](/tests/unit_tests/)
 
-func subtract(num1 : int, num2 : int) -> int:
-    return num1 - num2
-```
-```swift
-# test_calculator.gd
-extends GutTest
+The proper unit tests, testing the functionality of the nodes and functions.
 
-var class_script := preload("res://calculator.gd")
+To run, go to the `GUT` window of the terminal, then press `Run All`.
+More info can be found [here](https://gut.readthedocs.io/en/latest/Install.html#running-tests)
 
-func test_add__1_and_1__returns_2():
-    var calculator := class_script.new()
+### [c#_interop](/tests/c#_interop/)
 
-    var result := calculator.add(1, 1)
+As the name suggest, these are unit tests specifically for the interop between the C# wrapper classes and GDScript core.
 
-    assert_eq(result, 2, "Result should be 2.")
+To run, open and run [test_runner.tscn](/tests/c#_interop/test_runner.tscn).
+The results will be outputted into the standard `Output`.
+By default, the scene will automatically close once tests are done.
 
-func test_subtract__2_and_1__returns_1():
-    var calculator := class_script.new()
+### [visual_tests](/tests/visual_tests/)
 
-    var result := calculator.subtract(2, 1)
+Due to the nature of the project, it's incredibly hard, if not impossible, to unit test everything.
+This folder contains scenes which automatically modulate over the properties of every node.
+This is for manual inspection for how the properties interact with each other.
 
-    assert_eq(result, 1, "Result should be 1.")
-```
+A variety of user defined scripts and `AnimationPlayer` nodes are used. 
+Most can be played in editor, `AnimationPlayer` nodes via the `Animation` window, and user defined scripts by an exported property like `is_on`.
+however, the [table_display](/tests/visual_tests/table_display.gd) node requires the scene to be run.
 
-> [!NOTE]
-the reason `test_` is prefixed to files and methods
-is because that is what [GUT] looks for when finding 
-tests.
-
-## Gut Features Style Guide
-### Asserts
-The first parameter of the comparing asserts should be the thing being tested.
-
-The assert default messages compare the values, with the custom messages added afterwards.
-The custom message should clarify what is being compared.
-
-`assert_true` and `assert_false` don't provide a default message, so a full message should be provided.
-```swift
-assert_eq(polygon.size(), 4, "size of Property 'polygon'.")
-assert_false(polygon.is_empty(), "Property 'polygon' should not be empty.")
-```
-
-### Doubles
-The creation of doubles should be done in line. Static typing should still be used.
-```swift
-var calculator : Calculator = double(class_script).new()
-```
-
-`ignore_method_when_doubling` for static methods should be put in the `before_each` method. 
-`_init` methods should also be ignored if they use default parameters (all of them currently do).
-```swift
-func before_each():
-    ignore_method_when_doubling(class_script, "static_method")
-    ignore_method_when_doubling(class_script, "_init")
-```
-
-### Auto Freeing
-`autofree()` and variants should be done in line
-with static typing.
-```swift
-var node : Node = autoqfree(Node.new())
-```
-
-### Parameterized Tests
-The name of the parameter should be `p`,
-and the array used in `use_parameters()` should be in-line,
-unless it is too big.
-```swift
-func test_add__param_and_0__returns_param(p = use_parameters([1, 2, 3, 4])):
-```
-
-## C#
-Besides testing [interop](/tests/c#_interop/), c# shouldn't be used for any other unit tests.
-
-Only the guidelines under **format and naming** apply to c# tests. 
-
-[/tests]: (/tests/)
-[GUT]: (https://github.com/bitwes/Gut)
+For more info on how to use the user defined scripts, checkout the [Script Guide](/tests/visual_tests/script_guide.md).
