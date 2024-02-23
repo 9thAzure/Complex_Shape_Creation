@@ -9,3 +9,4 @@ addons.zip
 # ignore .DS_Stores
 .DS_Store
 */.DS_Store
+.vscode
