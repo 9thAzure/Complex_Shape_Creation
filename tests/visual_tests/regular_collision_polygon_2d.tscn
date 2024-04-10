@@ -127,24 +127,24 @@ _data = {
 "RESET": SubResource("Animation_wr35u")
 }
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_sud5u"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_tju0j"]
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_ktlnl"]
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_g1d4p"]
 points = PackedVector2Array(8.66025e-07, 5e-07, -8.66025e-07, 5e-07, -1.22465e-22, -1e-06)
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_7slmc"]
-points = PackedVector2Array(8.66025, 5, -8.66025, 5, -1.22465e-15, -10)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_f6thd"]
+points = PackedVector2Array(8.66028, 4.99996, -8.66023, 5.00004, -4.46638e-05, -10)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_nds6n"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vhp1p"]
 size = Vector2(14.1421, 14.1421)
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_bnwup"]
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_2lp6x"]
 points = PackedVector2Array(8.66025, 5, -8.66025, 5, -1.22465e-15, -10)
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_l37mw"]
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_1udl2"]
 points = PackedVector2Array(8.66025, 5, -8.66025, 5, -1.22465e-15, -10)
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_x24px"]
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_i6fuy"]
 points = PackedVector2Array(6.16025, 0.669873, 6.58525, 1.4926, 6.86025, 2.22872, 6.98525, 2.87824, 6.96025, 3.44115, 6.78525, 3.91747, 6.46025, 4.30718, 5.98525, 4.61029, 5.36025, 4.8268, 4.58525, 4.9567, 3.66025, 5, -3.66025, 5, -4.58525, 4.9567, -5.36025, 4.8268, -5.98525, 4.61029, -6.46025, 4.30718, -6.78525, 3.91747, -6.96025, 3.44115, -6.98525, 2.87824, -6.86025, 2.22872, -6.58525, 1.4926, -6.16025, 0.669873, -2.5, -5.66987, -2, -6.4493, -1.5, -7.05551, -1, -7.48853, -0.5, -7.74833, 0, -7.83494, 0.5, -7.74833, 1, -7.48853, 1.5, -7.05551, 2, -6.4493, 2.5, -5.66987)
 
 [sub_resource type="Animation" id="Animation_3cxhu"]
@@ -525,11 +525,11 @@ _data = {
 "RESET": SubResource("Animation_khpwa")
 }
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_70kgt"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_he6or"]
 radius = 1e-06
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_xefwe"]
-points = PackedVector2Array(-4.99998, 5.33335, 5.00002, 5.33331, 4.99998, -5.33335, -5.00002, -5.33331)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d1qn6"]
+size = Vector2(10, 2e-06)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8pt72"]
 
@@ -547,45 +547,45 @@ libraries = {
 
 [node name="VerticesCount" type="CollisionShape2D" parent="IndividualProperties"]
 position = Vector2(15, 15)
-shape = SubResource("CircleShape2D_sud5u")
+shape = SubResource("CircleShape2D_tju0j")
 script = ExtResource("2_okbtb")
 
 [node name="Size" type="CollisionShape2D" parent="IndividualProperties"]
 position = Vector2(45, 15)
-shape = SubResource("ConvexPolygonShape2D_ktlnl")
+shape = SubResource("ConvexPolygonShape2D_g1d4p")
 script = ExtResource("2_okbtb")
 vertices_count = 3
 size = 1e-06
 
 [node name="OffsetRotation" type="CollisionShape2D" parent="IndividualProperties"]
 position = Vector2(75, 16)
-shape = SubResource("ConvexPolygonShape2D_7slmc")
+shape = SubResource("ConvexPolygonShape2D_f6thd")
 script = ExtResource("2_okbtb")
 vertices_count = 3
 
 [node name="Width" type="CollisionShape2D" parent="IndividualProperties"]
 position = Vector2(165, 15)
-shape = SubResource("RectangleShape2D_nds6n")
+shape = SubResource("RectangleShape2D_vhp1p")
 script = ExtResource("2_okbtb")
 vertices_count = 4
 width = -0.001
 
 [node name="DrawnArc" type="CollisionShape2D" parent="IndividualProperties"]
 position = Vector2(195, 15)
-shape = SubResource("ConvexPolygonShape2D_bnwup")
+shape = SubResource("ConvexPolygonShape2D_2lp6x")
 script = ExtResource("2_okbtb")
 vertices_count = 3
 drawn_arc = -6.28319
 
 [node name="CornerSize" type="CollisionShape2D" parent="IndividualProperties"]
 position = Vector2(225, 15)
-shape = SubResource("ConvexPolygonShape2D_l37mw")
+shape = SubResource("ConvexPolygonShape2D_1udl2")
 script = ExtResource("2_okbtb")
 vertices_count = 3
 
 [node name="CornerSmoothness" type="CollisionShape2D" parent="IndividualProperties"]
 position = Vector2(255, 15)
-shape = SubResource("ConvexPolygonShape2D_x24px")
+shape = SubResource("ConvexPolygonShape2D_i6fuy")
 script = ExtResource("2_okbtb")
 vertices_count = 3
 corner_size = 5.0
@@ -693,7 +693,7 @@ libraries = {
 
 [node name="RegularPolygon2D" type="CollisionShape2D" parent="AllProperties"]
 position = Vector2(285, 15)
-shape = SubResource("CircleShape2D_70kgt")
+shape = SubResource("CircleShape2D_he6or")
 script = ExtResource("2_okbtb")
 size = 1e-06
 offset_rotation = -6.28319
@@ -702,7 +702,7 @@ drawn_arc = -6.28319
 
 [node name="RegularPolygon2D2" type="CollisionShape2D" parent="AllProperties"]
 position = Vector2(285, 75)
-shape = SubResource("ConvexPolygonShape2D_xefwe")
+shape = SubResource("RectangleShape2D_d1qn6")
 script = ExtResource("2_okbtb")
 vertices_count = 2
 size = 5.33333

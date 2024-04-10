@@ -326,6 +326,7 @@ position = Vector2(15, 75)
 scale = Vector2(2.5, 2.5)
 script = ExtResource("4_ocwss")
 test_script = ExtResource("1_nx66f")
+max_time = null
 properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.001, 20.0], ["offset_rotation_degrees", -360.0, 360.0], ["color", Color(0, 0, 0, 1), Color(1, 1, 0, 1)], ["offset_position", Vector2(-10, -10), Vector2(10, 10)]])
 defaults = {
 "vertices_count": 4

@@ -1,4 +1,31 @@
-# ------------------------------------------------------------------------------
+# ##############################################################################
+#(G)odot (U)nit (T)est class
+#
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2020 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################
 # Description
 # -----------
 # Command line interface for the GUT unit testing tool.  Allows you to run tests
@@ -9,7 +36,7 @@
 #
 # See the readme for a list of options and examples.  You can also use the -gh
 # option to get more information about how to use the command line interface.
-# ------------------------------------------------------------------------------
+# ##############################################################################
 extends SceneTree
 
 var Optparse = load('res://addons/gut/optparse.gd')
@@ -89,7 +116,7 @@ class OptionResolver:
 # Here starts the actual script that uses the Options class to kick off Gut
 # and run your tests.
 # ------------------------------------------------------------------------------
-var _utils = null
+var _utils = load('res://addons/gut/utils.gd').get_instance()
 var _gut_config = load('res://addons/gut/gut_config.gd').new()
 # instance of gut
 var _tester = null
@@ -239,49 +266,38 @@ func _run_gut():
 
 	# SHORTCIRCUIT
 	if(!all_options_valid or load_result == -1):
-		_end_run(1)
+		quit(1)
 	else:
 		opt_resolver.config_opts = _gut_config.options
 
 		if(o.get_value('-gh')):
 			print(_utils.get_version_text())
 			o.print_help()
-			_end_run(0)
+			quit()
 		elif(o.get_value('-gpo')):
 			print('All command line options and where they are specified.  ' +
 				'The "final" value shows which value will actually be used ' +
 				'based on order of precedence (default < .gutconfig < cmd line).' + "\n")
 			print(opt_resolver.to_s_verbose())
-			_end_run(0)
+			quit()
 		elif(o.get_value('-gprint_gutconfig_sample')):
 			_print_gutconfigs(opt_resolver.get_resolved_values())
-			_end_run(0)
+			quit()
 		else:
 			_final_opts = opt_resolver.get_resolved_values();
 			_gut_config.options = _final_opts
 
 			var runner = GutRunner.instantiate()
 
-			runner.ran_from_editor = false
+			runner.set_cmdln_mode(true)
 			runner.set_gut_config(_gut_config)
 
 			get_root().add_child(runner)
 			_tester = runner.get_gut()
 			_tester.connect('end_run', Callable(self,'_on_tests_finished').bind(_final_opts.should_exit, _final_opts.should_exit_on_success))
 
-			run_tests(runner)
+			runner.run_tests()
 
-
-func run_tests(runner):
-	runner.run_tests()
-
-
-func _end_run(exit_code=-9999):
-	if(is_instance_valid(_utils)):
-		_utils.free()
-
-	if(exit_code != -9999):
-		quit(exit_code)
 
 # exit if option is set.
 func _on_tests_finished(should_exit, should_exit_on_success):
@@ -300,9 +316,8 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 		exit_code = post_inst.get_exit_code()
 
 	if(should_exit or (should_exit_on_success and _tester.get_fail_count() == 0)):
-		_end_run(exit_code)
+		quit(exit_code)
 	else:
-		_end_run()
 		print("Tests finished, exit manually")
 
 
@@ -310,53 +325,9 @@ func _on_tests_finished(should_exit, should_exit_on_success):
 # MAIN
 # ------------------------------------------------------------------------------
 func _init():
-	var max_iter = 20
-	var iter = 0
-
-	# Not seen this wait more than 1.
-	while(Engine.get_main_loop() == null and iter < max_iter):
-		await create_timer(.01).timeout
-		iter += 1
-
-	if(Engine.get_main_loop() == null):
-		push_error('Main loop did not start in time.')
-		quit(0)
-		return
-
-	_utils = GutUtils.get_instance()
 	if(!_utils.is_version_ok()):
 		print("\n\n", _utils.get_version_text())
 		push_error(_utils.get_bad_version_text())
-		_end_run(1)
+		quit(1)
 	else:
 		_run_gut()
-
-
-# ##############################################################################
-#(G)odot (U)nit (T)est class
-#
-# ##############################################################################
-# The MIT License (MIT)
-# =====================
-#
-# Copyright (c) 2023 Tom "Butch" Wesley
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ##############################################################################

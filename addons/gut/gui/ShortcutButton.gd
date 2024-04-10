@@ -19,7 +19,6 @@ const NO_SHORTCUT = '<None>'
 var _source_event = InputEventKey.new()
 var _pre_edit_event = null
 var _key_disp = NO_SHORTCUT
-var _editing = false
 
 var _modifier_keys = [KEY_ALT, KEY_CTRL, KEY_META, KEY_SHIFT]
 
@@ -52,7 +51,6 @@ func _is_modifier(keycode):
 
 
 func _edit_mode(should):
-	_editing = should
 	set_process_unhandled_key_input(should)
 	_ctrls.set_button.visible = !should
 	_ctrls.save_button.visible = should
@@ -98,7 +96,10 @@ func _on_SaveButton_pressed():
 
 
 func _on_CancelButton_pressed():
-	cancel()
+	_edit_mode(false)
+	_source_event = _pre_edit_event
+	_key_disp = to_s()
+	_display_shortcut()
 
 
 func _on_ClearButton_pressed():
@@ -139,14 +140,5 @@ func clear_shortcut():
 func disable_set(should):
 	_ctrls.set_button.disabled = should
 
-
 func disable_clear(should):
 	_ctrls.clear_button.disabled = should
-	
-	
-func cancel():
-	if(_editing):
-		_edit_mode(false)
-		_source_event = _pre_edit_event
-		_key_disp = to_s()
-		_display_shortcut()
