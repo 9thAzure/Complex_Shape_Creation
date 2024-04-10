@@ -4,7 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Chickensoft.GoDotTest" Version="1.1.17" />
+    <PackageReference Include="Chickensoft.GoDotTest" Version="1.4.0" />
     <PackageReference Include="Shouldly" Version="4.2.1" />
   </ItemGroup>
 </Project>
