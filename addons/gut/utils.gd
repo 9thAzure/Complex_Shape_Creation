@@ -1,18 +1,39 @@
-@tool
 class_name GutUtils
-extends Object
-# ------------------------------------------------------------------------------
+extends Node
+# ##############################################################################
+#(G)odot (U)nit (T)est class
+#
+# ##############################################################################
+# The MIT License (MIT)
+# =====================
+#
+# Copyright (c) 2020 Tom "Butch" Wesley
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ##############################################################################
 # Description
 # -----------
 # This class is a PSUEDO SINGLETON.  You should not make instances of it but use
 # the get_instance static method.
-# ------------------------------------------------------------------------------
-# NOTE:  I think this can become completely static now that we have static
-#		 variables.  A lot would have to change though.  But it would be good
-#		 to do.
-# ------------------------------------------------------------------------------
+# ##############################################################################
 const GUT_METADATA = '__gutdbl'
-
 
 # Note, these cannot change since places are checking for TYPE_INT to determine
 # how to process parameters.
@@ -37,15 +58,11 @@ const TEST_STATUSES = {
 	FAILED = 'fail',
 	PASSED = 'pass'
 }
-
-static var avail_fonts = ['AnonymousPro', 'CourierPrime', 'LobsterTwo', 'Default']
-
-
-# This is a holdover from when GUT was making a psuedo autoload.  It would add
-# an instance of this class to the tree with a name and retrieve it when
-# get_instance was called.  We now have static variables so this var is now
-# used instead of a node.
-static var _the_instance = null
+# ------------------------------------------------------------------------------
+# The instance name as a function since you can't have static variables.
+# ------------------------------------------------------------------------------
+static func INSTANCE_NAME():
+	return '__GutUtilsInstName__'
 
 
 # ------------------------------------------------------------------------------
@@ -63,38 +80,30 @@ static func get_root_node():
 
 # ------------------------------------------------------------------------------
 # Get the ONE instance of utils
+# Since we can't have static variables we have to store the instance in the
+# tree.  This means you have to wait a bit for the main loop to be up and
+# running.
 # ------------------------------------------------------------------------------
 static func get_instance():
-	if(_the_instance == null):
-		_the_instance = GutUtils.new()
-
-	return _the_instance
+	var the_root = get_root_node()
+	var inst = null
+	if(the_root.has_node(INSTANCE_NAME())):
+		inst = the_root.get_node(INSTANCE_NAME())
+	else:
+		inst = load('res://addons/gut/utils.gd').new()
+		inst.set_name(INSTANCE_NAME())
+		the_root.add_child(inst)
+	return inst
 
 
 # ------------------------------------------------------------------------------
-# Gets the value from an enum.
-# - If passed an integer value as a string it will convert it to an int and
-# 	processes the int value.
-# - If the value is a float then it is converted to an int and then processes
-#	the int value
-# - If the value is an int, or was converted to an int, then the enum is checked
-#	to see if it contains the value, if so then the value is returned.
-#	Otherwise the default is returned.
-# - If the value is a string then it is uppercased and all spaces are replaced
-#	with underscores.  It then checks to see if enum contains a key of that
-#	name.  If so then the value for that key is returned, otherwise the default
-#	is returned.
-#
-# This description is longer than the code, you should have just read the code
-# and the tests.
+# Gets the value from an enum.  If passed an int it will return it if the enum
+# contains it.  If passed a string it will convert it to upper case and replace
+# spaces with underscores.  If the enum contains the key, it will return the
+# value for they key.  When keys or ints are not found, the default is returned.
 # ------------------------------------------------------------------------------
 static func get_enum_value(thing, e, default=null):
 	var to_return = default
-
-	if(typeof(thing) == TYPE_STRING and str(thing.to_int()) == thing):
-		thing = thing.to_int()
-	elif(typeof(thing) == TYPE_FLOAT):
-		thing = int(thing)
 
 	if(typeof(thing) == TYPE_STRING):
 		var converted = thing.to_upper().replace(' ', '_')
@@ -208,9 +217,23 @@ var CollectedScript = load('res://addons/gut/collected_test.gd')
 var GutScene = load('res://addons/gut/GutScene.tscn')
 
 # Source of truth for the GUT version
-var version = '9.2.1'
+var version = '9.1.0'
 # The required Godot version as an array.
-var req_godot = [4, 2, 0]
+var req_godot = [4, 1, 0]
+
+# These methods all call super implicitly.  Stubbing them to call super causes
+# super to be called twice.
+var non_super_methods = [
+	"_init",
+	"_ready",
+	"_notification",
+	"_enter_world",
+	"_exit_world",
+	"_process",
+	"_physics_process",
+	"_exit_tree",
+	"_gui_input	",
+]
 
 
 # ------------------------------------------------------------------------------
@@ -511,7 +534,7 @@ func pp(dict, indent=''):
 var _created_script_count = 0
 func create_script_from_source(source, override_path=null):
 	_created_script_count += 1
-	var r_path = str('gut_dynamic_script_', _created_script_count)
+	var r_path = ''#str('workaround for godot issue #65263 (', _created_script_count, ')')
 	if(override_path != null):
 		r_path = override_path
 
@@ -527,36 +550,4 @@ func create_script_from_source(source, override_path=null):
 
 
 func get_display_size():
-	return Engine.get_main_loop().get_viewport().get_visible_rect()
-
-
-
-# ##############################################################################
-#(G)odot (U)nit (T)est class
-#
-# ##############################################################################
-# The MIT License (MIT)
-# =====================
-#
-# Copyright (c) 2023 Tom "Butch" Wesley
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ##############################################################################
-
+	return get_viewport().get_visible_rect()
