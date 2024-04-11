@@ -10,7 +10,8 @@ config_version=5
 
 [application]
 
-config/name="2D Shapes Addon"
+config/name="Complex Shape Creation"
+config/tags=PackedStringArray("addon")
 run/main_scene="res://testing/main.tscn"
 config/features=PackedStringArray("4.1", "C#", "Mobile")
 config/icon="res://icon.svg"
@@ -22,7 +23,7 @@ window/stretch/mode="canvas_items"
 
 [dotnet]
 
-project/assembly_name="ShapesAddon"
+project/assembly_name="ComplexShapeCreation"
 
 [editor_plugins]
 
