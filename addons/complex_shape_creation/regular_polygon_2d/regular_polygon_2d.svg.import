@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://p02py6a2e6d"
-path="res://.godot/imported/simple_polygon_2d.svg-3dd529360df9108602bf45e15c7c2748.ctex"
+uid="uid://bae2khixx43v6"
+path="res://.godot/imported/regular_polygon_2d.svg-771c8069b0492403fc0e19110c06eecb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/2d_regular_polygons/simple_polygon_2d/simple_polygon_2d.svg"
-dest_files=["res://.godot/imported/simple_polygon_2d.svg-3dd529360df9108602bf45e15c7c2748.ctex"]
+source_file="res://addons/complex_shape_creation/regular_polygon_2d/regular_polygon_2d.svg"
+dest_files=["res://.godot/imported/regular_polygon_2d.svg-771c8069b0492403fc0e19110c06eecb.ctex"]
 
 [params]
 
