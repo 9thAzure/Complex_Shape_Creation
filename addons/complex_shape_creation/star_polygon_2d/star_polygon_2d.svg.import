@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cs6cmelpvo02r"
-path="res://.godot/imported/star_polygon_2d.svg-bd025f9e1224eac047b10fae8423a6da.ctex"
+path="res://.godot/imported/star_polygon_2d.svg-29c28efd651b9297549f41af6403676e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/2d_regular_polygons/star_polygon_2d/star_polygon_2d.svg"
-dest_files=["res://.godot/imported/star_polygon_2d.svg-bd025f9e1224eac047b10fae8423a6da.ctex"]
+source_file="res://addons/complex_shape_creation/star_polygon_2d/star_polygon_2d.svg"
+dest_files=["res://.godot/imported/star_polygon_2d.svg-29c28efd651b9297549f41af6403676e.ctex"]
 
 [params]
 
