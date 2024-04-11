@@ -1,6 +1,6 @@
 # Complex Shape Creation
 
-![Regular Polygon 2D icon](/addons/2d_regular_polygons/regular_polygon_2d/regular_polygon_2d.svg)
+![Regular Polygon 2D icon](/addons/complex_shape_creation/regular_polygon_2d/regular_polygon_2d.svg)
 
 ![GitHub Release](https://img.shields.io/github/v/release/9thAzure/Complex_Shape_Creation)
 ![Static Badge (License, not detected by github because it is in sub folder)](https://img.shields.io/badge/License-MIT-orange)
@@ -30,7 +30,7 @@ There are 2 ways to download the plugin:
 ### Zip-file download.
 1. Go to the **Releases** page.
 2. Download the zip file in **Assets** section of the wanted release.
-3. Extract the `2d_regular_polygon` folder from the zip file and put it in the `addons` folder in the target project.
+3. Extract the `complex_shape_creation` folder from the zip file and put it in the `addons` folder in the target project.
     Create the `addons` folder if it does not exist yet project.
 
 ***
@@ -41,7 +41,7 @@ Once downloaded, the addon can be enabled in `Project` > `Project Settings` > `P
 
 This is a short introduction to how the addon works.
 
-More in depth documentation can be found the [wiki](https://github.com/9thAzure/2D_Regular_Polygons/wiki)
+More in depth documentation can be found the [wiki](https://github.com/9thAzure/Complex_Shape_Creation/wiki)
 or the documentation within the scripts, which is accessible within Godot editor's **Script** tab.
 
 ### Nodes
@@ -81,7 +81,7 @@ All other functions **modify** the array passed in as the argument.
 ## License
 
 This addon is available under the [MIT](https://mit-license.org/) license,
-which is in the addon's [folder](/addons/2d_regular_polygons/LICENSE.txt)
+which is in the addon's [folder](/addons/complex_shape_creation/LICENSE.txt)
 
 ## Plugins / Packages Used
 
@@ -90,7 +90,7 @@ This addon uses several external packages for unit testing:
 - [Chickensoft.GoDotTest](https://github.com/chickensoft-games/GoDotTest) (Nuget package)
 - [Shouldly](https://github.com/shouldly/shouldly) (Nuget package)
 
-[RegularPolygon2D]: (/addons/2d_regular_polygons/regular_polygon_2d/regular_polygon_2d.gd)
-[SimplePolygon2D]: (/addons/2d_regular_polygons/simple_polygon_2d/simple_polygon_2d.gd)
-[RegularCollisionPolygon2D]: (/addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd)
-[StarPolygon2D]: (/addons/2d_regular_polygons/star_polygon_2d/star_polygon_2d.gd)
+[RegularPolygon2D]: (/addons/complex_shape_creation/regular_polygon_2d/regular_polygon_2d.gd)
+[SimplePolygon2D]: (/addons/complex_shape_creation/simple_polygon_2d/simple_polygon_2d.gd)
+[RegularCollisionPolygon2D]: (/addons/complex_shape_creation/regular_collision_polygon_2d/regular_collision_polygon_2d.gd)
+[StarPolygon2D]: (/addons/complex_shape_creation/star_polygon_2d/star_polygon_2d.gd)

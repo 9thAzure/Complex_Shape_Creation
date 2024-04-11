@@ -26,7 +26,7 @@ project/assembly_name="ShapesAddon"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/2d_regular_polygons/plugin.cfg", "res://addons/gut/plugin.cfg")
+enabled=PackedStringArray("res://addons/complex_shape_creation/plugin.cfg", "res://addons/gut/plugin.cfg")
 
 [rendering]
 
