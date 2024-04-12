@@ -1,6 +1,6 @@
 extends GutTest
 
-var class_script := preload("res://addons/2d_regular_polygons/regular_collision_polygon_2d/regular_collision_polygon_2d.gd")
+var class_script := preload("res://addons/complex_shape_creation/regular_collision_polygon_2d/regular_collision_polygon_2d.gd")
 
 func before_each():
 	ignore_method_when_doubling(class_script, "_init")

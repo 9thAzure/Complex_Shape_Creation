@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://et6ia1vpk1x4"]
 
 [ext_resource type="Script" path="res://tests/visual_tests/animation_manager.gd" id="1_0xcni"]
-[ext_resource type="Script" path="res://addons/2d_regular_polygons/star_polygon_2d/star_polygon_2d.gd" id="2_6ln1t"]
+[ext_resource type="Script" path="res://addons/complex_shape_creation/star_polygon_2d/star_polygon_2d.gd" id="2_6ln1t"]
 [ext_resource type="Script" path="res://tests/visual_tests/random_modulate.gd" id="3_wrn76"]
 [ext_resource type="Script" path="res://tests/visual_tests/table_display.gd" id="4_74omj"]
 
@@ -814,8 +814,8 @@ point_count = 1
 position = Vector2(45, 15)
 script = ExtResource("2_6ln1t")
 point_count = 3
-size = 1e-06
-inner_size = 7.5
+size = 8.09252
+inner_size = 1.43061
 
 [node name="OffsetRotation" type="Polygon2D" parent="IndividualProperties"]
 position = Vector2(75, 16)
@@ -858,62 +858,66 @@ libraries = {
 
 [node name="VerticesCount" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(15, 45)
+polygon = PackedVector2Array(-1.22465e-15, -10, 3.53553, -3.53553, 10, -1.83697e-15, 3.53553, 3.53553, 2.44929e-15, 10, -3.53553, 3.53553, -10, 3.06162e-15, -3.53553, -3.53553)
 script = ExtResource("2_6ln1t")
-point_count = 1
+point_count = 4
 width = 10.0
 
 [node name="Size" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(45, 45)
-polygon = PackedVector2Array(-1.22465e-22, -1e-06, 6.49519, -3.75, 8.66025e-07, 5e-07, 8.49831e-15, 7.5, -8.66025e-07, 5e-07, -6.49519, -3.75)
+polygon = PackedVector2Array(-9.91048e-16, -8.09252, 1.23894, -0.715304, 7.00833, 4.04626, 1.62103e-15, 1.43061, -7.00833, 4.04626, -1.23894, -0.715304)
 script = ExtResource("2_6ln1t")
 point_count = 3
-size = 1e-06
-inner_size = 7.5
+size = 8.09252
+inner_size = 1.43061
 width = 10.0
 
 [node name="OffsetRotation" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(75, 46)
-polygon = PackedVector2Array(-4.46638e-05, -10, 4.33012, -2.50002, 8.66028, 4.99996, 2.23319e-05, 5, -8.66023, 5.00004, -4.33014, -2.49998)
+polygon = PackedVector2Array(-9.31496, -3.63751, -0.753651, -4.94287, 7.80766, -6.24824, 4.65748, 1.81876, 1.5073, 9.88575, -3.90383, 3.12412)
 script = ExtResource("2_6ln1t")
 point_count = 3
-offset_rotation = -6.28319
+offset_rotation = -1.1985
 width = 10.0
 
 [node name="Color" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(105, 45)
-color = Color(1, 0, 0, 1)
+color = Color(0, 0.786122, 0.22621, 1)
 polygon = PackedVector2Array(0.980171, 9.95185, -0.980171, 9.95185, -2.90285, 9.5694, -4.71397, 8.81921, -6.34393, 7.7301, -7.7301, 6.34393, -8.81921, 4.71397, -9.5694, 2.90285, -9.95185, 0.980171, -9.95185, -0.980171, -9.5694, -2.90285, -8.81921, -4.71397, -7.7301, -6.34393, -6.34393, -7.7301, -4.71397, -8.81921, -2.90285, -9.5694, -0.980171, -9.95185, 0.980171, -9.95185, 2.90285, -9.5694, 4.71397, -8.81921, 6.34393, -7.7301, 7.7301, -6.34393, 8.81921, -4.71397, 9.5694, -2.90285, 9.95185, -0.980171, 9.95185, 0.980171, 9.5694, 2.90285, 8.81921, 4.71397, 7.7301, 6.34393, 6.34393, 7.7301, 4.71397, 8.81921, 2.90285, 9.5694)
 script = ExtResource("2_6ln1t")
 width = 10.0
 
 [node name="Offset" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(135, 45)
+offset = Vector2(8.09264, 3.57652)
 polygon = PackedVector2Array(0.980171, 9.95185, -0.980171, 9.95185, -2.90285, 9.5694, -4.71397, 8.81921, -6.34393, 7.7301, -7.7301, 6.34393, -8.81921, 4.71397, -9.5694, 2.90285, -9.95185, 0.980171, -9.95185, -0.980171, -9.5694, -2.90285, -8.81921, -4.71397, -7.7301, -6.34393, -6.34393, -7.7301, -4.71397, -8.81921, -2.90285, -9.5694, -0.980171, -9.95185, 0.980171, -9.95185, 2.90285, -9.5694, 4.71397, -8.81921, 6.34393, -7.7301, 7.7301, -6.34393, 8.81921, -4.71397, 9.5694, -2.90285, 9.95185, -0.980171, 9.95185, 0.980171, 9.5694, 2.90285, 8.81921, 4.71397, 7.7301, 6.34393, 6.34393, 7.7301, 4.71397, 8.81921, 2.90285, 9.5694)
 script = ExtResource("2_6ln1t")
 width = 10.0
 
 [node name="DrawnArc" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(195, 45)
-polygon = PackedVector2Array(-1.22465e-15, -10, 4.33013, -2.5, 8.66025, 5, 5.66554e-15, 5, -8.66025, 5, -4.33013, -2.5)
+polygon = PackedVector2Array(-1.22465e-15, -10, -4.33013, -2.5, -4.71131, -1.83978, 0, 0)
 script = ExtResource("2_6ln1t")
 point_count = 3
 width = 10.0
-drawn_arc = -6.28319
+drawn_arc = -1.1985
 
 [node name="CornerSize" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(225, 45)
-polygon = PackedVector2Array(-1.22465e-15, -10, 4.33013, -2.5, 8.66025, 5, 5.66554e-15, 5, -8.66025, 5, -4.33013, -2.5)
+polygon = PackedVector2Array(-1.82082, -6.84625, -1.45665, -7.41393, -1.09249, -7.85545, -0.728327, -8.17083, -0.364163, -8.36005, 0, -8.42313, 0.364163, -8.36005, 0.728327, -8.17083, 1.09249, -7.85545, 1.45665, -7.41393, 1.82082, -6.84625, 2.50931, -5.65375, 2.87347, -5.023, 3.23764, -4.39225, 3.6018, -3.7615, 3.96596, -3.13075, 4.33013, -2.5, 4.69429, -1.86925, 5.05845, -1.2385, 5.42262, -0.607751, 5.78678, 0.0229986, 6.15094, 0.653748, 6.83944, 1.84625, 7.14898, 2.44546, 7.34927, 2.9816, 7.44031, 3.45466, 7.4221, 3.86465, 7.29464, 4.21156, 7.05793, 4.4954, 6.71198, 4.71616, 6.25677, 4.87385, 5.69232, 4.96846, 5.01862, 5, 3.64163, 5, 2.91331, 5, 2.18498, 5, 1.45665, 5, 0.728327, 5, 0, 5, -0.728327, 5, -1.45665, 5, -2.18498, 5, -2.91331, 5, -3.64163, 5, -5.01862, 5, -5.69232, 4.96846, -6.25677, 4.87385, -6.71198, 4.71616, -7.05793, 4.4954, -7.29464, 4.21156, -7.4221, 3.86465, -7.44031, 3.45466, -7.34927, 2.9816, -7.14898, 2.44546, -6.83944, 1.84625, -6.15094, 0.653748, -5.78678, 0.0229986, -5.42262, -0.607751, -5.05845, -1.2385, -4.69429, -1.86925, -4.33013, -2.5, -3.96596, -3.13075, -3.6018, -3.7615, -3.23764, -4.39225, -2.87347, -5.023, -2.50931, -5.65375)
 script = ExtResource("2_6ln1t")
 point_count = 3
 width = 10.0
+corner_size = 3.64163
 
 [node name="CornerSmoothness" type="Polygon2D" parent="IndividualPropertiesWithPolygon"]
 position = Vector2(255, 45)
-polygon = PackedVector2Array(-2.16506, -6.25, -1.73205, -6.925, -1.29904, -7.45, -0.866025, -7.825, -0.433013, -8.05, 0, -8.125, 0.433013, -8.05, 0.866025, -7.825, 1.29904, -7.45, 1.73205, -6.925, 2.16506, -6.25, 2.16506, -6.25, 2.59808, -5.5, 3.03109, -4.75, 3.4641, -4, 3.89711, -3.25, 4.33013, -2.5, 4.76314, -1.75, 5.19615, -1, 5.62916, -0.25, 6.06218, 0.5, 6.49519, 1.25, 6.49519, 1.25, 6.86325, 1.9625, 7.10141, 2.6, 7.20966, 3.1625, 7.18801, 3.65, 7.03646, 4.0625, 6.755, 4.4, 6.34364, 4.6625, 5.80237, 4.85, 5.1312, 4.9625, 4.33013, 5, 4.33013, 5, 3.4641, 5, 2.59808, 5, 1.73205, 5, 0.866025, 5, 0, 5, -0.866025, 5, -1.73205, 5, -2.59808, 5, -3.4641, 5, -4.33013, 5, -4.33013, 5, -5.1312, 4.9625, -5.80237, 4.85, -6.34364, 4.6625, -6.755, 4.4, -7.03646, 4.0625, -7.18801, 3.65, -7.20966, 3.1625, -7.10141, 2.6, -6.86325, 1.9625, -6.49519, 1.25, -6.49519, 1.25, -6.06218, 0.5, -5.62916, -0.25, -5.19615, -1, -4.76314, -1.75, -4.33013, -2.5, -3.89711, -3.25, -3.4641, -4, -3.03109, -4.75, -2.59808, -5.5, -2.16506, -6.25)
+polygon = PackedVector2Array(-2.16398, -6.25187, -0.721327, -7.91771, 0.721327, -7.91771, 2.16398, -6.25187, 2.16615, -6.24813, 3.6088, -3.74938, 5.05145, -1.25062, 6.49411, 1.24813, 6.49627, 1.25187, 7.2176, 3.33417, 6.49627, 4.58354, 4.33229, 5, 4.32796, 5, 1.44265, 5, -1.44265, 5, -4.32796, 5, -4.33229, 5, -6.49627, 4.58354, -7.2176, 3.33417, -6.49627, 1.25187, -6.49411, 1.24813, -5.05145, -1.25062, -3.6088, -3.74938, -2.16615, -6.24813)
 script = ExtResource("2_6ln1t")
 point_count = 3
 width = 10.0
 corner_size = 5.0
+corner_smoothness = 3
 
 [node name="IndividualPropertiesWithLines" type="AnimationPlayer" parent="."]
 libraries = {
@@ -924,51 +928,54 @@ libraries = {
 position = Vector2(45, 75)
 script = ExtResource("2_6ln1t")
 point_count = 1
-size = 1e-06
-inner_size = 7.5
-width = 10.0
+size = 8.09252
+inner_size = 1.43061
+width = 4.27757
 
 [node name="OffsetRotation" type="Polygon2D" parent="IndividualPropertiesWithLines"]
 position = Vector2(75, 75)
 script = ExtResource("2_6ln1t")
 point_count = 1
-offset_rotation = -6.28319
-width = 10.0
+offset_rotation = -1.1985
+width = 4.27757
 
 [node name="Color" type="Polygon2D" parent="IndividualPropertiesWithLines"]
 position = Vector2(105, 75)
-color = Color(1, 0, 0, 1)
+color = Color(0, 0.786122, 0.22621, 1)
 script = ExtResource("2_6ln1t")
 point_count = 1
-width = 10.0
+width = 4.27757
 
 [node name="Offset" type="Polygon2D" parent="IndividualPropertiesWithLines"]
 position = Vector2(135, 75)
+offset = Vector2(8.09264, 3.57652)
 script = ExtResource("2_6ln1t")
 point_count = 1
-width = 10.0
+width = 4.27757
 
 [node name="DrawnArc" type="Polygon2D" parent="IndividualPropertiesWithLines"]
 position = Vector2(195, 75)
 script = ExtResource("2_6ln1t")
 point_count = 1
-width = 10.0
-drawn_arc = -6.28319
+width = 4.27757
+drawn_arc = -1.1985
 
 [node name="CornerSize" type="Polygon2D" parent="IndividualPropertiesWithLines"]
 position = Vector2(225, 75)
 script = ExtResource("2_6ln1t")
 point_count = 1
-width = 10.0
+width = 4.27757
 drawn_arc = 1.5708
+corner_size = 3.64163
 
 [node name="CornerSmoothness" type="Polygon2D" parent="IndividualPropertiesWithLines"]
 position = Vector2(255, 75)
 script = ExtResource("2_6ln1t")
 point_count = 1
-width = 10.0
+width = 4.27757
 drawn_arc = 1.5708
 corner_size = 5.0
+corner_smoothness = 3
 
 [node name="AllProperties" type="AnimationPlayer" parent="."]
 libraries = {
@@ -977,24 +984,31 @@ libraries = {
 
 [node name="RegularPolygon2D" type="Polygon2D" parent="AllProperties"]
 position = Vector2(285, 15)
-color = Color(1, 0, 0, 1)
+color = Color(0, 0.786122, 0.22621, 1)
+offset = Vector2(8.09264, 3.57652)
 script = ExtResource("2_6ln1t")
-point_count = 1
-size = 1e-06
-inner_size = 7.5
-offset_rotation = -6.28319
-drawn_arc = -6.28319
+point_count = 4
+size = 8.09252
+inner_size = 1.43061
+offset_rotation = -1.1985
+width = 0.0
+drawn_arc = -1.1985
+corner_size = 3.64163
+corner_smoothness = 3
 
 [node name="RegularPolygon2D2" type="Polygon2D" parent="AllProperties"]
 position = Vector2(285, 75)
-color = Color(1, 0, 0, 1)
+color = Color(0, 0.786122, 0.22621, 1)
+offset = Vector2(8.09264, 3.57652)
 script = ExtResource("2_6ln1t")
 point_count = 1
 size = 5.33333
-inner_size = 7.5
-offset_rotation = -6.28319
-width = 10.0
-drawn_arc = -6.28319
+inner_size = 1.43061
+offset_rotation = -1.1985
+width = 4.27757
+drawn_arc = -1.1985
+corner_size = 3.64163
+corner_smoothness = 3
 
 [node name="AllPropertiesIndividually" type="Node" parent="."]
 script = ExtResource("3_wrn76")
@@ -1003,8 +1017,11 @@ properties = Array[Array]([["point_count", 1, 8], ["size", 1.0, 20.0], ["inner_s
 
 [node name="RegularPolygon2D" type="Polygon2D" parent="AllPropertiesIndividually"]
 position = Vector2(315, 15)
+polygon = PackedVector2Array(-4.69282e-05, -10, 2.03989, -2.8077, 9.51055, -3.09021, 3.30065, 1.07243, 5.87789, 8.09014, 1.62864e-05, 3.4705, -5.87781, 8.0902, -3.30064, 1.07246, -9.51058, -3.09013, -2.03992, -2.80768, -4.74145e-05, -10, -2.11826e-05, -4.41019, -0.899644, -1.23824, -4.19435, -1.3628, -1.45564, 0.472975, -2.59223, 3.56793, 7.18262e-06, 1.53056, 2.59226, 3.56791, 1.45565, 0.472961, 4.19433, -1.36284, 0.899632, -1.23825, -2.06962e-05, -4.41019)
 script = ExtResource("2_6ln1t")
+inner_size = 3.4705
 offset_rotation = -6.28319
+width = 5.58981
 
 [node name="AllPropertiesIndividuallyLine" type="Node" parent="."]
 script = ExtResource("3_wrn76")
@@ -1013,9 +1030,11 @@ properties = Array[Array]([["size", 1.0, 20.0], ["inner_size", 1.0, 15.0], ["off
 
 [node name="RegularPolygon2D" type="Polygon2D" parent="AllPropertiesIndividuallyLine"]
 position = Vector2(315, 75)
+color = Color(1, 0.986182, 0.908227, 1)
 script = ExtResource("2_6ln1t")
 point_count = 1
 offset_rotation = -6.28319
+drawn_arc = -0.0387932
 
 [node name="Table" type="Node2D" parent="."]
 position = Vector2(345, 15)
