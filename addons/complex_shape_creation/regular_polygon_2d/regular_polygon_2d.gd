@@ -45,6 +45,18 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_pre_redraw()
 
+func rotate_shape(radian : float) -> void:
+	if not uses_polygon_member():
+		offset_rotation += radian
+		return
+	
+	_queue_status = _BLOCK_QUEUE
+	offset_rotation += radian
+	_queue_status = _NOT_QUEUED
+	var shape = polygon;
+	var matrix = Transform2D(radian, Vector2.ONE, 0, Vector2.ZERO)
+	polygon = matrix * shape
+
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
 @export_group("complex")
 
