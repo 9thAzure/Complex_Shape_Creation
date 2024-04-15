@@ -31,6 +31,19 @@ var size : float = 10:
 		size = value
 		_pre_redraw()
 
+func apply_size_scale(scale : float):
+	assert(scale > 0, "param 'scale' should be positive.")
+	if not uses_polygon_member():
+		size *= scale
+		return
+
+	_queue_status = _BLOCK_QUEUE
+	size *= scale
+	_queue_status = _NOT_QUEUED
+	var shape = polygon
+	var transform = Transform2D(0, Vector2.ONE * scale, 0, Vector2.ZERO)
+	polygon = shape * transform
+
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
