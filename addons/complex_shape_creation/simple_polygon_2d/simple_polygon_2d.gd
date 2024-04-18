@@ -25,6 +25,10 @@ var size : float = 10:
 		assert(value > 0, "property 'size' must be greater than 0.");
 		queue_redraw()
 
+func apply_size_scale(scale : float) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+	size *= scale
+	
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
@@ -38,6 +42,9 @@ var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
 		queue_redraw()
+
+func rotate_shape(radian : float) -> void:
+	offset_rotation += radian
 
 ## The color of the shape.
 @export

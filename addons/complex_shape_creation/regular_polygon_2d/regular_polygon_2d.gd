@@ -31,7 +31,7 @@ var size : float = 10:
 		size = value
 		_pre_redraw()
 
-func apply_size_scale(scale : float):
+func apply_size_scale(scale : float) -> void:
 	assert(scale > 0, "param 'scale' should be positive.")
 	if not uses_polygon_member():
 		size *= scale

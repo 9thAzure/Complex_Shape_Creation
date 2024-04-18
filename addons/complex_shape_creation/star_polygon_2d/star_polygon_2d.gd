@@ -40,6 +40,22 @@ var inner_size : float = 5.0:
 		inner_size = value
 		_pre_redraw()
 
+func apply_size_scale(scale : float) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+
+	_queue_status = _BLOCK_QUEUE
+	size *= scale
+	inner_size *= scale
+	
+	if not uses_polygon_member():
+		regenerate_polygon()
+		return
+
+	_queue_status = _NOT_QUEUED
+	var shape = polygon
+	var transform = Transform2D(0, Vector2.ONE * scale, 0, Vector2.ZERO)
+	polygon = shape * transform
+
 ## The offset rotation of the star, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
@@ -53,6 +69,18 @@ var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
 		_pre_redraw()
+
+func rotate_shape(radian : float) -> void:
+	_queue_status = _BLOCK_QUEUE
+	offset_rotation += radian
+	_queue_status = _NOT_QUEUED
+	if not uses_polygon_member():
+		regenerate_polygon()
+		return
+
+	var shape = polygon;
+	var matrix = Transform2D(radian, Vector2.ONE, 0, Vector2.ZERO)
+	polygon = matrix * shape
 
 @export_group("complex")
 
