@@ -161,4 +161,62 @@ func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
 
 	assert_eq(new_size, 2 * previous_size + 2, "Size of modified array, 2 + 2 * the original size")
 
+var params_rotate_shape := [
+	[4, 10, 10, TAU, 0, 0],
+	[20, 10, 10, TAU, 0, 0],
+	[4, 100, 10, TAU, 0, 0],
+	[4, 10, 5, -PI, 3, 4],
+	[8, 30, 15, 2, 1, 2],
+]
+func test_rotate_shape__various_shape_types__almost_expected_result(p=use_parameters(params_rotate_shape)):
+	const sample_rotation_amount = PI / 8;
+	assert(p[2] >= 0 and p[0] != 2, "param does not have the node use 'polygon'.")
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape.vertices_count = p[0]
+	shape.size = p[1]
+	shape.width = p[2]
+	shape.drawn_arc = p[3]
+	shape.corner_size = p[4]
+	shape.corner_smoothness = p[5]
+	var expected := RegularPolygon2D.new()
+	expected.vertices_count = p[0]
+	expected.size = p[1]
+	expected.width = p[2]
+	expected.drawn_arc = p[3]
+	expected.corner_size = p[4]
+	expected.corner_smoothness = p[5]
+	autoqfree(expected)
+	# sub-setup
+	shape.regenerate_polygon()
+	expected.offset_rotation +=  sample_rotation_amount
+	expected.regenerate_polygon()
 
+	shape.rotate_shape(sample_rotation_amount)
+
+	assert_almost_eq(shape.polygon[0], expected.polygon[0], Vector2.ONE * 0.001)
+
+func test_apply_size_scale__various_shape_types__almost_expected_result(p=use_parameters(params_rotate_shape)):
+	const sample_scale_amount := 2
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape.vertices_count = p[0]
+	shape.size = p[1]
+	shape.width = p[2]
+	shape.drawn_arc = p[3]
+	shape.corner_size = p[4]
+	shape.corner_smoothness = p[5]
+	var expected := RegularPolygon2D.new()
+	expected.vertices_count = p[0]
+	expected.size = p[1]
+	expected.width = p[2]
+	expected.drawn_arc = p[3]
+	expected.corner_size = p[4]
+	expected.corner_smoothness = p[5]
+	autoqfree(expected)
+	# sub-setup
+	shape.regenerate_polygon()
+	expected.size *=  sample_scale_amount
+	expected.regenerate_polygon()
+
+	shape.apply_size_scale(sample_scale_amount)
+
+	assert_almost_eq(shape.polygon[0], expected.polygon[0], Vector2.ONE * 0.001)
