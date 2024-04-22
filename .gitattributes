@@ -2,7 +2,7 @@
 * text=auto eol=lf
 
 # Only include /assets/complex_shape_creation/* for download from the asset store.
-# *                                 export-ignore
+*                                 export-ignore
 
 /addons                          -export-ignore
 /addons/complex_shape_creation   -export-ignore
