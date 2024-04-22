@@ -41,7 +41,7 @@ func apply_size_scale(scale : float) -> void:
 	size *= scale
 	_queue_status = _NOT_QUEUED
 	var shape = polygon
-	resize_points_size(shape, scale, 0 if is_zero_approx(corner_size) else (corner_smoothness if corner_smoothness != 0 else 32) + 1, 0 < width and width < size)
+	resize_points_size(shape, scale, 1 if is_zero_approx(corner_size) else (corner_smoothness if corner_smoothness != 0 else 32) + 1, 0 < width and width < size)
 	polygon = shape
 
 ## The offset rotation of the shape, in degrees.
@@ -450,6 +450,10 @@ static func resize_points_size(points : PackedVector2Array, scaler : float, poin
 	assert(points_per_corner > 0, "param 'points_per_corner' should be positive.")
 	var size := points.size()
 	var has_rounded_corners := points_per_corner != 1
+	var width := 0.0
+	if is_ringed_shape:
+		width = (points[-1] - points[0]).length()
+	
 	for i in size:
 		points[i] *= scaler
 
@@ -491,14 +495,22 @@ static func resize_points_size(points : PackedVector2Array, scaler : float, poin
 		if not is_ringed_shape:
 			continue
 		
+		for i2 in points_per_corner:
+			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(points[index + i2], delta)
+
 		var first_point2 := points[-index - 1]
 		var last_point2 := points[-index - points_per_corner]
 		var first_slope2 := first_point2 - previous_inner_point
 		var last_slope2 := last_point2 - points[-index - points_per_corner - 1 + size]
 		var b := _find_intersection(first_point2, first_slope2, last_point2, last_slope2)
 		inner_point = first_point2 + first_slope2 * b
+		# points[-index - 2] = inner_point
 		for i2 in points_per_corner:
-			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, delta / 2) + (outer_point - inner_point) * delta
+			# points[-index - i2 - 1] = points[index + i2]
+			# points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, 1 / width)
+			# points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, delta) + (outer_point - inner_point) * delta
+			# points[-index - i2 - 1] = points[-index - i2 - 1] + (outer_point - inner_point) * delta
+			pass
 
 		previous_inner_point = last_point2
 
