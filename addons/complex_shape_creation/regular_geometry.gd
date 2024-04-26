@@ -1,7 +1,18 @@
+extends Object
 class_name RegularGeometry2D
 
 ## Holds methods for creating and modifying shapes.
 
+func _init():
+	printerr("This class is meant to be a singleton, and cannot be instantiated")
+	self.free()
+
+## Modifies [param points] so that the shape it represents have rounded corners. The method uses quadratic Bézier curves for the corners.
+## [br][br][param corner_size] determines how long each corner is, from the original point to at most half the side length.
+## [param corner_smoothness] determines how many [b]lines[/b] are in each corner.
+## [br][br][param start_index] & [param length] can be used to specify only part of the shape should be rounded.
+## [param original_array_size], when used, indicates that the array has already been resized, so the method should add points into the empty space.
+## This parameter specifies the part of the array that is currently used.
 static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int,
 	start_index := 0, length := -1, original_array_size := 0) -> void:
 	# argument prep 
@@ -94,6 +105,15 @@ static func _quadratic_bezier_interpolate(start : Vector2, control : Vector2, en
 
 ## sub class that designates how much each method expands the array.
 class SizeIncrease:
+	extends Object
+
+	func _init():
+		printerr("This class is meant to be a singleton, and cannot be instantiated")
+		self.free()
+
+	## Designates how much [method RegularGeometry2D.add_rounded_corners] expands the array.
+	## [br][br][param length] specifies many points are to be converted into rounded corners.
+	## [param corner_smoothness] specifies how many lines are in each corner.
 	static func add_rounded_corners(length : int, corner_smoothness : int) -> int:
 		assert(length >= 0, "param 'length' must be positive.")
 		assert(corner_smoothness > 0, "param 'corner_smoothness' must be positive.")
