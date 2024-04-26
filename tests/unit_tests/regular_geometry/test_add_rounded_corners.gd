@@ -77,7 +77,7 @@ func test_add_rounded_corners__full_shape_with_resizing__expected_shape():
 	var sample_shape : PackedVector2Array = [Vector2(1, 1), Vector2(-1, 1), Vector2(-1, -1), Vector2(1, -1)]
 	sample_shape.resize(expected_shape.size())
 
-	RegularGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, 0, -1, 4)
+	RegularGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, 0, -1, true, 4)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)
 
@@ -90,7 +90,7 @@ func test_add_rounded_corners__partial_shape_with_resizing__expected_shape(p=use
 	var expected_shape : PackedVector2Array = p[2]
 	sample_shape.resize(expected_shape.size())
 
-	RegularGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, 4)
+	RegularGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, true, 4)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)
 
@@ -105,6 +105,18 @@ func test_add_rounded_corners__partial_shape_with_resizing_and_extra_empties_exp
 	expected_shape.resize(expected_shape.size() + extra_empty_spaces_amount)
 	sample_shape.resize(expected_shape.size())
 
-	RegularGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, 4)
+	RegularGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, true, 4)
+
+	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)
+
+func test_add_rounded_corners__non_limited_ending_slopes__expected_result():
+	const oversized_corner_size := 10
+	const sample_corner_smoothness := 1
+	const sample_start_index := 2
+	const sample_length := 1
+	var sample_shape : PackedVector2Array = [Vector2(1, 1), Vector2(-1, 1), Vector2.UP]
+	var expected_shape : PackedVector2Array = [Vector2(1, 1), Vector2(-1, 1), Vector2(-1, 1), Vector2(1, 1)]
+
+	RegularGeometry2D.add_rounded_corners(sample_shape, oversized_corner_size, sample_corner_smoothness, sample_start_index, sample_length, false)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)

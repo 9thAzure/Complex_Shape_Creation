@@ -11,10 +11,11 @@ func _init():
 ## [br][br][param corner_size] determines how long each corner is, from the original point to at most half the side length.
 ## [param corner_smoothness] determines how many [b]lines[/b] are in each corner.
 ## [br][br][param start_index] & [param length] can be used to specify only part of the shape should be rounded.
+## [param limit_ending_slopes] determines whether the ending corners should still be limited to half the side length. Does not work if the entire shape is being rounded.
 ## [param original_array_size], when used, indicates that the array has already been resized, so the method should add points into the empty space.
 ## This parameter specifies the part of the array that is currently used.
 static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int,
-	start_index := 0, length := -1, original_array_size := 0) -> void:
+	start_index := 0, length := -1, limit_ending_slopes := true, original_array_size := 0) -> void:
 	# argument prep 
 	var corner_size_squared := corner_size ** 2
 	var points_per_corner := corner_smoothness + 1
@@ -32,6 +33,7 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater.")
 	assert(start_index >= 0, "param 'start_index' must be 0 or greater.")
 	assert(start_index + length <= original_array_size, "sum of param 'start_index' & param 'length' must not be greater than the original size of the array (param 'original_array_size', or if 0, size of param 'points').")
+	assert(limit_ending_slopes || length != original_array_size, "param 'limit_ending_slopes' was set to false, but the entire shape is being rounded so there are no \"ending\" slopes.")
 
 	# resizing and spacing
 	var size_increase := SizeIncrease.add_rounded_corners(length, corner_smoothness)
@@ -77,13 +79,16 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 		var ending_slope := (current_point - next_point)
 		var starting_point : Vector2
 		var ending_point : Vector2
-		if starting_slope.length_squared() / 4 < corner_size_squared:
-			starting_point = current_point - starting_slope / 2.001
+
+		var slope_limit_value := 1 if not limit_ending_slopes and i == 0 else 2
+		if starting_slope.length_squared() / (slope_limit_value * slope_limit_value) < corner_size_squared:
+			starting_point = current_point - starting_slope / (slope_limit_value + 0.001)
 		else:
 			starting_point = current_point - starting_slope.normalized() * corner_size
 		
-		if ending_slope.length_squared() / 4 < corner_size_squared:
-			ending_point = current_point - ending_slope / 2.001
+		slope_limit_value = 1 if not limit_ending_slopes and i + 1 == length else 2
+		if ending_slope.length_squared() / (slope_limit_value * slope_limit_value) < corner_size_squared:
+			ending_point = current_point - ending_slope / (slope_limit_value + 0.001)
 		else:
 			ending_point = current_point - ending_slope.normalized() * corner_size
 
