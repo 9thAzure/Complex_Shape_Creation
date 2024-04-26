@@ -42,12 +42,18 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 	var next_point : Vector2
 	var point_after_final : Vector2
 	var previous_point : Vector2
-	if start_index == 0 and length == original_array_size:
-		point_after_final = points[start_index]
-		previous_point = points[start_index - points_per_corner]
+	if start_index == 0:
+		if length == original_array_size:
+			previous_point = points[original_array_size + size_increase - points_per_corner]
+		else:
+			previous_point = points[original_array_size + size_increase - 1]
 	else:
-		point_after_final = points[start_index + length * points_per_corner - (original_array_size + size_increase)]
 		previous_point = points[start_index - 1]
+
+	if start_index + length == original_array_size:
+		point_after_final = points[0]
+	else:
+		point_after_final = points[start_index + length * points_per_corner - points.size()]
 	
 	for i in length:
 		if i + 1 == length:
