@@ -242,14 +242,11 @@ func regenerate_polygon() -> void:
 	var uses_width := width < size
 	var uses_drawn_arc := _uses_drawn_arc()
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
-	if uses_width and uses_drawn_arc:
-		add_hole_to_points(points, 1 - width / size, false)
+	if uses_width:
+		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc)
 
 	if not is_zero_approx(corner_size):
-		add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
-
-	if uses_width and not uses_drawn_arc:
-		add_hole_to_points(points, 1 - width / size, true)
+		add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count, uses_width and not uses_drawn_arc)
 	
 	polygon = points
 
@@ -375,7 +372,26 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## Modifies [param points] so that the shape it represents have rounded corners. 
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
 ## [br][br]For [param corner_size] and [param corner_smoothness] documentation, see [member corner_size] and [member corner_smoothness].
-static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
+## [param is_ringed_shape] is used to indicate that the shape to round is a ring (see [method add_hole_to_points]).
+static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int, is_ringed_shaped := false) -> void:
+	if is_ringed_shaped:
+		var functional_length := (points.size() - 2) / 2
+
+		# temp points to have corners rounded to its correct neighbours.
+		var temp_point := points[0]
+		points[0] = points[-functional_length]
+		RegularGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness, functional_length + 2, functional_length)
+		points[0] = temp_point
+
+		temp_point = points[-1]
+		points[-1] = points[functional_length - 1]
+		RegularGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness, 0, functional_length)
+		points[-1] = temp_point
+
+		points[functional_length * (corner_smoothness + 1)] = points[0]
+		points[functional_length * (corner_smoothness + 1) + 1] = points[-1]
+		return
+	
 	RegularGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness)
 
 # Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
