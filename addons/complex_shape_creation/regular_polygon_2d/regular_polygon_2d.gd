@@ -376,58 +376,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
 ## [br][br]For [param corner_size] and [param corner_smoothness] documentation, see [member corner_size] and [member corner_smoothness].
 static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
-	assert(points.size() >= 3, "param 'points' must have at least 3 points")
-	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
-	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
-	
-	var corner_size_squared = corner_size ** 2
-	var array_size := points.size()
-	if corner_smoothness == 0:
-		corner_smoothness = 32 / points.size()
-
-	var corner_index_size := corner_smoothness + 1
-	
-	points.resize(array_size * corner_index_size)
-	for pre_i in array_size:
-		var i := array_size - 1 - pre_i
-		points[i * corner_index_size] = points[i]
-
-	var first_point := points[0]
-	var last_point := points[-corner_index_size]
-	var current_point := points[0]
-	var next_point : Vector2
-	for i in array_size:
-		if i + 1 == array_size:
-			next_point = first_point
-		else:
-			next_point = points[(i + 1) * corner_index_size]
-		# get starting & ending points of corner.
-		var starting_slope := (current_point - last_point)
-		var ending_slope := (current_point - next_point)
-		var starting_point : Vector2
-		var ending_point : Vector2
-		if starting_slope.length_squared() / 4 < corner_size_squared:
-			starting_point = current_point - starting_slope / 2.001
-		else:
-			starting_point = current_point - starting_slope.normalized() * corner_size
-		
-		if ending_slope.length_squared() / 4 < corner_size_squared:
-			ending_point = current_point - ending_slope / 2.001
-		else:
-			ending_point = current_point - ending_slope.normalized() * corner_size
-
-		points[i * corner_index_size] = starting_point
-		points[i * corner_index_size + corner_index_size - 1] = ending_point
-		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no in-between points.
-		var sub_i := 1
-		while sub_i < corner_smoothness:
-			var t_value := sub_i / (corner_smoothness as float)
-			points[i * corner_index_size + sub_i] = quadratic_bezier_interpolate(starting_point, current_point, ending_point, t_value)
-			sub_i += 1
-		
-		# end, prep for next loop.
-		last_point = current_point
-		current_point = next_point
+	RegularGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness)
 
 # Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
 ## [b][color=red]Warning[/color][/b]: This method is not meant to be used outside the class, and will be changed/made private in the future.
