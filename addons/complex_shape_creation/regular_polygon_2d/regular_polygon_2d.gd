@@ -51,9 +51,14 @@ func apply_transformation(rotation : float, scale : float) -> void:
 	offset_rotation += rotation
 	size *= scale
 	_queue_status = _NOT_QUEUED
-
+	
 	if not uses_polygon_member():
 		queue_redraw()
+		return
+
+	if width > size and width < size / scale or \
+	   width < size and width > size / scale:
+		regenerate_polygon()
 		return
 	
 	var shape := polygon

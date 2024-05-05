@@ -183,7 +183,7 @@ var params_transform_shape := [
 	[4, 10, 5, -PI, 1.2, 3],
 	[8, 30, 15, 2.269, 1, 2],
 ]
-func test_apply_transform__various_shape_types__almost_expected_result(p=use_parameters(params_transform_shape)):
+func test_apply_transformation__various_shape_types__almost_expected_result(p=use_parameters(params_transform_shape)):
 	const sample_rotation_amount = 2;
 	const sample_scale_amount := PI
 	assert(p[2] >= 0 and p[0] != 2, "param does not have the node use 'polygon'.")
@@ -211,13 +211,28 @@ func test_apply_transform__various_shape_types__almost_expected_result(p=use_par
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
 
-func test_apply_transform__size_change_creates_ring__shape_regenerated() -> void:
+func test_apply_transformation__size_change_creates_ring__shape_regenerated() -> void:
 	const sample_scale_amount := 2
-	var expected_shape := PackedVector2Array([14.1421, 14.1421, -14.1421, 14.1421, -14.1421, -14.1421, 14.1421, -14.1421, 14.1421, 14.1421, 3.53553, 3.53553, 3.53553, -3.53553, -3.53553, -3.53553, -3.53553, 3.53553, 3.53553, 3.53553])
+	var expected_shape := PackedVector2Array([Vector2(14.1421, 14.1421), Vector2(-14.1421, 14.1421), Vector2(-14.1421, -14.1421), Vector2(14.1421, -14.1421), Vector2(14.1421, 14.1421), Vector2(3.53553, 3.53553), Vector2(3.53553, -3.53553), Vector2(-3.53553, -3.53553), Vector2(-3.53553, 3.53553), Vector2(3.53553, 3.53553)])
 	var shape := RegularPolygon2D.new()
 	shape.vertices_count = 4
 	shape.width = 15
 	shape.regenerate_polygon()
+	autoqfree(shape)
+
+	shape.apply_transformation(0, sample_scale_amount)
+
+	assert_almost_eq_deep(shape.polygon, expected_shape, Vector2.ONE * 0.001)
+
+func test_apply_transformation__size_change_removes_ring__shape_regenerated() -> void:
+	const sample_scale_amount := 0.5
+	var expected_shape := PackedVector2Array([Vector2(7.07107, 7.07107), Vector2(-7.07107, 7.07107), Vector2(-7.07107, -7.07107), Vector2(7.07107, -7.07107)])
+	var shape := RegularPolygon2D.new()
+	shape.vertices_count = 4
+	shape.size = 20
+	shape.width = 15
+	shape.regenerate_polygon()
+	autoqfree(shape)
 
 	shape.apply_transformation(0, sample_scale_amount)
 
