@@ -31,19 +31,6 @@ var size : float = 10:
 		size = value
 		_pre_redraw()
 
-func apply_size_scale(scale : float) -> void:
-	assert(scale > 0, "param 'scale' should be positive.")
-	if not uses_polygon_member():
-		size *= scale
-		return
-
-	_queue_status = _BLOCK_QUEUE
-	size *= scale
-	_queue_status = _NOT_QUEUED
-	var shape = polygon
-	resize_points_size(shape, scale, 1 if is_zero_approx(corner_size) else (corner_smoothness if corner_smoothness != 0 else 32) + 1, 0 < width and width < size)
-	polygon = shape
-
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
@@ -58,17 +45,21 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_pre_redraw()
 
-func rotate_shape(radian : float) -> void:
+func apply_transformation(rotation : float, scale : float) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+	_queue_status = _BLOCK_QUEUE
+	offset_rotation += rotation
+	size *= scale
+	_queue_status = _NOT_QUEUED
+
 	if not uses_polygon_member():
-		offset_rotation += radian
+		queue_redraw()
 		return
 	
-	_queue_status = _BLOCK_QUEUE
-	offset_rotation += radian
-	_queue_status = _NOT_QUEUED
-	var shape = polygon;
-	var matrix = Transform2D(radian, Vector2.ONE, 0, Vector2.ZERO)
-	polygon = matrix * shape
+	var shape := polygon
+	RegularGeometry2D.apply_transformation(shape, rotation, scale, 1 if is_zero_approx(corner_size) else (corner_smoothness if corner_smoothness != 0 else 32) + 1, 0 < width and width < size)
+	polygon = shape
+
 
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
 @export_group("complex")
@@ -443,66 +434,6 @@ static func add_hole_to_points(points : PackedVector2Array, hole_scaler : float,
 		var slope := (points[original_size - 2] - points[original_size - 1]) / 4194304 # 2^22
 		points[original_size - 1] += slope
 		points[original_size] += slope
-
-static func resize_points_size(points : PackedVector2Array, scaler : float, points_per_corner := 0, is_ringed_shape := false) -> void:
-	assert(points.size() >= 3, "param 'points' does not represent a proper shape.")
-	assert(scaler > 0, "param 'scaler' should be positive.")
-	assert(points_per_corner > 0, "param 'points_per_corner' should be positive.")
-	var size := points.size()
-	var has_rounded_corners := points_per_corner != 1
-	var width := 0.0
-	if is_ringed_shape:
-		width = (points[-1] - points[0]).length()
-	
-	for i in size:
-		points[i] *= scaler
-
-	if not has_rounded_corners and not is_ringed_shape:
-		return
-
-	var delta := 1 - (1 / scaler)
-	var previous_outer_point := points[-1]
-	var previous_inner_point := points[0]
-	var complete_shape_arc := false
-	if is_ringed_shape and points[-1].is_equal_approx(points[size / 2]):
-		assert(points[0].is_equal_approx(points[size / 2 - 1]), "expected two pairs of points to be on top of each other, forming an identical line used to draw a ringed shape")
-		complete_shape_arc = true
-		previous_outer_point = points[size / 2 - 2]
-		previous_inner_point = points[size / 2 + 1]
-
-	for i in size / points_per_corner / (2 if is_ringed_shape else 1):
-		var index := i * points_per_corner
-		var outer_point := Vector2.ZERO
-		var inner_point := Vector2.ZERO
-		
-		if not has_rounded_corners:
-			outer_point = points[index]
-			inner_point = points[-index - 1]
-			points[-index - 1] = inner_point.lerp(outer_point, delta)
-			continue
-
-		var first_point1 := points[index]
-		var last_point1 := points[index + points_per_corner - 1]
-		var first_slope1 := first_point1 - previous_outer_point
-		var last_slope1 := last_point1 - points[index + points_per_corner - size]
-		var a := _find_intersection(first_point1, first_slope1, last_point1, last_slope1)
-		outer_point = first_point1 + first_slope1 * a
-		for i2 in points_per_corner:
-			points[index + i2] = points[index + i2].lerp(outer_point, delta)
-		
-		previous_outer_point = last_point1
-
-		if not is_ringed_shape:
-			continue
-		
-		for i2 in points_per_corner:
-			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(outer_point, delta)
-			pass
-
-	if complete_shape_arc:
-		var offsetting_slope := (points[size / 2 - 1] - previous_outer_point) / 4194304 # 2^22
-		points[size / 2 - 1] = points[0] + offsetting_slope
-		points[size / 2] = points[-1] + offsetting_slope
 
 # these functions are for c# interop, as changes to an argument are not transferred.
 static func _add_rounded_corners_result(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> PackedVector2Array:
