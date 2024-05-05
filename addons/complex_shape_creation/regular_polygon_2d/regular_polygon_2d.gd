@@ -496,23 +496,8 @@ static func resize_points_size(points : PackedVector2Array, scaler : float, poin
 			continue
 		
 		for i2 in points_per_corner:
-			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(points[index + i2], delta)
-
-		var first_point2 := points[-index - 1]
-		var last_point2 := points[-index - points_per_corner]
-		var first_slope2 := first_point2 - previous_inner_point
-		var last_slope2 := last_point2 - points[-index - points_per_corner - 1 + size]
-		var b := _find_intersection(first_point2, first_slope2, last_point2, last_slope2)
-		inner_point = first_point2 + first_slope2 * b
-		# points[-index - 2] = inner_point
-		for i2 in points_per_corner:
-			# points[-index - i2 - 1] = points[index + i2]
-			# points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, 1 / width)
-			# points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, delta) + (outer_point - inner_point) * delta
-			# points[-index - i2 - 1] = points[-index - i2 - 1] + (outer_point - inner_point) * delta
+			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(outer_point, delta)
 			pass
-
-		previous_inner_point = last_point2
 
 	if complete_shape_arc:
 		var offsetting_slope := (points[size / 2 - 1] - previous_outer_point) / 4194304 # 2^22
