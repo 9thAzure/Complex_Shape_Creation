@@ -45,24 +45,35 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_pre_redraw()
 
-func apply_transformation(rotation : float, scale : float) -> void:
+func apply_transformation(rotation : float, scale : float, scale_width := false, scale_corner_size := false) -> void:
 	assert(scale > 0, "param 'scale' should be positive.")
 	_queue_status = _BLOCK_QUEUE
 	offset_rotation += rotation
 	size *= scale
+	if scale_width:
+		width *= scale
+
+	if scale_corner_size:
+		corner_size *= scale
+
 	_queue_status = _NOT_QUEUED
 	
 	if not uses_polygon_member():
 		queue_redraw()
 		return
 
-	if width > size and width < size / scale or \
-	   width < size and width > size / scale:
+	if not scale_width and width >= size and width < size / scale \
+		or width < size and width >= size / scale:
 		regenerate_polygon()
 		return
 	
+	var points_per_corner := 0
+	if corner_size > 0:
+		points_per_corner = corner_smoothness if corner_smoothness != 0 else corner_smoothness / vertices_count
+	points_per_corner += 1
+	
 	var shape := polygon
-	RegularGeometry2D.apply_transformation(shape, rotation, scale, 1 if is_zero_approx(corner_size) else (corner_smoothness if corner_smoothness != 0 else 32) + 1, 0 < width and width < size)
+	RegularGeometry2D.apply_transformation(shape, rotation, scale, points_per_corner, 0 < width and width < size, scale_width, scale_corner_size)
 	polygon = shape
 
 

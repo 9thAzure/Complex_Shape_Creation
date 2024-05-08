@@ -108,7 +108,7 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 static func _quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 
-static func apply_transformation(points : PackedVector2Array, rotation : float, scaler : float, points_per_corner := 1, is_ringed_shape := false) -> void:
+static func apply_transformation(points : PackedVector2Array, rotation : float, scaler : float, points_per_corner := 1, is_ringed_shape := false, scale_width := false, scale_corner_size := false) -> void:
 	assert(points.size() >= 3, "param 'points' does not represent a proper shape.")
 	assert(scaler > 0, "param 'scaler' should be positive.")
 	assert(points_per_corner > 0, "param 'points_per_corner' should be positive.")
@@ -141,6 +141,9 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 		var inner_point := Vector2.ZERO
 		
 		if not has_rounded_corners:
+			if scale_width:
+				continue
+
 			outer_point = points[index]
 			inner_point = points[-index - 1]
 			points[-index - 1] = inner_point.lerp(outer_point, delta)
@@ -152,17 +155,37 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 		var last_slope1 := last_point1 - points[index + points_per_corner - size]
 		var a := _find_intersection(first_point1, first_slope1, last_point1, last_slope1)
 		outer_point = first_point1 + first_slope1 * a
-		for i2 in points_per_corner:
-			points[index + i2] = points[index + i2].lerp(outer_point, delta)
-		
 		previous_outer_point = last_point1
+		if not scale_corner_size:
+			for i2 in points_per_corner:
+				points[index + i2] = points[index + i2].lerp(outer_point, delta)
 
 		if not is_ringed_shape:
 			continue
+
+		if scale_corner_size:
+			if scale_width:
+				continue
+			
+			for i2 in points_per_corner:
+				points[-index - i2 - 1] = points[-index - i2 - 1].lerp(points[index + i2], delta)	
+			continue
+
+		if not scale_width:
+			for i2 in points_per_corner:
+				points[-index - i2 - 1] = points[-index - i2 - 1].lerp(outer_point, delta)
+				pass
+			continue
 		
+		var first_point2 := points[-index - 1]
+		var last_point2 := points[-index - points_per_corner]
+		var first_slope2 := first_point2 - previous_inner_point
+		var last_slope2 := last_point2 - points[-index - points_per_corner - 1 + size]
+		var b := _find_intersection(first_point2, first_slope2, last_point2, last_slope2)
+		inner_point = first_point2 + first_slope2 * b
+		previous_inner_point = last_point2
 		for i2 in points_per_corner:
-			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(outer_point, delta)
-			pass
+			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, delta)
 
 	if complete_shape_arc:
 		var offsetting_slope := (points[size / 2 - 1] - previous_outer_point) / 4194304 # 2^22
