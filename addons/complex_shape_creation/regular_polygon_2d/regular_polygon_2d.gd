@@ -73,7 +73,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := false,
 	points_per_corner += 1
 	
 	var shape := polygon
-	RegularGeometry2D.apply_transformation(shape, rotation, scale, points_per_corner, 0 < width and width < size, scale_width, scale_corner_size)
+	RegularGeometry2D.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
 	polygon = shape
 
 
