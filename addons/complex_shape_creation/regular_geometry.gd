@@ -188,7 +188,7 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, delta)
 
 	if complete_shape_arc:
-		var offsetting_slope := (points[size / 2 - 1] - previous_outer_point) / 4194304 # 2^22
+		var offsetting_slope := (points[size / 2 - 2] - points[0]) / 4194304 # 2^22
 		points[size / 2 - 1] = points[0] + offsetting_slope
 		points[size / 2] = points[-1] + offsetting_slope
 
