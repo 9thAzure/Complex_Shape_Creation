@@ -114,9 +114,6 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 	assert(points_per_corner > 0, "param 'points_per_corner' should be positive.")
 	var size := points.size()
 	var has_rounded_corners := points_per_corner != 1
-	var width := 0.0
-	if is_ringed_shape:
-		width = (points[-1] - points[0]).length()
 	
 	var transform := Transform2D(-rotation, Vector2.ONE * scaler, 0, Vector2.ZERO)
 	for i in size:

@@ -40,22 +40,6 @@ var inner_size : float = 5.0:
 		inner_size = value
 		_pre_redraw()
 
-func apply_size_scale(scale : float) -> void:
-	assert(scale > 0, "param 'scale' should be positive.")
-
-	_queue_status = _BLOCK_QUEUE
-	size *= scale
-	inner_size *= scale
-	
-	if not uses_polygon_member():
-		regenerate_polygon()
-		return
-
-	_queue_status = _NOT_QUEUED
-	var shape = polygon
-	var transform = Transform2D(0, Vector2.ONE * scale, 0, Vector2.ZERO)
-	polygon = shape * transform
-
 ## The offset rotation of the star, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
@@ -70,17 +54,38 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_pre_redraw()
 
-func rotate_shape(radian : float) -> void:
+func apply_transformation(rotation : float, scale : float, scale_width := false, scale_corner_size := false) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
 	_queue_status = _BLOCK_QUEUE
-	offset_rotation += radian
+	offset_rotation += rotation
+	size *= scale
+	inner_size *= scale
+	if scale_width:
+		width *= scale
+
+	if scale_corner_size:
+		corner_size *= scale
+
 	_queue_status = _NOT_QUEUED
+	
 	if not uses_polygon_member():
-		regenerate_polygon()
+		queue_redraw()
 		return
 
-	var shape = polygon;
-	var matrix = Transform2D(radian, Vector2.ONE, 0, Vector2.ZERO)
-	polygon = matrix * shape
+	if not scale_width and \
+		(width >= size and width < size / scale
+		or width < size and width >= size / scale):
+		regenerate_polygon()
+		return
+	
+	var points_per_corner := 0
+	if corner_size > 0:
+		points_per_corner = corner_smoothness if corner_smoothness != 0 else corner_smoothness / point_count 
+	points_per_corner += 1
+	
+	var shape := polygon
+	RegularGeometry2D.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
+	polygon = shape
 
 @export_group("complex")
 
