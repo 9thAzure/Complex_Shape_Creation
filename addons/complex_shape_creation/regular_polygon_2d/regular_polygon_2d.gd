@@ -62,8 +62,9 @@ func apply_transformation(rotation : float, scale : float, scale_width := false,
 		queue_redraw()
 		return
 
-	if not scale_width and width >= size and width < size / scale \
-		or width < size and width >= size / scale:
+	if not scale_width and \
+		(width >= size and width < size / scale
+		or width < size and width >= size / scale):
 		regenerate_polygon()
 		return
 	

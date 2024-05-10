@@ -135,7 +135,8 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 		previous_outer_point = points[size / 2 - 2]
 		previous_inner_point = points[size / 2 + 1]
 
-	for i in size / points_per_corner / (2 if is_ringed_shape else 1):
+	var iterations_count := size / points_per_corner / (2 if is_ringed_shape else 1)
+	for i in iterations_count:
 		var index := i * points_per_corner
 		var outer_point := Vector2.ZERO
 		var inner_point := Vector2.ZERO
@@ -160,11 +161,21 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 			for i2 in points_per_corner:
 				points[index + i2] = points[index + i2].lerp(outer_point, delta)
 
+
 		if not is_ringed_shape:
 			continue
 
 		if scale_corner_size:
 			if scale_width:
+				continue
+			
+			if not complete_shape_arc and (i == 0 or i + 1 == iterations_count):
+				var offset = i / (iterations_count - 1) * (points_per_corner - 1)
+				outer_point = points[index + points_per_corner - 1 - offset]
+				inner_point = points[-index - points_per_corner + offset]
+				var slope := (outer_point - inner_point) * delta
+				for i2 in points_per_corner:
+					points[-index - i2 - 1] = points[-index - i2 - 1] + slope
 				continue
 			
 			for i2 in points_per_corner:
