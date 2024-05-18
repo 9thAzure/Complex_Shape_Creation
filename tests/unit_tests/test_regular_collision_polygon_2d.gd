@@ -1,5 +1,51 @@
 extends GutTest
 
+func assert_almost_eq_deep(c1, c2, error_interval):
+	if c1.size() != c2.size():
+		_fail("collections are different sizes (%s vs %s)" % [c1.size(), c2.size()])
+		return
+	
+	var has_failed := false
+	for i in c2.size():
+		if not _is_almost_eq(c1[i], c2[i], error_interval):
+			_fail("Elements at index [%s] is different (%s != %s)" % [i, c1[i], c2[i]])
+			has_failed = true
+
+	if not has_failed:
+		_pass("%s approximately matches with %s with the error interval '%s'" % [c1, c2, error_interval])
+
+func assert_eq_shape(a : Shape2D, b : Shape2D, error_interval : float) -> void:
+	if a.get_class() != b.get_class():
+		fail_test("shapes aren't the same: %s vs %s" % [a, b])
+		return
+
+	if a is CircleShape2D:
+		assert_almost_eq(a.radius, b.radius, error_interval)
+		return
+	
+	if a is RectangleShape2D:
+		assert_almost_eq(a.size, b.size, Vector2.ONE * error_interval)
+		return
+	
+	if a is SegmentShape2D:
+		assert_almost_eq(a.a, b.a, Vector2.ONE * error_interval)
+		assert_almost_eq(a.b, b.b, Vector2.ONE * error_interval)
+		return
+	
+	var points1 : PackedVector2Array = []
+	var points2 : PackedVector2Array = []
+	if a is ConcavePolygonShape2D:
+		points1 = a.segments
+		points2 = b.segments
+	elif a is ConvexPolygonShape2D:
+		points1 = a.points
+		points2 = b.points
+	else:
+		fail_test("unexpected shapes encountered: %s vs %s" % [a, b])
+		return
+	
+	assert_almost_eq_deep(points1, points2, Vector2.ONE * error_interval)
+
 var class_script := preload("res://addons/complex_shape_creation/regular_collision_polygon_2d/regular_collision_polygon_2d.gd")
 
 func before_each():
@@ -184,3 +230,85 @@ func test_regenerate__vertices_count_4__shape_rectangle_shape():
 	shape.regenerate()
 
 	assert_true(shape.shape is RectangleShape2D, "Property 'shape' should be type RectangleShape2D.")
+
+func random_shapes(amount, seed_value := 999) -> Array:
+	var r := RandomNumberGenerator.new()
+	r.seed = seed_value
+	var array := []
+	for i in amount / 4:
+		var dictionary := {
+			vertices_count = r.randi_range(1, 5),
+			size = r.randf_range(10.0, 30.0),
+			inner_size = 0.0 if i % 2 == 0 else r.randf_range(2.0, 10.0),
+			width = 0.0 if i % 4 < 2 else r.randf_range(3.0, 5.0),
+			drawn_arc = TAU if i % 8 < 4 else r.randf_range(-TAU, TAU),
+			corner_size = 0.0 if i % 16 < 8 else r.randf_range(0.1, 0.2),
+			corner_smoothness = randi_range(1, 4),
+			scale_width = false,
+			scale_corner_size = false
+		}
+		if i % 8 >= 4:
+			var point_count : int = dictionary.vertices_count
+			if is_zero_approx(dictionary.inner_size) and point_count == 2 or not is_zero_approx(dictionary.inner_size) and point_count == 1:
+				dictionary.drawn_arc = randf_range(-TAU, TAU)
+			else:
+				if point_count == 1:
+					point_count = 32
+				if dictionary.inner_size > 0.0:
+					point_count *= 2
+				var point_arc_range := TAU / point_count
+				if dictionary.inner_size > 0.0:
+					dictionary.drawn_arc = (point_arc_range * randi_range(1, point_count) - point_arc_range / 2) * (randi_range(0, 1) * 2 - 1)
+				else:
+					dictionary.drawn_arc = point_arc_range * randi_range(1, point_count - 1) * (randi_range(0, 1) * 2 - 1)
+			assert(dictionary.drawn_arc != 0, str(dictionary))
+		
+
+		array.append(dictionary)
+		dictionary = dictionary.duplicate()
+		dictionary.scale_width = true
+		array.append(dictionary)
+		dictionary = dictionary.duplicate()
+		dictionary.scale_corner_size = true
+		array.append(dictionary)
+		dictionary = dictionary.duplicate()
+		dictionary.scale_width = false
+		array.append(dictionary)
+	return array
+
+func test_apply_transformation__various_shape_types_and_options__almost_expected_result(p=use_parameters(random_shapes(100))):
+	const sample_rotation_amount = 2;
+	const sample_scale_amount := PI
+	var shape : RegularCollisionPolygon2D = partial_double(class_script).new()
+	shape._queue_status = RegularCollisionPolygon2D._BLOCK_QUEUE
+	shape.vertices_count = p.vertices_count
+	shape.size = p.size
+	shape.inner_size = p.inner_size
+	shape.width = p.width
+	shape.drawn_arc = p.drawn_arc
+	shape.corner_size = p.corner_size
+	shape.corner_smoothness = p.corner_smoothness
+	shape._queue_status = RegularCollisionPolygon2D._NOT_QUEUED
+	var expected := RegularCollisionPolygon2D.new()
+	autoqfree(expected)
+	expected.vertices_count = p.vertices_count
+	expected.size = p.size
+	expected.inner_size = p.inner_size
+	expected.width = p.width
+	expected.drawn_arc = p.drawn_arc
+	expected.corner_size = p.corner_size
+	expected.corner_smoothness = p.corner_smoothness
+	expected.regenerate()
+	shape.shape = expected.shape
+	expected.offset_rotation += sample_rotation_amount
+	expected.size *= sample_scale_amount
+	expected.inner_size *= sample_scale_amount
+	if p.scale_width:
+		expected.width *= sample_scale_amount
+	if p.scale_corner_size:
+		expected.corner_size *= sample_scale_amount
+	expected.regenerate()
+
+	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, p.scale_width, p.scale_corner_size)
+
+	assert_eq_shape(shape.shape, expected.shape, 0.01)

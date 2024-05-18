@@ -119,7 +119,7 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 	for i in size:
 		points[i] *= transform
 
-	if not has_rounded_corners and not is_ringed_shape or is_zero_approx(scaler):
+	if not has_rounded_corners and not is_ringed_shape or is_equal_approx(scaler, 1):
 		return
 
 	var delta := 1 - (1 / scaler)
