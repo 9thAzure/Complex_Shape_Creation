@@ -108,6 +108,13 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 static func _quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 
+## Transforms [param points], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
+## [br][br][param is_ringed_shape] indicates the shape forms a ringed shape.
+## [param points_per_corner] indicates the shape has rounded corners and how many points form each rounded corner.
+## [param scale_width] toggles scaling the width formed by the ring.
+## [param scale_corner_size] toggles scaling the size of the rounded corners.
+## [br][br][b]Note[/b]: The method does not check if the transformation would result in a different shape then its properties would suggest,
+## such as shrinking a ring shape to the point it is no longer ringed or having a corner size larger than the a side length.
 static func apply_transformation(points : PackedVector2Array, rotation : float, scaler : float, is_ringed_shape := false, points_per_corner := 1, scale_width := false, scale_corner_size := false) -> void:
 	assert(points.size() >= 3, "param 'points' does not represent a proper shape.")
 	assert(scaler > 0, "param 'scaler' should be positive.")

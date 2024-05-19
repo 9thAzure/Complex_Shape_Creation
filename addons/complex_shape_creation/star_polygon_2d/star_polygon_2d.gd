@@ -54,6 +54,13 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_pre_redraw()
 
+## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
+## This method modifies the existing [member CollisionShape2D.shape], so is generally faster than changing [member size]/[member inner_size] and [member offset_rotation].
+## This only happens if the transformed shape is congruent to the original. If it is not or [member CollisionShape2D.shape] isn't used, the shape is regenerated.
+## [br][br][param scale_width] toggles scaling [member width].
+## [param scale_corner_size] toggles scaling [member corner_size].
+## [br][br][b][color=red]Warning[/color][/b]: Currently method does not check if the [member corner_size] value is clamped due to small side lengths.
+## If this occurs in the original or transformed shape, the shape will not be accurate to this node's properties.
 func apply_transformation(rotation : float, scale : float, scale_width := false, scale_corner_size := false) -> void:
 	assert(scale > 0, "param 'scale' should be positive.")
 	_queue_status = _BLOCK_QUEUE
