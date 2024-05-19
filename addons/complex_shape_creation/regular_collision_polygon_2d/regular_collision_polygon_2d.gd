@@ -28,40 +28,6 @@ var size : float = 10:
 		size = value
 		queue_regenerate()
 
-func apply_size_scale(scale : float) -> void:
-	assert(scale > 0, "param 'scale' should be positive.")
-	
-	_queue_status = _BLOCK_QUEUE
-	size *= scale
-	inner_size *= scale
-	_queue_status = _NOT_QUEUED
-
-	var current = shape
-	if current == null:
-		regenerate()
-		return
-
-	if current is CircleShape2D:
-		current.radius *= scale
-		return
-	if current is RectangleShape2D:
-		current.size *= scale
-		return
-	if current is SegmentShape2D:
-		current.a *= size
-		current.b *= size
-		return
-
-	var transform = Transform2D(0, Vector2.ONE * scale, 0, Vector2.ZERO)
-	if current is ConvexPolygonShape2D:
-		current.points *= transform
-		return
-	if current is ConcavePolygonShape2D:
-		current.segments *= transform
-		return
-	
-	printerr("unexpected shape found: (%s)" % current)
-
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
@@ -75,37 +41,6 @@ var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
 		queue_regenerate()
-
-func rotate_shape(radian : float) -> void:
-	var current = shape
-	_queue_status = _BLOCK_QUEUE
-	offset_rotation += radian
-	_queue_status = _NOT_QUEUED
-	
-	if current == null:
-		regenerate()
-		return
-
-	if current is CircleShape2D:
-		return
-	
-	if current is RectangleShape2D:
-		regenerate()
-		return
-
-	var transform := Transform2D(radian, Vector2.ONE, 0, Vector2.ZERO)
-	if current is SegmentShape2D:
-		current.a *= transform
-		current.b *= transform
-		return
-	if current is ConvexPolygonShape2D:
-		current.points *= transform
-		return
-	if current is ConcavePolygonShape2D:
-		current.segments *= transform
-		return
-	
-	printerr("unexpected shape found: (%s)" % current)
 
 ## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
 ## This method modifies the existing [member CollisionShape2D.shape], so is generally faster than changing [member size]/[member inner_size] and [member offset_rotation].
