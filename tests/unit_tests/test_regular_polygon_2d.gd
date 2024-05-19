@@ -210,7 +210,7 @@ func test_apply_transformation__various_shape_types__almost_expected_result(p=us
 	expected.size *= sample_scale_amount
 	expected.regenerate_polygon()
 
-	shape.apply_transformation(sample_rotation_amount, sample_scale_amount)
+	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, false, false)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
 	assert_not_called(shape, "regenerate_polygon")
@@ -224,7 +224,7 @@ func test_apply_transformation__size_change_creates_ring__shape_regenerated() ->
 	shape.regenerate_polygon()
 	autoqfree(shape)
 
-	shape.apply_transformation(0, sample_scale_amount)
+	shape.apply_transformation(0, sample_scale_amount, false, false)
 
 	assert_almost_eq_deep(shape.polygon, expected_shape, Vector2.ONE * 0.001)
 
@@ -238,7 +238,7 @@ func test_apply_transformation__size_change_removes_ring__shape_regenerated() ->
 	shape.regenerate_polygon()
 	autoqfree(shape)
 
-	shape.apply_transformation(0, sample_scale_amount)
+	shape.apply_transformation(0, sample_scale_amount, false, false)
 
 	assert_almost_eq_deep(shape.polygon, expected_shape, Vector2.ONE * 0.001)
 
@@ -269,7 +269,7 @@ func test_apply_transformation__width_scaled__expected_shape(p=use_parameters(pa
 	expected.width *= sample_scale_amount
 	expected.regenerate_polygon()
 
-	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true)
+	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true, false)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
 	assert_not_called(shape, "regenerate_polygon")
