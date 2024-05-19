@@ -126,7 +126,9 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 	for i in size:
 		points[i] *= transform
 
-	if not has_rounded_corners and not is_ringed_shape or is_equal_approx(scaler, 1):
+	scale_corner_size = scale_corner_size or not has_rounded_corners
+	scale_width = scale_width or not is_ringed_shape
+	if scale_corner_size and scale_width or is_equal_approx(scaler, 1):
 		return
 
 	var delta := 1 - (1 / scaler)
@@ -164,7 +166,6 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 		if not scale_corner_size:
 			for i2 in points_per_corner:
 				points[index + i2] = points[index + i2].lerp(outer_point, delta)
-
 
 		if not is_ringed_shape:
 			continue
