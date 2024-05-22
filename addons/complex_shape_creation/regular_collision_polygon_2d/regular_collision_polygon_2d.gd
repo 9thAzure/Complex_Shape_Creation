@@ -150,7 +150,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 			shape.segments = segments
 			return 
 			
-		# TODO: Should be possible, but requires modification of apply_transform that I don't want to do.
+		# TODO: Should be possible, but requires modification of apply_transformation that I don't want to do.
 		if scale_width != scale_corner_size and has_rounded_corners:
 			regenerate()
 			return

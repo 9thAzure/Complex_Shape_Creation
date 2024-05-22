@@ -143,7 +143,7 @@ public class RegularPolygon2D
         set => Instance.Scale = value;
     }
 
-    /// <inheritdoc cref="SimplePolygon2D.ApplyTransform(float, float)"/>
+    /// <inheritdoc cref="SimplePolygon2D.ApplyTransformation(float, float)"/>
     /// <summary>
     /// Transforms <see cref="Polygon2D.Polygon"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
     /// </summary>
@@ -155,7 +155,7 @@ public class RegularPolygon2D
     /// </remarks>
     /// <param name="scale_width">Toggles scaling <see cref="Width"/>, applying correction if <see langword="false"/>.</param>
     /// <param name="scale_corner_size">Toggles scaling <see cref="CornerSize"/>, applying correction if <see langword="false"/>.</param>
-    public void ApplyTransform(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransform, rotation, scale, scale_width, scale_corner_size);
+    public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
 
     /// <summary>
     /// Sets <see cref="Polygon2D.Polygon"> using the properties of this node. 

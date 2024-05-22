@@ -153,7 +153,7 @@ public class RegularPolygon2DTests : TestClass
         expected.RegeneratePolygon();
         sample.RegeneratePolygon();
 
-        sample.ApplyTransform(rotationAmount, sizeScale, false, false);
+        sample.ApplyTransformation(rotationAmount, sizeScale, false, false);
 
         sample.OffsetRotation.ShouldBe(expected.OffsetRotation);
         sample.Size.ShouldBe(expected.Size);

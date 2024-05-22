@@ -89,8 +89,8 @@ public partial class SimplePolygon2D
     /// <remarks>Unlike other methods, this simply affects <see cref="OffsetRotation"/> and <see cref="Size"/>, regenerating the shape </remarks>
     /// <param name="rotation">The amount to rotate the shape in radians.</param>
     /// <param name="scale">The factor to scale the shape.</param>
-    public void ApplyTransform(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransform, rotation, scale, scale_width, scale_corner_size);
-    public void ApplyTransform(float rotation, float scale) => Instance.Call(MethodName.ApplyTransform, rotation, scale);
+    public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
+    public void ApplyTransformation(float rotation, float scale) => Instance.Call(MethodName.ApplyTransformation, rotation, scale);
 
     /// <summary>Creates and wraps a <see cref="SimplePolygon2D"/> around <paramref name="instance"/>.</summary>
     /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>

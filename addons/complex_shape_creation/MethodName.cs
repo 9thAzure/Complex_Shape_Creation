@@ -20,5 +20,5 @@ public static class MethodName
     public static readonly StringName GetStarVertices = new("get_star_vertices");
     public static readonly StringName WidenPolyline = new("_widen_polyline_result");
     public static readonly StringName WidenMultiline = new("_widen_multiline_result");
-    public static readonly StringName ApplyTransform = new("apply_transform");
+    public static readonly StringName ApplyTransformation = new("apply_transformation");
 }

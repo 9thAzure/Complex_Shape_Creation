@@ -142,7 +142,7 @@ public class RegularCollisionPolygon2DTests : TestClass
         expected.Regenerate();
         sample.Regenerate();
 
-        sample.ApplyTransform(rotationAmount, sizeScale, false, false);
+        sample.ApplyTransformation(rotationAmount, sizeScale, false, false);
 
         sample.OffsetRotation.ShouldBe(expected.OffsetRotation);
         sample.Size.ShouldBe(expected.Size);
