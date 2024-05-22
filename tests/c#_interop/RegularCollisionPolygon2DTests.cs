@@ -129,4 +129,22 @@ public class RegularCollisionPolygon2DTests : TestClass
 
         result.Length.ShouldBe(16);
     }
+
+    [Test]
+    public void ApplyTransform_SampleShape_ReturnsExpected()
+    {
+        const float rotationAmount = 1.2f;
+        const float sizeScale = 2;
+        RegularCollisionPolygon2D expected = new(4, 10, 0, 0, Mathf.Tau, 1, 1);
+        RegularCollisionPolygon2D sample = new(4, 10, 0, 0, Mathf.Tau, 1, 1);
+        expected.OffsetRotation += rotationAmount;
+        expected.Size *= sizeScale;
+        expected.Regenerate();
+        sample.Regenerate();
+
+        sample.ApplyTransform(rotationAmount, sizeScale, false, false);
+
+        sample.OffsetRotation.ShouldBe(expected.OffsetRotation);
+        sample.Size.ShouldBe(expected.Size);
+    }
 }
