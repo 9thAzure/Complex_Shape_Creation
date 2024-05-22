@@ -129,6 +129,17 @@ public class StarPolygon2D
         set => Instance.Scale = value;
     }
 
+    /// <inheritdoc cref="RegularPolygon2D.ApplyTransformation(float, float, bool, bool)"/>
+    /// <remarks>
+    /// This method modifies the existing <see cref="Polygon2D.Polygon"/>, so is generally faster than changing <see cref="Size"/> and <see cref="OffsetRotation"/>.
+    /// This only happens if the transformed shape is congruent to the original. If it is not or <see cref="Polygon2D.Polygon"/> isn't used, the shape is regenerated.
+    /// <br/><br/><b>Warning</b>: Currently method does not check if the <see cref="CornerSize"/> value is clamped due to small side lengths.
+    /// If this occurs in the original or transformed shape and <paramref name="scale_corner_size"/> is <see langword="false"/>, the shape will not be accurate to this node's properties.
+    /// </remarks>
+    /// <param name="scale_width">Toggles scaling <see cref="Width"/>, applying correction if <see langword="false"/>.</param>
+    /// <param name="scale_corner_size">Toggles scaling <see cref="CornerSize"/>, applying correction if <see langword="false"/>.</param>
+    public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
+
     /// <summary>
     /// Sets <see cref="innerSize"/> such that the angle formed by each point is equivalent to <paramref name="angle"/>, in radians.
     /// </summary>

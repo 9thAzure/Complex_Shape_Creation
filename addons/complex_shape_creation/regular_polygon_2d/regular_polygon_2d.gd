@@ -45,6 +45,47 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		_pre_redraw()
 
+## Transforms [member Polygon2D.polygon], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
+## This method modifies the existing [member Polygon2D.polygon], so is generally faster than changing [member size] and [member offset_rotation].
+## This only happens if the transformed shape is congruent to the original. If it is not or [member Polygon2D.polygon] isn't used, the shape is regenerated.
+## [br][br][param scale_width] toggles scaling [member width].
+## [param scale_corner_size] toggles scaling [member corner_size].
+## If these values are [code]false[/code], their respective properties are not altered and the shape is corrected.
+## [br][br][b][color=red]Warning[/color][/b]: Currently method does not check if the [member corner_size] value is clamped due to small side lengths.
+## If this occurs in the original or transformed shape and [param scale_corner_size] is [code]false[/code], the shape will not be accurate to this node's properties.
+func apply_transformation(rotation : float, scale : float, scale_width := true, scale_corner_size := true) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+	_queue_status = _BLOCK_QUEUE
+	offset_rotation += rotation
+	size *= scale
+	if scale_width:
+		width *= scale
+
+	if scale_corner_size:
+		corner_size *= scale
+
+	_queue_status = _NOT_QUEUED
+	
+	if not uses_polygon_member():
+		queue_redraw()
+		return
+
+	if not scale_width and \
+		(width >= size and width < size / scale
+		or width < size and width >= size / scale):
+		regenerate_polygon()
+		return
+	
+	var points_per_corner := 0
+	if corner_size > 0:
+		points_per_corner = corner_smoothness if corner_smoothness != 0 else corner_smoothness / vertices_count
+	points_per_corner += 1
+	
+	var shape := polygon
+	RegularGeometry2D.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
+	polygon = shape
+
+
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
 @export_group("complex")
 

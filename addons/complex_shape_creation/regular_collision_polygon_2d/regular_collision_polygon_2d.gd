@@ -42,6 +42,202 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		queue_regenerate()
 
+## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
+## This method modifies the existing [member CollisionShape2D.shape], so is generally faster than changing [member size]/[member inner_size] and [member offset_rotation].
+## This only happens if the transformed shape is congruent to the original, otherwise it is simply regenerated. Certain cases will also cause it to regenerate.
+## [br][br][param scale_width] toggles scaling [member width].
+## [param scale_corner_size] toggles scaling [member corner_size].
+## If these values are [code]false[/code], their respective properties are not altered and the shape is corrected.
+## [br][br][b][color=red]Warning[/color][/b]: Currently method does not check if the [member corner_size] value is clamped due to small side lengths.
+## If this occurs in the original or transformed shape and [param scale_corner_size] is [code]false[/code], the shape will not be accurate to this node's properties.
+func apply_transformation(rotation : float, scale : float, scale_width := true, scale_corner_size := true) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+	_queue_status = _BLOCK_QUEUE
+	offset_rotation += rotation
+	size *= scale
+	inner_size *= scale
+	if scale_width:
+		width *= scale
+
+	if scale_corner_size:
+		corner_size *= scale
+
+	_queue_status = _NOT_QUEUED
+	
+	if not scale_width and \
+		(width >= size and width < size / scale
+		or width < size and width >= size / scale):
+		regenerate()
+		return
+	
+	var is_star_shape := not is_zero_approx(inner_size)
+	var is_line := is_star_shape and vertices_count == 1 or not is_star_shape and vertices_count == 2
+	var has_rounded_corners := not is_zero_approx(corner_size)
+	var points_per_corner := 0
+	if has_rounded_corners:
+		points_per_corner = corner_smoothness if corner_smoothness != 0 else corner_smoothness / vertices_count 
+	points_per_corner += 1
+
+	
+	# cares about scale_width
+	# unaffected by corner_size
+	if shape is CircleShape2D:
+		shape.radius *= scale
+		return
+
+	# cares about scale_width, corner_size, everything that isn't scale
+	if shape is RectangleShape2D:
+		if not is_zero_approx(rotation):
+			regenerate()
+			return
+
+		if not scale_width and is_line:
+			if is_zero_approx(sin(offset_rotation)):
+				shape.size.y *= scale
+				return
+			shape.size.x *= scale
+			return
+		shape.size *= scale
+		return
+	
+	# scale_width can't even effect this
+	if shape is SegmentShape2D:
+		var transform := Transform2D(-rotation, Vector2.ONE * scale, 0, Vector2.ZERO)
+		shape.a *= transform
+		shape.b *= transform
+		return
+	
+	if shape is ConvexPolygonShape2D:
+		var points : PackedVector2Array = shape.points
+		if not scale_width and is_line:
+			assert(points.size() == 4)
+			var slope1 := (points[0] - (points[0] - points[1]) / 2) * (scale - 1)
+			var slope2 := (points[3] - (points[0] - points[1]) / 2) * (scale - 1)
+			var transform := Transform2D(-rotation, Vector2.ONE, 0, Vector2.ZERO)
+			points[0] = (points[0] + slope1) * transform
+			points[1] = (points[1] + slope1) * transform
+			points[2] = (points[2] + slope2) * transform
+			points[3] = (points[3] + slope2) * transform
+			shape.points = points
+			return
+
+		RegularGeometry2D.apply_transformation(points, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
+		shape.points = points
+		return
+
+	if not shape is ConcavePolygonShape2D:
+		printerr("unexpected shape found: (%s)" % shape)
+		return
+
+	# requires special care for scale if it forms a line.
+	var segments : PackedVector2Array = shape.segments
+	if is_line:
+		if is_zero_approx(width):
+			if scale_corner_size and has_rounded_corners:
+				RegularGeometry2D.apply_transformation(segments, rotation, scale)
+				shape.segments = segments
+				return 
+			
+			segments[0] *= scale
+			segments[-1] *= scale
+			RegularGeometry2D.apply_transformation(segments, rotation, 1)
+			shape.segments = segments
+			return
+
+		
+		if scale_width and (scale_corner_size or not has_rounded_corners):
+			RegularGeometry2D.apply_transformation(segments, rotation, scale)
+			shape.segments = segments
+			return 
+			
+		# TODO: Should be possible, but requires modification of apply_transformation that I don't want to do.
+		if scale_width != scale_corner_size and has_rounded_corners:
+			regenerate()
+			return
+
+		RegularGeometry2D.apply_transformation(segments, rotation, 1)
+
+		# extend segments
+		if not has_rounded_corners:
+			# point 1
+			var slope := (segments[0] - segments[1]) * (scale - 1)
+			var point := segments[0] + slope
+			segments[0] = point
+			segments[7] = point
+
+			point = segments[5] + slope
+			segments[5] = point
+			segments[6] = point
+
+			# point 2
+			slope = (segments[9] - segments[8]) * (scale - 1)
+			point = segments[9] + slope
+			segments[9] = point
+			segments[10] = point
+
+			point = segments[11] + slope
+			segments[11] = point
+			segments[12] = point
+		else:
+			# point 1
+			var slope := (segments[0] - (segments[-1] - segments[-2]) / 2) * (scale - 1)
+			var point := segments[0] + slope
+			segments[0] = point
+			segments[-1] = point
+
+			point = segments[-2] + slope
+			segments[-2] = point
+			segments[-3] = point
+
+			# point 2
+			var index := segments.size() / 2
+			slope = (segments[index] - (segments[index - 1] - segments[index - 2]) / 2) * (scale - 1)
+			point = segments[index] + slope
+			segments[index] = point
+			segments[index - 1] = point
+
+			point = segments[index - 2] + slope
+			segments[index - 2] = point
+			segments[index - 3] = point
+
+		shape.segments = segments
+		return
+	
+	var is_ringed_shape := 0 < width and width < size
+	var offset_points := _uses_drawn_arc() and is_ringed_shape
+	# TODO: Again, I don't want to change apply_transformation to make this work.
+	if is_ringed_shape and not _uses_drawn_arc():
+		regenerate()
+		return
+
+	var segment_size := segments.size()
+	for i in segment_size / 2 - 1:
+		segments[i + 1] = segments[i * 2 + 1]
+	segments.resize(segment_size / 2)
+
+	if offset_points:
+		var temp := segments[-1]
+		for i in segments.size() - 1:
+			segments[i - 1] = segments[i]
+		segments[-2] = temp
+
+	RegularGeometry2D.apply_transformation(segments, rotation, scale, is_ringed_shape, points_per_corner, scale_width, scale_corner_size)
+
+	if offset_points:
+		var temp := segments[0]
+		for i in segments.size() - 1:
+			segments[-i] = segments[-i - 1] 
+		segments[1] = temp
+
+	segments.resize(segment_size)
+	segments[-1] = segments[0]
+	for i in segment_size / 2 - 1:
+		var point := segments[segment_size / 2 - i - 1]
+		segments[-i * 2 - 2] = point
+		segments[-i * 2 - 3] = point
+
+	shape.segments = segments
+
 @export_group("complex")
 
 ## The length of the inner vertices between each normal vertices to the center of the shape. If set to [code]0[/code], it is ignored.

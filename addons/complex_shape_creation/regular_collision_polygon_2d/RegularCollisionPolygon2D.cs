@@ -103,6 +103,20 @@ public class RegularCollisionPolygon2D
         get => Instance.Scale;
         set => Instance.Scale = value;
     }
+    
+    /// <inheritdoc cref="RegularPolygon2D.ApplyTransformation(float, float, bool, bool)"/>
+    /// <summary>
+    /// Transforms <see cref="CollisionShape2D.Shape"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
+    /// </summary>
+    /// <remarks>
+    /// This method modifies the existing <see cref="CollisionShape2D.Shape"/>, so is generally faster than changing <see cref="Size"/> and <see cref="OffsetRotation"/>.
+    /// This only happens if the transformed shape is congruent to the original. If it is not or <see cref="CollisionShape2D.Shape"/> isn't used, the shape is regenerated.
+    /// <br/><br/><b>Warning</b>: Currently method does not check if the <see cref="CornerSize"/> value is clamped due to small side lengths.
+    /// If this occurs in the original or transformed shape and <paramref name="scale_corner_size"/> is <see langword="false"/>, the shape will not be accurate to this node's properties.
+    /// </remarks>
+    /// <param name="scale_width">Toggles scaling <see cref="Width"/>, applying correction if <see langword="false"/>.</param>
+    /// <param name="scale_corner_size">Toggles scaling <see cref="CornerSize"/>, applying correction if <see langword="false"/>.</param>
+    public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
 
     /// <summary>Creates and wraps a <see cref="CollisionShape2D"/> around <paramref name="instance"/>.</summary>
     /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>

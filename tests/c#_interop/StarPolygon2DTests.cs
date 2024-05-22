@@ -131,4 +131,22 @@ public class StarPolygon2DTests : TestClass
 
         array.Length.ShouldBe(8);
     }
+
+    [Test]
+    public void ApplyTransform_SampleShape_ReturnsExpected()
+    {
+        const float rotationAmount = 1.2f;
+        const float sizeScale = 2;
+        RegularPolygon2D expected = new(4, 10, 0);
+        RegularPolygon2D sample = new(4, 10, 0);
+        expected.OffsetRotation += rotationAmount;
+        expected.Size *= sizeScale;
+        expected.RegeneratePolygon();
+        sample.RegeneratePolygon();
+
+        sample.ApplyTransformation(rotationAmount, sizeScale, false, false);
+
+        sample.OffsetRotation.ShouldBe(expected.OffsetRotation);
+        sample.Size.ShouldBe(expected.Size);
+    }
 }

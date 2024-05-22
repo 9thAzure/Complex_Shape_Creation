@@ -143,6 +143,20 @@ public class RegularPolygon2D
         set => Instance.Scale = value;
     }
 
+    /// <inheritdoc cref="SimplePolygon2D.ApplyTransformation(float, float)"/>
+    /// <summary>
+    /// Transforms <see cref="Polygon2D.Polygon"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
+    /// </summary>
+    /// <remarks>
+    /// This method modifies the existing <see cref="Polygon2D.Polygon"/>, so is generally faster than changing <see cref="Size"/> and <see cref="OffsetRotation"/>.
+    /// This only happens if the transformed shape is congruent to the original. If it is not or <see cref="Polygon2D.Polygon"/> isn't used, the shape is regenerated.
+    /// <br/><br/><b>Warning</b>: Currently method does not check if the <see cref="CornerSize"/> value is clamped due to small side lengths.
+    /// If this occurs in the original or transformed shape and <paramref name="scale_corner_size"/> is <see langword="false"/>, the shape will not be accurate to this node's properties.
+    /// </remarks>
+    /// <param name="scale_width">Toggles scaling <see cref="Width"/>, applying correction if <see langword="false"/>.</param>
+    /// <param name="scale_corner_size">Toggles scaling <see cref="CornerSize"/>, applying correction if <see langword="false"/>.</param>
+    public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
+
     /// <summary>
     /// Sets <see cref="Polygon2D.Polygon"> using the properties of this node. 
     /// This method can be used when the node is outside the <see cref="SceneTree"/> to force this, and ignores the result of <see cref="UsesPolygonMember"/>.

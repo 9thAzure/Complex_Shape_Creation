@@ -39,6 +39,12 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		queue_redraw()
 
+## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
+func apply_transformation(rotation : float, scale : float) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+	offset_rotation += rotation
+	size *= scale
+
 ## The color of the shape.
 @export
 var color : Color = Color.WHITE:
