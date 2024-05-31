@@ -104,12 +104,14 @@ func test_regenerate_polygon__holed_shape_with_drawn_arc__ends_not_equal():
 	assert_almost_ne(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
 
 func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
+	var expected := PackedVector2Array([Vector2(0, 7.07107), Vector2(-7.07107, 7.07107), Vector2(-7.07107, -7.07107), Vector2(0, -7.07107)])
 	var shape : PackedVector2Array
 
 	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, p[0])
 
 	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last element of the returned array.")
-	assert_eq(shape.size(), 4, "Size of returned array.")
+	# assert_eq(shape.size(), 4, "Size of returned array.")
+	assert_almost_eq_deep(shape, expected, Vector2.ONE * 0.001)
 
 func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_central_point(p = use_parameters([[TAU], [PI], [-PI]])):
 	var shape : PackedVector2Array
@@ -143,23 +145,23 @@ func test_add_rounded_corners__very_small_corner_size__approximately_equal_vecto
 		assert_almost_eq(shape[index + 1], shape[index], Vector2.ONE * 0.1, "First part of corner of modified array.")
 		assert_almost_eq(shape[index + 2], shape[index], Vector2.ONE * 0.1, "Last part of corner of modified array.")
 
-func test_add_hole_to_points__do_not_close_shape__array_size_doubles():
-	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
-	var previous_size := shape.size()
+func test_add_hole_to_points__do_not_close_shape__expected_shape():
+	const sample_hole_scaler = 0.5
+	var shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10)])
+	var expected_shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10), Vector2(-6.12323e-16, -5), Vector2(-4.33013, 2.5), Vector2(4.33013, 2.5)])
 
-	RegularPolygon2D.add_hole_to_points(shape, 1, false)
-	var new_size := shape.size()
+	RegularPolygon2D.add_hole_to_points(shape, sample_hole_scaler, false)
 
-	assert_eq(new_size, 2 * previous_size, "Size of modified array, 2 * the original size.")
+	assert_almost_eq_deep(shape, expected_shape, Vector2.ONE * 0.0001)
 	
-func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
+func test_add_hole_to_points__do_close_shape__expected_shape():
+	const sample_hole_scaler = 0.5
 	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
-	var previous_size := shape.size()
+	var expected_shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10), Vector2(8.66025, 5), Vector2(4.33012, 2.5), Vector2(-6.12323e-16, -5), Vector2(-4.33013, 2.5), Vector2(4.33013, 2.5)])
 
-	RegularPolygon2D.add_hole_to_points(shape, 1, true)
-	var new_size := shape.size()
+	RegularPolygon2D.add_hole_to_points(shape, sample_hole_scaler, true)
 
-	assert_eq(new_size, 2 * previous_size + 2, "Size of modified array, 2 + 2 * the original size")
+	assert_almost_eq_deep(shape, expected_shape, Vector2.ONE * 0.0001)
 
 var params_transform_shape := [
 	[4, 10, 100, TAU, 0, 0],
