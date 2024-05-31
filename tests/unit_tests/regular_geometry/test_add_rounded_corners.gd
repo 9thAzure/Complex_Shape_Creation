@@ -1,18 +1,4 @@
-extends GutTest
-
-func assert_almost_eq_deep(c1, c2, error_interval):
-	if c1.size() != c2.size():
-		_fail("collections are different sizes (%s | %s)" % [c1, c2])
-		return
-	
-	var has_failed := false
-	for i in c2.size():
-		if not _is_almost_eq(c1[i], c2[i], error_interval):
-			_fail("Elements at index [%s] is different (%s != %s)" % [i, c1[i], c2[i]])
-			has_failed = true
-
-	if not has_failed:
-		_pass("%s approximately matches with %s with the error interval '%s'" % [c1, c2, error_interval])
+extends GutCollectionTest
 
 var various_shapes_with_corner_smoothness := [
 	[1, [Vector2.LEFT, Vector2.UP, Vector2.RIGHT, Vector2.DOWN]],
