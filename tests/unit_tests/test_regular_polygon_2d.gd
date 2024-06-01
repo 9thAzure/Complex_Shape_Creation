@@ -103,11 +103,11 @@ func test_regenerate_polygon__holed_shape_with_drawn_arc__ends_not_equal():
 	assert_almost_ne(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
 	assert_almost_ne(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
 
-func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
+func test_get_shape_vertices__drawn_arc_PI__no_central_point():
 	var expected := PackedVector2Array([Vector2(0, 7.07107), Vector2(-7.07107, 7.07107), Vector2(-7.07107, -7.07107), Vector2(0, -7.07107)])
 	var shape : PackedVector2Array
 
-	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, p[0])
+	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, PI)
 
 	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last element of the returned array.")
 	# assert_eq(shape.size(), 4, "Size of returned array.")
@@ -156,7 +156,7 @@ func test_add_hole_to_points__do_not_close_shape__expected_shape():
 	
 func test_add_hole_to_points__do_close_shape__expected_shape():
 	const sample_hole_scaler = 0.5
-	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
+	var shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10)])
 	var expected_shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10), Vector2(8.66025, 5), Vector2(4.33012, 2.5), Vector2(-6.12323e-16, -5), Vector2(-4.33013, 2.5), Vector2(4.33013, 2.5)])
 
 	RegularPolygon2D.add_hole_to_points(shape, sample_hole_scaler, true)

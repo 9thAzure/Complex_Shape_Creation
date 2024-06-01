@@ -20,3 +20,13 @@ func assert_almost_eq_deep(c1, c2, error_interval):
 		message += "\n[%s]: %s vs %s" % [i, c1[i], c2[i]]
 	
 	_fail(message)
+
+func to_vector2s(nums : Array) -> PackedVector2Array:
+	assert(nums.size() % 2 == 0)
+	var points := PackedVector2Array()
+	@warning_ignore("integer_division") 
+	points.resize(nums.size() / 2)
+	for i in points.size():
+		points[i] = Vector2(nums[i * 2], nums[i * 2 + 1])
+	
+	return points
