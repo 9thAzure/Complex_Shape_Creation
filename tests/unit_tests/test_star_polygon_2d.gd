@@ -1,18 +1,4 @@
-extends GutTest
-
-func assert_almost_eq_deep(c1, c2, error_interval):
-	if c1.size() != c2.size():
-		_fail("collections are different sizes (%s vs %s)" % [c1.size(), c2.size()])
-		return
-	
-	var has_failed := false
-	for i in c2.size():
-		if not _is_almost_eq(c1[i], c2[i], error_interval):
-			_fail("Elements at index [%s] is different (%s != %s)" % [i, c1[i], c2[i]])
-			has_failed = true
-
-	if not has_failed:
-		_pass("%s approximately matches with %s with the error interval '%s'" % [c1, c2, error_interval])
+extends GutCollectionTest
 
 var class_script := preload("res://addons/complex_shape_creation/star_polygon_2d/star_polygon_2d.gd")
 var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
@@ -108,12 +94,12 @@ func test_get_star_vertices__drawn_arc_PI__no_central_point(p = use_parameters([
 	assert_eq(star.size(), 6, "Size of the returned array.")
 
 func test_get_star_vertices__add_central_point_false__expected_size_and_not_ZERO():
+	var expected_shape := PackedVector2Array([Vector2(-1.22465e-15, -10), Vector2(2.93893, -4.04508), Vector2(9.51057, -3.09017), Vector2(4.75528, 1.54508), Vector2(5.87785, 8.09017), Vector2(1.22465e-15, 5), Vector2(-5.87785, 8.09017), Vector2(-4.75528, 1.54508), Vector2(-6.34038, 0)])
 	var star : PackedVector2Array
 
 	star = StarPolygon2D.get_star_vertices(5, 10, 5, 0, Vector2.ZERO, PI * 3 / 2, false)
 
-	assert_almost_ne(star[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last point in the returned array.")
-	assert_eq(star.size(), 9, "Size of the returned array")
+	assert_almost_eq_deep(star, expected_shape, Vector2.ONE * 0.001)
 
 var params_transform_shape := [
 	[4, 10, 100, TAU, 0, 0],

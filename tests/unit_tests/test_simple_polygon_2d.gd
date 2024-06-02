@@ -1,4 +1,4 @@
-extends GutTest
+extends GutCollectionTest
 
 func test_init__filled__variables_assigned():
 	var shape : SimplePolygon2D

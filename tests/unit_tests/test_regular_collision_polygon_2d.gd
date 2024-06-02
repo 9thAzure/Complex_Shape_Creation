@@ -1,18 +1,4 @@
-extends GutTest
-
-func assert_almost_eq_deep(c1, c2, error_interval):
-	if c1.size() != c2.size():
-		_fail("collections are different sizes (%s vs %s)" % [c1.size(), c2.size()])
-		return
-	
-	var has_failed := false
-	for i in c2.size():
-		if not _is_almost_eq(c1[i], c2[i], error_interval):
-			_fail("Elements at index [%s] is different (%s != %s)" % [i, c1[i], c2[i]])
-			has_failed = true
-
-	if not has_failed:
-		_pass("%s approximately matches with %s with the error interval '%s'" % [c1, c2, error_interval])
+extends GutCollectionTest
 
 func assert_eq_shape(a : Shape2D, b : Shape2D, error_interval : float) -> void:
 	if a.get_class() != b.get_class():
@@ -135,9 +121,12 @@ func test_regenerate__vertices_count_2__shape_segment_shape():
 
 	assert_true(shape.shape is SegmentShape2D, "Property 'shape' should be type SegmentShape2D.")
 
-func test_regenerate__line_with_width_offset_rotation_multiples_of_PI__shape_rectangle_taller_than_wide(p = use_parameters([0, PI, -PI, TAU])):
+func test_regenerate__line_with_width_offset_rotation_multiples_of_PI__expected_shape(p = use_parameters([0, PI, -PI, TAU])):
+	var expected_shape := RectangleShape2D.new()
+	expected_shape.size = Vector2(5, 20)
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.vertices_count = 2
+	shape.size = 10
 	shape.width = 5
 	shape.offset_rotation = p
 
@@ -146,11 +135,14 @@ func test_regenerate__line_with_width_offset_rotation_multiples_of_PI__shape_rec
 	assert_true(shape.shape is RectangleShape2D, "Property 'shape' should be type RectangleShape2D.")
 	if is_failing(): 
 		return
-	assert_gt(shape.shape.size.y, shape.shape.size.x, "Property 'shape' should be taller than wide")
+	assert_eq_shape(shape.shape, expected_shape, 0.001)
 
 func test_regenerate__line_with_width_offset_rotation_multiples_of_PI_plus_PI_over_2__shape_rectangle_wider_than_tall(p = use_parameters([PI / 2, -PI * 3 / 2, PI * 5 / 2])):
+	var expected_shape := RectangleShape2D.new()
+	expected_shape.size = Vector2(20, 5)
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.vertices_count = 2
+	shape.size = 10
 	shape.width = 5
 	shape.offset_rotation = p
 
@@ -159,7 +151,7 @@ func test_regenerate__line_with_width_offset_rotation_multiples_of_PI_plus_PI_ov
 	assert_true(shape.shape is RectangleShape2D, "Property 'shape' should be type RectangleShape2D.")
 	if is_failing(): 
 		return
-	assert_gt(shape.shape.size.x, shape.shape.size.y, "Property 'shape' should be wider than tall")
+	assert_eq_shape(shape.shape, expected_shape, 0.001)
 
 func test_regenerate__line_with_width_offset_rotation_not_multiple_of_PI_over_2__shape_4_point_convex_shape(p = use_parameters([1, -3, 5])):
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
@@ -187,21 +179,24 @@ func test_regenerate__line_with_width_uses_drawn_arc__shape_16_point_concave_sha
 		return
 	assert_eq(shape.shape.segments.size(), 16, "Property 'shape.segments' should have 16 points")
 
-func test_regenerate__line_with_width_uses_drawn_arc_and_corner_size__shape_76_point_concave_shape():
+func test_regenerate__line_with_width_uses_drawn_arc_and_corner_size__expected_shape():
+	var expected_shape := to_vector2s([-2.5, 10, -2.5, 5.40569, -2.5, 5.40569, -3.22642, 3.22642, -3.22642, 3.22642, -5.40569, 2.5, -5.40569, 2.5, -10, 2.5, -10, 2.5, -10, -2.5, -10, -2.5, -4.59431, -2.5, -4.59431, -2.5, 0.726424, -0.726424, 0.726424, -0.726424, 2.5, 4.59431, 2.5, 4.59431, 2.5, 10, 2.5, 10, -2.5, 10])
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.vertices_count = 2
 	shape.width = 5
 	shape.drawn_arc = PI * 3 / 2
 	shape.corner_size = 5
+	shape.corner_smoothness = 2
 
 	shape.regenerate()
 
 	assert_true(shape.shape is ConcavePolygonShape2D, "Property 'shape' should be type ConcavePolygonShape2D")
 	if is_failing(): 
 		return
-	assert_eq(shape.shape.segments.size(), 76, "Property 'shape.segments' should have 76 points")
+	assert_almost_eq_deep(shape.shape.segments, expected_shape, Vector2.ONE * 0.001)
 
 func test_regenerate__line_with_width_drawn_arc_PI_uses_corner_size__shape_8_point_concave_shape():
+	var expected_shape := to_vector2s([-2.5, 10, -2.5, 6.12323e-16, -2.5, 6.12323e-16, 2.5, -6.12323e-16, 2.5, -6.12323e-16, 2.5, 10, 2.5, 10, -2.5, 10])
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
 	shape.vertices_count = 2
 	shape.width = 5
@@ -213,7 +208,7 @@ func test_regenerate__line_with_width_drawn_arc_PI_uses_corner_size__shape_8_poi
 	assert_true(shape.shape is ConcavePolygonShape2D, "Property 'shape' should be type ConcavePolygonShape2D")
 	if is_failing(): 
 		return
-	assert_eq(shape.shape.segments.size(), 8, "Property 'shape.segments' should have 8 points")
+	assert_almost_eq_deep(shape.shape.segments, expected_shape, Vector2.ONE * 0.001)
 
 func test_regenerate__uses_width__shape_concave_shape():
 	var shape : RegularCollisionPolygon2D = autoqfree(RegularCollisionPolygon2D.new())
