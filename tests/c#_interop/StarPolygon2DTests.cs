@@ -113,6 +113,8 @@ public class StarPolygon2DTests : TestClass
 
         result.ShouldBe(true);
     }
+    
+    [Test]
     public async System.Threading.Tasks.Task QueueRegenerate_PolygonSetEmpty_PolygonFilled()
     {
         TestScene.AddChild(polygon);
@@ -148,12 +150,12 @@ public class StarPolygon2DTests : TestClass
     {
         const float rotationAmount = 1.2f;
         const float sizeScale = 2;
-        RegularPolygon2D expected = new(4, 10, 0);
-        RegularPolygon2D sample = new(4, 10, 0);
+        StarPolygon2D expected = new(4, 10, 0);
+        StarPolygon2D sample = new(4, 10, 0);
         expected.OffsetRotation += rotationAmount;
         expected.Size *= sizeScale;
-        expected.RegeneratePolygon();
-        sample.RegeneratePolygon();
+        expected.Regenerate();
+        sample.Regenerate();
 
         sample.ApplyTransformation(rotationAmount, sizeScale, false, false);
 
