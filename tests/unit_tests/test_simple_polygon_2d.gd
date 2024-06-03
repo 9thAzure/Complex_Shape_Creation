@@ -9,7 +9,7 @@ func test_init__filled__variables_assigned():
 	assert_eq(shape.size, 5.0, "Property 'size'.")
 	assert_eq(shape.offset_rotation, 1.0, "Property 'offset_rotation'.")
 	assert_eq(shape.color, Color.RED, "Property 'color'.")
-	assert_eq(shape.offset_position, Vector2.ONE, "Property 'offset_position'.")
+	assert_eq(shape.offset, Vector2.ONE, "Property 'offset'.")
 	shape.queue_free()
 
 var param2 := [[2], [5], [8], [32], [100]]

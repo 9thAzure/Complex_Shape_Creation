@@ -52,11 +52,17 @@ public partial class SimplePolygon2D
         get => (Color)Instance.Get(PropertyName.Color);
         set => Instance.Set(PropertyName.Color, value);
     }
-    /// <summary>The offset position of the shape.</summary>
+    [Obsolete("Property name has been replaced, use 'Offset' instead.", false)]
     public Vector2 OffsetPosition
     {
         get => (Vector2)Instance.Get(PropertyName.OffsetPosition);
         set => Instance.Set(PropertyName.OffsetPosition, value);
+    }
+    /// <summary>The offset position of the shape.</summary>
+    public Vector2 Offset
+    {
+        get => (Vector2)Instance.Get(PropertyName.Offset);
+        set => Instance.Set(PropertyName.Offset, value);
     }
     /// <summary>Position, relative to the node's parent.</summary>
     public Vector2 Position

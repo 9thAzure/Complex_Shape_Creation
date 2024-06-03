@@ -10,7 +10,9 @@ public static class PropertyName
     public static readonly StringName OffsetRotationDegrees = new("offset_rotation_degrees");
     public static readonly StringName OffsetRotation = new("offset_rotation");
     public static readonly StringName Color = new("color");
+    [Obsolete("Property name has been replaced, use 'Offset' instead.", false)]
     public static readonly StringName OffsetPosition = new("offset_position");
+    public static readonly StringName Offset = new("offset");
     public static readonly StringName Width = new("width");
     public static readonly StringName DrawnArcDegrees = new("drawn_arc_degrees");
     public static readonly StringName DrawnArc = new("drawn_arc");
