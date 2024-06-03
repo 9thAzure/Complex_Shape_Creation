@@ -158,10 +158,23 @@ public class RegularPolygon2D
     public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
 
     /// <summary>
+    /// Queues <see cref="Regenerate"/> for the next process frame. If this method is called multiple times, the shape is only regenerated once.
+    /// </summary>
+    /// <remarks>
+    /// If this method is called when the node is outside the <see cref="SceneTree"/>, regeneration will be delayed to when the node enters the tree. 
+    /// Use <see cref="Regenerate"/> directly to force initialization.
+    /// </remarks>
+    public void QueueRegenerate() => Instance.Call(MethodName.QueueRegenerate);
+
+    /// <summary>
     /// Sets <see cref="Polygon2D.Polygon"> using the properties of this node. 
     /// This method can be used when the node is outside the <see cref="SceneTree"/> to force this, and ignores the result of <see cref="UsesPolygonMember"/>.
     /// </summary>
+    public void Regenerate() => Instance.Call(MethodName.Regenerate);
+
+    [Obsolete("Method name has changed, use 'Regenerate' instead.", false)]
     public void RegeneratePolygon() => Instance.Call(MethodName.RegeneratePolygon);
+
     /// <summary>
     /// Checks whether the current properties of this node will have it use <see cref="Polygon2D.Polygon">.
     /// </summary>
