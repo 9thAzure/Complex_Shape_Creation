@@ -6,6 +6,7 @@ namespace ComplexShapeCreation.MemberNames;
 public static class MethodName
 {
     public static readonly StringName GetShapeVertices = new("get_shape_vertices");
+    [Obsolete("Method name has changed, use 'Regenerate' instead.", false)]
     public static readonly StringName RegeneratePolygon = new("regenerate_polygon");
     public static readonly StringName UsesPolygonMember = new("uses_polygon_member");
     public static readonly StringName GetSideLength = new("get_side_length");
