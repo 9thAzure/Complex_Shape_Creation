@@ -97,11 +97,24 @@ public class RegularPolygon2DTests : TestClass
     }
 
     [Test]
-    public void RegeneratePolygon_PolygonSetEmpty_PolygonFilled()
+    public async System.Threading.Tasks.Task QueueRegenerate_PolygonSetEmpty_PolygonFilled()
+    {
+        TestScene.AddChild(polygon);
+        polygon.Instance.Polygon = System.Array.Empty<Vector2>();
+
+        polygon.QueueRegenerate();
+        await TestScene.ToSignal(TestScene.GetTree(), SceneTree.SignalName.ProcessFrame);
+        await TestScene.ToSignal(TestScene.GetTree(), SceneTree.SignalName.ProcessFrame);
+
+        polygon.Instance.Polygon.Length.ShouldBeGreaterThan(0);
+    }
+
+    [Test]
+    public void Regenerate_PolygonSetEmpty_PolygonFilled()
     {
         polygon.Instance.Polygon = System.Array.Empty<Vector2>();
 
-        polygon.RegeneratePolygon();
+        polygon.Regenerate();
 
         polygon.Instance.Polygon.Length.ShouldBeGreaterThan(0);
     }
@@ -146,12 +159,12 @@ public class RegularPolygon2DTests : TestClass
     {
         const float rotationAmount = 1.2f;
         const float sizeScale = 2;
-        RegularPolygon2D expected = new(4, 10, 0);
-        RegularPolygon2D sample = new(4, 10, 0);
+        RegularPolygon2D expected = new(4, width: 100);
+        RegularPolygon2D sample = new(4, width: 100);
         expected.OffsetRotation += rotationAmount;
         expected.Size *= sizeScale;
-        expected.RegeneratePolygon();
-        sample.RegeneratePolygon();
+        expected.Regenerate();
+        sample.Regenerate();
 
         sample.ApplyTransformation(rotationAmount, sizeScale, false, false);
 

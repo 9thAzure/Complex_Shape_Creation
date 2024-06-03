@@ -54,7 +54,7 @@ func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
 	stub(shape, "_enter_tree").to_do_nothing()
 	add_child(shape)
 
-	shape._pre_redraw()
+	shape.queue_regenerate()
 
 	assert_true(shape.polygon.is_empty(), "Variable 'polygon' should still be an empty array.")
 	await wait_for_signal(get_tree().process_frame, 10)
@@ -65,12 +65,12 @@ func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
 func test_enter_tree__blocked_queue__polygon_not_regenerated():
 	var shape : RegularPolygon2D = partial_double(class_script).new()
 	stub(shape, "uses_polygon_member").to_return(true)
-	stub(shape, "regenerate_polygon").to_do_nothing()
+	stub(shape, "regenerate").to_do_nothing()
 	shape._queue_status = RegularPolygon2D._BLOCK_QUEUE
 
 	shape._enter_tree()
 
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularPolygon2D._IS_QUEUED, RegularPolygon2D._BLOCK_QUEUE])):
 	var shape : RegularPolygon2D = partial_double(class_script).new()
@@ -80,24 +80,24 @@ func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularP
 
 	assert_eq(shape._queue_status, RegularPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
-func test_regenerate_polygon__holed_shape_without_drawn_arc__ends_equal():
+func test_regenerate__holed_shape_without_drawn_arc__ends_equal():
 	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
 	shape.vertices_count = 4
 	shape.width = 5
 
-	shape.regenerate_polygon()
+	shape.regenerate()
 
 	var polygon := shape.polygon
 	assert_almost_eq(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
 	assert_almost_eq(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
 
-func test_regenerate_polygon__holed_shape_with_drawn_arc__ends_not_equal():
+func test_regenerate__holed_shape_with_drawn_arc__ends_not_equal():
 	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
 	shape.vertices_count = 4
 	shape.width = 5
 	shape.drawn_arc = 6
 
-	shape.regenerate_polygon()
+	shape.regenerate()
 
 	var polygon := shape.polygon
 	assert_almost_ne(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
@@ -191,16 +191,16 @@ func test_apply_transformation__various_shape_types__almost_expected_result(p=us
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, false, false)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_apply_transformation__size_change_creates_ring__shape_regenerated() -> void:
 	const sample_scale_amount := 2
@@ -208,7 +208,7 @@ func test_apply_transformation__size_change_creates_ring__shape_regenerated() ->
 	var shape := RegularPolygon2D.new()
 	shape.vertices_count = 4
 	shape.width = 15
-	shape.regenerate_polygon()
+	shape.regenerate()
 	autoqfree(shape)
 
 	shape.apply_transformation(0, sample_scale_amount, false, false)
@@ -222,7 +222,7 @@ func test_apply_transformation__size_change_removes_ring__shape_regenerated() ->
 	shape.vertices_count = 4
 	shape.size = 20
 	shape.width = 15
-	shape.regenerate_polygon()
+	shape.regenerate()
 	autoqfree(shape)
 
 	shape.apply_transformation(0, sample_scale_amount, false, false)
@@ -249,17 +249,17 @@ func test_apply_transformation__width_scaled__expected_shape(p=use_parameters(pa
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
 	expected.width *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true, false)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_apply_transformation__corner_size_scaled__expected_shape(p=use_parameters(params_transform_shape)):
 	const sample_scale_amount := 2.3
@@ -281,17 +281,17 @@ func test_apply_transformation__corner_size_scaled__expected_shape(p=use_paramet
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
 	expected.corner_size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, false, true)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_apply_transformation__width_and_corner_size_scaled__expected_shape(p=use_parameters(params_transform_shape)):
 	const sample_scale_amount := 2.3
@@ -313,15 +313,15 @@ func test_apply_transformation__width_and_corner_size_scaled__expected_shape(p=u
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
 	expected.width *= sample_scale_amount
 	expected.corner_size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true, true)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")

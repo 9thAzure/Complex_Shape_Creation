@@ -24,6 +24,12 @@ public class StarPolygon2D
     /// The number of points the star has.
     /// </summary>
     /// <remarks>If set to <c>1</c>, a line is drawn.</remarks>
+    public int VerticesCount
+    {
+        get => (int)Instance.Get(PropertyName.VerticesCount);
+        set => Instance.Set(PropertyName.VerticesCount, value);
+    }
+    [Obsolete("Property name has been replaced, use 'VerticesCount' instead.", false)]
     public int PointCount
     {
         get => (int)Instance.Get(PropertyName.PointCount);
@@ -144,11 +150,25 @@ public class StarPolygon2D
     /// Sets <see cref="innerSize"/> such that the angle formed by each point is equivalent to <paramref name="angle"/>, in radians.
     /// </summary>
     public void SetPointAngle(float angle) => Instance.Call(MethodName.SetPointAngle, angle);
+
+    /// <summary>
+    /// Queues <see cref="Regenerate"/> for the next process frame. If this method is called multiple times, the shape is only regenerated once.
+    /// </summary>
+    /// <remarks>
+    /// If this method is called when the node is outside the <see cref="SceneTree"/>, regeneration will be delayed to when the node enters the tree. 
+    /// Use <see cref="Regenerate"/> directly to force initialization.
+    /// </remarks>
+    public void QueueRegenerate() => Instance.Call(MethodName.QueueRegenerate);
+
     /// <summary>
     /// Sets <see cref="Polygon2D.Polygon"> using the properties of this node. 
     /// This method can be used when the node is outside the <see cref="SceneTree"/> to force this, and ignores the result of <see cref="UsesPolygonMember"/>.
     /// </summary>
+    public void Regenerate() => Instance.Call(MethodName.Regenerate);
+
+    [Obsolete("Method name has changed, use 'Regenerate' instead.", false)]
     public void RegeneratePolygon() => Instance.Call(MethodName.RegeneratePolygon);
+
     /// <summary>
     /// Checks whether the current properties of this node will have it use <see cref="Polygon2D.Polygon">.
     /// </summary>

@@ -9,7 +9,7 @@ extends Polygon2D
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
 ## Certain properties with circles will use a 32-sided polygon instead.
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
-## regeneration will be delayed to when it enters it. Use [method regenerate_polygon] to force regeneration.
+## regeneration will be delayed to when it enters it. Use [method regenerate] to force regeneration.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Certain properties with circles will use a 32-sided polygon instead.
@@ -21,7 +21,7 @@ var vertices_count : int = 1:
 		if vertices_count == 2 and width > 0:
 			polygon = PackedVector2Array()
 			return
-		_pre_redraw()
+		queue_regenerate()
 
 ## The length from each corner to the center.
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
@@ -29,7 +29,7 @@ var size : float = 10:
 	set(value):
 		assert(value > 0, "property 'size' must be greater than 0");
 		size = value
-		_pre_redraw()
+		queue_regenerate()
 
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
@@ -43,7 +43,7 @@ var offset_rotation_degrees : float = 0:
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
-		_pre_redraw()
+		queue_regenerate()
 
 ## Transforms [member Polygon2D.polygon], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
 ## This method modifies the existing [member Polygon2D.polygon], so is generally faster than changing [member size] and [member offset_rotation].
@@ -73,7 +73,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 	if not scale_width and \
 		(width >= size and width < size / scale
 		or width < size and width >= size / scale):
-		regenerate_polygon()
+		regenerate()
 		return
 	
 	var points_per_corner := 0
@@ -106,7 +106,7 @@ var width : float = -0.001:
 			return
 
 		width = value
-		_pre_redraw()
+		queue_regenerate()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
@@ -130,7 +130,7 @@ var drawn_arc_degrees : float = 360:
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
-		_pre_redraw()
+		queue_regenerate()
 		update_configuration_warnings()
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
@@ -142,7 +142,7 @@ var corner_size : float = 0.0:
 	set(value):
 		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
 		corner_size = value
-		_pre_redraw()
+		queue_regenerate()
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 ## This only has an effect if [member corner_size] is used.
@@ -151,7 +151,7 @@ var corner_smoothness : int = 0:
 	set(value):
 		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
 		corner_smoothness = value
-		_pre_redraw()
+		queue_regenerate()
 
 # "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
 const _NOT_QUEUED = 0
@@ -160,9 +160,14 @@ const _BLOCK_QUEUE = 2
 
 var _queue_status : int = _NOT_QUEUED 
 
-# Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
-# queue-like functionality - pauses, and only 1 call.
+## @deprecated
 func _pre_redraw() -> void:
+	queue_regenerate()
+
+## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
+## [br][br]If this method is called when the node is outside the [SceneTree], regeneration will be delayed to when the node enters the tree.
+## Call [method regenerate] directly to force initialization.
+func queue_regenerate() -> void:
 	if not uses_polygon_member():
 		# the setting the 'polygon' property already calls queue_redraw
 		queue_redraw()
@@ -180,11 +185,11 @@ func _pre_redraw() -> void:
 	_queue_status = _NOT_QUEUED
 	if not uses_polygon_member():
 		return
-	regenerate_polygon()
+	regenerate()
 
 func _enter_tree() -> void:
 	if _queue_status == _IS_QUEUED and uses_polygon_member():
-		regenerate_polygon()
+		regenerate()
 	_queue_status = _NOT_QUEUED
 
 func _draw() -> void:
@@ -272,9 +277,14 @@ func _draw() -> void:
 	
 	draw_colored_polygon(points, color)
 
+## see [method regenerate]
+## @deprecated
+func regenerate_polygon() -> void:
+	regenerate()
+
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force the regeneration of [member Polygon2D.polygon].
-func regenerate_polygon() -> void:
+func regenerate() -> void:
 	_queue_status = _NOT_QUEUED
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
@@ -437,6 +447,7 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 
 # Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
 ## [b][color=red]Warning[/color][/b]: This method is not meant to be used outside the class, and will be changed/made private in the future.
+## @deprecated
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 

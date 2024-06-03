@@ -59,6 +59,14 @@ var offset_position : Vector2 = Vector2.ZERO:
 		offset_position = value
 		queue_redraw()
 
+## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
+func queue_regenerate() -> void:
+	queue_redraw()
+
+## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
+func regenerate() -> void:
+	queue_redraw()
+
 func _draw() -> void:
 	if (vertices_count == 1):
 		draw_circle(offset_position, size, color)

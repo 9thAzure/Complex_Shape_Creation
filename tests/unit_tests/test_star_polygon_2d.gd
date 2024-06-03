@@ -13,7 +13,7 @@ func test_init__params_filled__assigned_to_vars():
 
 	star = autoqfree(StarPolygon2D.new(3, 5.0, 1.0, 1.0, Color.RED, Vector2.ONE, 1.0, 1.0, 1.0, 1))
 
-	assert_eq(star.point_count, 3, "Property 'point_count'.")
+	assert_eq(star.vertices_count, 3, "Property 'vertices_count'.")
 	assert_eq(star.size, 5.0, "Property 'size'.")
 	assert_eq(star.inner_size, 1.0, "Property 'inner_size'.")
 	assert_eq(star.offset_rotation, 1.0, "Property 'offset_rotation'.")
@@ -44,13 +44,13 @@ func test_init__polygon_empty__queue_not_blocked():
 
 func test_enter_tree__blocked_queue__regenerate_not_called_not_queued():
 	var shape : StarPolygon2D = partial_double(class_script).new()
-	stub(shape, "regenerate_polygon").to_do_nothing()
+	stub(shape, "regenerate").to_do_nothing()
 	shape.polygon = sample_polygon
 	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
 
 	shape._enter_tree()
 
-	assert_not_called(shape, "regenerate_polygon") # does not accept a custom message.
+	assert_not_called(shape, "regenerate") # does not accept a custom message.
 
 func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([StarPolygon2D._IS_QUEUED, StarPolygon2D._BLOCK_QUEUE])):
 	var shape : StarPolygon2D = partial_double(class_script).new()
@@ -66,7 +66,7 @@ func test_pre_redraw__not_queued__is_queued():
 	star.polygon = sample_polygon
 	star._queue_status = StarPolygon2D._NOT_QUEUED
 
-	star._pre_redraw()
+	star.queue_regenerate()
 
 	assert_eq(star._queue_status, StarPolygon2D._IS_QUEUED, "Property '_queue_status' should be '_IS_QUEUED' (1).")
 
@@ -77,7 +77,7 @@ func test_queue_regenerate__in_tree__delayed_shape_filled():
 	stub(star, "_enter_tree").to_do_nothing()
 	add_child(star)
 
-	star._pre_redraw()
+	star.queue_regenerate()
 
 	assert_true(star.polygon.is_empty(), "Variable 'polygon' should still be an empty array.")
 	await wait_for_signal(get_tree().process_frame, 10)
@@ -114,7 +114,7 @@ func test_apply_transformation__various_shape_types__almost_expected_result(p=us
 	assert(p[2] >= 0 and p[0] != 2, "param does not have the node use 'polygon'.")
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
-	shape.point_count = p[0]
+	shape.vertices_count = p[0]
 	shape.size = p[1]
 	shape.inner_size = p[1] / 2.0
 	shape.width = p[2]
@@ -124,67 +124,67 @@ func test_apply_transformation__various_shape_types__almost_expected_result(p=us
 	shape._queue_status = StarPolygon2D._NOT_QUEUED
 	var expected := StarPolygon2D.new()
 	autoqfree(expected)
-	expected.point_count = p[0]
+	expected.vertices_count = p[0]
 	expected.size = p[1]
 	expected.inner_size = p[1] / 2.0
 	expected.width = p[2]
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
 	expected.inner_size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, false, false)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_apply_transformation__size_change_creates_ring__shape_regenerated() -> void:
 	const sample_scale_amount := 3
 	var expected := StarPolygon2D.new()
-	expected.point_count = 4
+	expected.vertices_count = 4
 	expected.width = 15
-	expected.regenerate_polygon()
+	expected.regenerate()
 	autoqfree(expected)
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
-	shape.point_count = 4
+	shape.vertices_count = 4
 	shape.width = 15
 	shape._queue_status = StarPolygon2D._NOT_QUEUED
 	shape.polygon = expected.polygon
 	expected.size *= sample_scale_amount
 	expected.inner_size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(0, sample_scale_amount, false, false)
 
-	assert_called(shape, "regenerate_polygon")
+	assert_called(shape, "regenerate")
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
 
 func test_apply_transformation__size_change_removes_ring__shape_regenerated() -> void:
 	const sample_scale_amount := 0.2
 	var expected := StarPolygon2D.new()
-	expected.point_count = 4
+	expected.vertices_count = 4
 	expected.width = 5
-	expected.regenerate_polygon()
+	expected.regenerate()
 	autoqfree(expected)
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
-	shape.point_count = 4
+	shape.vertices_count = 4
 	shape.width = 5
 	shape._queue_status = StarPolygon2D._NOT_QUEUED
 	shape.polygon = expected.polygon
 	expected.size *= sample_scale_amount
 	expected.inner_size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(0, sample_scale_amount, false, false)
 
-	assert_called(shape, "regenerate_polygon")
+	assert_called(shape, "regenerate")
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
 
 func test_apply_transformation__width_scaled__expected_shape(p=use_parameters(params_transform_shape)):
@@ -192,7 +192,7 @@ func test_apply_transformation__width_scaled__expected_shape(p=use_parameters(pa
 	const sample_rotation_amount := 1
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
-	shape.point_count = p[0]
+	shape.vertices_count = p[0]
 	shape.size = p[1]
 	shape.inner_size = p[1] / 2.0
 	shape.width = p[2]
@@ -202,32 +202,32 @@ func test_apply_transformation__width_scaled__expected_shape(p=use_parameters(pa
 	shape._queue_status = StarPolygon2D._NOT_QUEUED
 	var expected := StarPolygon2D.new()
 	autoqfree(expected)
-	expected.point_count = p[0]
+	expected.vertices_count = p[0]
 	expected.size = p[1]
 	expected.inner_size = p[1] / 2.0
 	expected.width = p[2]
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
 	expected.inner_size *= sample_scale_amount
 	expected.width *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true, false)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_apply_transformation__corner_size_scaled__expected_shape(p=use_parameters(params_transform_shape)):
 	const sample_scale_amount := 2.3
 	const sample_rotation_amount := 1
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
-	shape.point_count = p[0]
+	shape.vertices_count = p[0]
 	shape.size = p[1]
 	shape.inner_size = p[1] / 2.0
 	shape.width = p[2]
@@ -237,32 +237,32 @@ func test_apply_transformation__corner_size_scaled__expected_shape(p=use_paramet
 	shape._queue_status = StarPolygon2D._NOT_QUEUED
 	var expected := StarPolygon2D.new()
 	autoqfree(expected)
-	expected.point_count = p[0]
+	expected.vertices_count = p[0]
 	expected.size = p[1]
 	expected.inner_size = p[1] / 2.0
 	expected.width = p[2]
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
 	expected.inner_size *= sample_scale_amount
 	expected.corner_size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, false, true)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_apply_transformation__width_and_corner_size_scaled__expected_shape(p=use_parameters(params_transform_shape)):
 	const sample_scale_amount := 2.3
 	const sample_rotation_amount := 1
 	var shape : StarPolygon2D = partial_double(class_script).new()
 	shape._queue_status = StarPolygon2D._BLOCK_QUEUE
-	shape.point_count = p[0]
+	shape.vertices_count = p[0]
 	shape.size = p[1]
 	shape.inner_size = p[1] / 2.0
 	shape.width = p[2]
@@ -272,23 +272,23 @@ func test_apply_transformation__width_and_corner_size_scaled__expected_shape(p=u
 	shape._queue_status = StarPolygon2D._NOT_QUEUED
 	var expected := StarPolygon2D.new()
 	autoqfree(expected)
-	expected.point_count = p[0]
+	expected.vertices_count = p[0]
 	expected.size = p[1]
 	expected.inner_size = p[1] / 2.0
 	expected.width = p[2]
 	expected.drawn_arc = p[3]
 	expected.corner_size = p[4]
 	expected.corner_smoothness = p[5]
-	expected.regenerate_polygon()
+	expected.regenerate()
 	shape.polygon = expected.polygon
 	expected.offset_rotation += sample_rotation_amount
 	expected.size *= sample_scale_amount
 	expected.inner_size *= sample_scale_amount
 	expected.width *= sample_scale_amount
 	expected.corner_size *= sample_scale_amount
-	expected.regenerate_polygon()
+	expected.regenerate()
 
 	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true, true)
 
 	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
