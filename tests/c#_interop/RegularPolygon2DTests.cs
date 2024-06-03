@@ -159,8 +159,8 @@ public class RegularPolygon2DTests : TestClass
     {
         const float rotationAmount = 1.2f;
         const float sizeScale = 2;
-        RegularPolygon2D expected = new(4, 10, 0);
-        RegularPolygon2D sample = new(4, 10, 0);
+        RegularPolygon2D expected = new(4, width: 100);
+        RegularPolygon2D sample = new(4, width: 100);
         expected.OffsetRotation += rotationAmount;
         expected.Size *= sizeScale;
         expected.Regenerate();

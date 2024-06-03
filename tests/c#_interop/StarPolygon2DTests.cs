@@ -150,8 +150,8 @@ public class StarPolygon2DTests : TestClass
     {
         const float rotationAmount = 1.2f;
         const float sizeScale = 2;
-        StarPolygon2D expected = new(4, 10, 0);
-        StarPolygon2D sample = new(4, 10, 0);
+        StarPolygon2D expected = new(5, width: 100);
+        StarPolygon2D sample = new(5, width: 100);
         expected.OffsetRotation += rotationAmount;
         expected.Size *= sizeScale;
         expected.Regenerate();
