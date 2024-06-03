@@ -52,11 +52,19 @@ var color : Color = Color.WHITE:
 		color = value
 		queue_redraw()
 
-## The offset position of the shape.
+## see [member offset]
+## @deprecated
 @export
-var offset_position : Vector2 = Vector2.ZERO:
+var offset_position := Vector2.ZERO:
 	set(value):
-		offset_position = value
+		offset = value
+	get:
+		return offset
+
+## The offset position of the shape.
+var offset : Vector2 = Vector2.ZERO:
+	set(value):
+		offset = value
 		queue_redraw()
 
 ## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
@@ -69,24 +77,24 @@ func regenerate() -> void:
 
 func _draw() -> void:
 	if (vertices_count == 1):
-		draw_circle(offset_position, size, color)
+		draw_circle(offset, size, color)
 		return
 	
 	if (vertices_count == 2):
 		if offset_rotation == 0:
-			draw_line(Vector2.UP * size + offset_position, Vector2.DOWN * size + offset_position, color)
+			draw_line(Vector2.UP * size + offset, Vector2.DOWN * size + offset, color)
 			return
 		
 		var point1 := Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
-		draw_line(point1 + offset_position, -point1 + offset_position, color)
+		draw_line(point1 + offset, -point1 + offset, color)
 		return
 	
 	if (vertices_count == 4 && offset_rotation == 0):
 		const sqrt_two_over_two := 0.707106781
-		draw_rect(Rect2(offset_position - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 		
-	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation, offset_position), color)
+	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation, offset), color)
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
@@ -98,7 +106,7 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if color != Color.WHITE:
 		self.color = color
 	if offset_position != Vector2.ZERO:
-		self.offset_position = offset_position
+		self.offset = offset_position
 
 static var _circle := get_shape_vertices(32)
 
