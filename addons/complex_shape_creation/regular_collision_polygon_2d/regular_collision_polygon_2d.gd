@@ -35,8 +35,8 @@ var offset_rotation_degrees : float = 0:
 	get:
 		return rad_to_deg(offset_rotation)
 
-@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
 ## The offset rotation of the shape, in radians.
+@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
@@ -242,7 +242,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 
 ## The length of the inner vertices between each normal vertices to the center of the shape. If set to [code]0[/code], it is ignored.
 ## [br][br]If used, [member vertices_count] must be set to [code]1[/code] to generate lines, and circles cannot be generated.
-## It determines the length of the bottem segment of the line.
+## It determines the length of the bottom segment of the line.
 @export_range(0, 10, 0.001, "or_greater", "hide_slider")
 var inner_size : float = 0.0:
 	set(value):
@@ -551,7 +551,7 @@ static func convert_to_line_segments(points : PackedVector2Array) -> PackedVecto
 	return points
 
 ## Modifies [param segments] to form an outline of the interconnected segments with the given [param width].
-## [param join_perimeter] controls whether the function should extend (or shorten) line segments to form a propery closed shape.
+## [param join_perimeter] controls whether the function should extend (or shorten) line segments to form a properly closed shape.
 ## For disconnected segments, use [method widen_polyline].
 ## [br][br][param segments] should contain pairs of points for each segment (see [property ConcavePolygonShape2D.segments]).
 static func widen_polyline(segments : PackedVector2Array, width : float, join_perimeter : bool) -> void:
@@ -589,7 +589,7 @@ static func widen_polyline(segments : PackedVector2Array, width : float, join_pe
 	segments[original_size] = segments[original_size - 1]
 	segments[original_size + 1] = segments[original_size + 2]
 
-## modifies [param segements] to to form the outlines of every disconnected segment with the given [param width].
+## modifies [param segments] to to form the outlines of every disconnected segment with the given [param width].
 ## For interconnected segments, use [method widen_polyline].
 ## [br][br][param segments] should contain pairs of points for each segment (see [property ConcavePolygonShape2D.segments]),
 static func widen_multiline(segments : PackedVector2Array, width : float) -> void:
