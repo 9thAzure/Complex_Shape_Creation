@@ -23,10 +23,21 @@ func _init(parent : Node2D) -> void:
 
 func _ready():
 	assert(Engine.is_editor_hint())
+	_parent.draw.connect(_on_parent_draw)
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	var button := _select_button_query.get_button()
 	if SelectModeQuery.valid_button_instance(button):
 		button.toggled.connect(_on_select_toggled)
+
+func _on_parent_draw() -> void:
+	_origin = _parent.offset
+	_from_parent_properties()
+
+func _from_parent_properties() -> void:
+	printerr("'_from_parent_properties' is abstract")
+
+func _update_properties() -> void:
+	printerr("'_update_properties' is abstract")
 
 func _on_selection_changed():
 	if not is_inside_tree():
@@ -102,6 +113,8 @@ func maintain_shape():
 	global_transform = Transform2D(PI / 4, Vector2.ONE / editor_scale, 0, cache_global_position)
 	if _being_dragged and Input.is_key_pressed(KEY_SHIFT):
 		_clamp_position()
+	if _being_dragged:
+		_update_properties()
 
 func _clamp_position() -> void:
 	if _shift_clamps.size() == 0:
