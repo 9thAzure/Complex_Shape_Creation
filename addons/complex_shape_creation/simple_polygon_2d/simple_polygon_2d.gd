@@ -110,7 +110,7 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
-		var control := preload("res://addons/complex_shape_creation/gui_editing/gui_editor.gd").new(self)
+		var control := preload("res://addons/complex_shape_creation/gui_handlers/base_handler.gd").new(self)
 		control.position += Vector2.RIGHT * 5
 		add_child(control)
 

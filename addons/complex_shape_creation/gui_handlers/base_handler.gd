@@ -1,11 +1,18 @@
 @tool
+@static_unload
 extends Node2D 
 
-var _parent : Node2D
+static var _select_button_query := SelectModeQuery.new()
+var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius]
 
+var _parent : Node2D
 var _origin := Vector2.ZERO
 
-var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius]
+var _select_button_enabled := true
+var _is_echo := false
+var _being_dragged := false
+var _old_position := Vector2.ZERO
+
 
 func _init(parent : Node2D) -> void:
 	_parent = parent
@@ -17,6 +24,9 @@ func _init(parent : Node2D) -> void:
 func _ready():
 	assert(Engine.is_editor_hint())
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
+	var button := _select_button_query.get_button()
+	if SelectModeQuery.valid_button_instance(button):
+		button.toggled.connect(_on_select_toggled)
 
 func _on_selection_changed():
 	if not is_inside_tree():
@@ -34,7 +44,7 @@ func _on_selection_changed():
 	
 	var nodes := EditorInterface.get_selection().get_selected_nodes()
 	if _parent in nodes:
-		set_process(true)
+		set_process(_select_button_enabled)
 		visible = true 
 	else:
 		maintain_shape()
@@ -44,6 +54,13 @@ func _on_selection_changed():
 			return
 
 		EditorInterface.edit_node(_parent)
+
+func _on_select_toggled(toggled : bool) -> void:
+	_select_button_enabled = toggled
+	if not visible:
+		return
+	
+	set_process(toggled)
 
 func _draw() -> void:
 	const margin := 2
@@ -61,9 +78,6 @@ func _process(_delta):
 	if is_inside_tree():
 		maintain_shape()
 	
-var _is_echo := false
-var _being_dragged := false
-var _old_position := Vector2.ZERO
 
 func maintain_shape():
 	var editor_scale := get_viewport_transform().get_scale().x
@@ -122,3 +136,54 @@ func clamp_circle_radius() -> Vector2:
 
 func _manhattan_distance(point : Vector2) -> float:
 	return abs(point.x) + abs(point.y)
+
+class SelectModeQuery:
+	extends RefCounted
+
+	var _select_button : Button
+
+	func get_button() -> Button:
+		if not valid_button_instance(_select_button):
+			retrieve_button()
+		return _select_button
+
+	static func valid_button_instance(button : Node = null) -> bool:
+		if button == null:
+			return false
+		
+		if button.is_queued_for_deletion():
+			return false
+
+		if not button is Button:
+			return false
+
+		return button.toggle_mode and button.icon != null
+
+	func retrieve_button(forced := false) -> bool:
+		if not forced and valid_button_instance(_select_button):
+			printerr("_select_button is already set.")
+			return true
+
+		var main_screen := EditorInterface.get_editor_main_screen()
+		var button1 := main_screen.get_node("@CanvasItemEditor@9465/@MarginContainer@9280/@HFlowContainer@9281/@HBoxContainer@9282/@Button@9329")
+		var button2 := main_screen.get_child(0).get_child(0).get_child(0).get_child(0).get_child(0)
+		var button3 := EditorInterface.get_editor_viewport_2d()\
+			.get_parent().get_parent().get_parent().get_parent().get_parent().get_parent()\
+			.get_child(0).get_child(0).get_child(0).get_child(0).get_child(0)
+
+		var buttons = [button1, button2, button3]
+
+		for button in buttons:
+			if valid_button_instance(button):
+				_select_button = button
+				return true
+
+		printerr("Cannot find selection button.")
+		return false
+	
+	func check_signals() -> void:
+		if not valid_button_instance(_select_button):
+			return
+
+	func _init() -> void:
+		retrieve_button()
