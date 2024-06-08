@@ -325,6 +325,11 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
 	
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		var control := preload("res://addons/complex_shape_creation/gui_handlers/size_rotation_handler.gd").new(self, 2)
+		add_child(control)
+
 func _get_configuration_warnings() -> PackedStringArray:
 	if drawn_arc == 0:
 		return ["nothing will be drawn when 'drawn_arc' is 0."]

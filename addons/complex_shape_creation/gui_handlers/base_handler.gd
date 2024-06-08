@@ -7,6 +7,7 @@ var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius]
 
 var _parent : Node2D
 var _origin := Vector2.ZERO
+var size := 1.0
 
 var _select_button_enabled := true
 var _is_echo := false
@@ -14,8 +15,9 @@ var _being_dragged := false
 var _old_position := Vector2.ZERO
 
 
-func _init(parent : Node2D) -> void:
+func _init(parent : Node2D, handler_size := 1.0) -> void:
 	_parent = parent
+	size = handler_size
 	if parent == null:
 		printerr("%s initialized without parent" % self)
 	else:
@@ -83,7 +85,7 @@ func _draw() -> void:
 	box.border_width_right = margin
 	box.border_color = Color.BLACK
 
-	box.draw(get_canvas_item(), Rect2(-5, -5, 10, 10))
+	box.draw(get_canvas_item(), Rect2(-5 * size, -5 * size, 10 * size, 10 * size))
 
 func _process(_delta):
 	if is_inside_tree():
@@ -99,7 +101,7 @@ func maintain_shape():
 	if mouse_pressed:
 		if not _is_echo:
 			_is_echo = true
-			if _manhattan_distance(mouse_position - cache_global_position) <= 7 / editor_scale:
+			if _manhattan_distance(mouse_position - cache_global_position) <= 7 * size / editor_scale:
 				_old_position = position
 				_being_dragged = true
 				if _old_position == Vector2.ZERO:

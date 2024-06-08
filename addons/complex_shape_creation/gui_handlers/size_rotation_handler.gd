@@ -18,6 +18,9 @@ func _update_properties() -> void:
 	_parent.offset_rotation = atan2(functional_position.y, functional_position.x) + PI / 2 - get_rotation_offset()
 
 func get_rotation_offset() -> float:
-	if not is_star_shape and _parent.vertices_count % 2 == 0 and _parent.vertices_count != 2:
-		return TAU / _parent.vertices_count / 2
-	return 0
+	var offset := 0.0
+	if not is_star_shape:
+		offset += PI
+		if _parent.vertices_count != 2:
+			offset += TAU / _parent.vertices_count / 2
+	return offset
