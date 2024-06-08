@@ -184,10 +184,26 @@ class SelectModeQuery:
 		var button2 := main_screen.get_child(0).get_child(0).get_child(0).get_child(0).get_child(0)
 		var button3 := EditorInterface.get_editor_viewport_2d()\
 			.get_parent().get_parent().get_parent().get_parent().get_parent().get_parent()\
-			.get_child(0).get_child(0).get_child(0).get_child(0).get_child(0)
+			.get_child(0).get_child(0).get_child(0).get_child(0)
 
-		var buttons = [button1, button2, button3]
+		var buttons : Array[Node] = [button1, button2, button3]
+		
+		var invalid_state := false
+		for i in buttons.size():
+			var button := buttons[i]
+			if not valid_button_instance(button):
+				printerr("invalid button instance obtained (i: %s)" % i)
+				invalid_state = true
+		
+		for i in buttons.size() - 1:
+			if buttons[i] != buttons[i + 1]:
+				printerr("2 separate instances obtained (i: %s)" % i)
+				invalid_state = true
 
+		if not invalid_state:
+			_select_button = buttons[0]
+			return true
+		
 		for button in buttons:
 			if valid_button_instance(button):
 				_select_button = button
