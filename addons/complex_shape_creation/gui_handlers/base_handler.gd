@@ -9,8 +9,6 @@ var _parent : Node2D = null
 var _origin := Vector2.ZERO
 var size := 1.0
 
-var _select_button_enabled := true
-var _is_echo := false
 var _being_dragged := false
 var _old_position := Vector2.ZERO
 
@@ -23,20 +21,12 @@ func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, han
 	size = handler_size
 
 func _ready() -> void:
-	set_process(true)
 	assert(Engine.is_editor_hint())
-	# if _parent != null:
-	# 	_parent.draw.disconnect(_on_parent_draw)
 
 	_parent = get_parent()
-	# _parent.draw.connect(_on_parent_draw)
 
 	maintain_shape()
 	_from_parent_properties()
-
-# func _on_parent_draw() -> void:
-# 	_origin = _parent.offset
-# 	_from_parent_properties()
 
 func mouse_press(point : Vector2) -> bool:
 	if _manhattan_distance(point - global_position) <= 7 * size / get_viewport_transform().get_scale().x:
@@ -50,6 +40,7 @@ func mouse_press(point : Vector2) -> bool:
 func mouse_release() -> bool:
 	if _being_dragged:
 		_being_dragged = false
+		_mouse_released()
 		return true
 	return false
 
@@ -58,6 +49,9 @@ func _from_parent_properties() -> void:
 
 func _update_properties() -> void:
 	printerr("'_update_properties' is abstract")
+
+func _mouse_released() -> void:
+	printerr("'_mouse_released' is abstract")
 
 func _draw() -> void:
 	const margin := 2

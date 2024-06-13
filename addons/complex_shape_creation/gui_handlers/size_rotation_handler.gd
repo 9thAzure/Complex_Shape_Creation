@@ -10,8 +10,8 @@ const _SHAPE_COLLISION := 4
 
 
 func _ready() -> void:
+	shape_type = _get_shape_type(get_parent())
 	super._ready()
-	shape_type = _get_shape_type(_parent)
 	
 func _get_shape_type(shape : Node2D) -> int:
 	if shape is SimplePolygon2D:
@@ -36,6 +36,20 @@ func _update_properties() -> void:
 	var functional_position := position - _origin
 	_parent.size = functional_position.length()
 	_parent.offset_rotation = atan2(functional_position.y, functional_position.x) + PI / 2 - get_rotation_offset()
+
+func _mouse_released() -> void:
+	_undo_redo_manager.create_action("Resizing and Rotating Shape")
+
+	_undo_redo_manager.add_do_property(_parent, &"size", _parent.size)
+	_undo_redo_manager.add_do_property(_parent, &"offset_rotation", _parent.offset_rotation)
+
+	var old_functional_position := (_old_position - _origin)
+	var old_size = old_functional_position.length()
+	var old_rotation = atan2(old_functional_position.y, old_functional_position.x) + PI / 2 - get_rotation_offset()
+	_undo_redo_manager.add_undo_property(_parent, &"size", old_size)
+	_undo_redo_manager.add_undo_property(_parent, &"offset_rotation", old_rotation)
+
+	_undo_redo_manager.commit_action()
 
 func get_rotation_offset() -> float:
 	var offset := 0.0
