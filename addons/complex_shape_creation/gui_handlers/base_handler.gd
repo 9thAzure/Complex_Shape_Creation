@@ -34,6 +34,7 @@ func mouse_press(point : Vector2) -> bool:
 		_being_dragged = true
 		if _old_position == Vector2.ZERO:
 			_old_position = Vector2.RIGHT
+		modulate = Color.LIME_GREEN
 		return true
 	return false
 
@@ -41,6 +42,7 @@ func mouse_release() -> bool:
 	if _being_dragged:
 		_being_dragged = false
 		_mouse_released()
+		modulate = Color.WHITE
 		return true
 	return false
 
@@ -54,16 +56,12 @@ func _mouse_released() -> void:
 	printerr("'_mouse_released' is abstract")
 
 func _draw() -> void:
-	const margin := 2
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color.WHITE
-	box.border_width_bottom = margin
-	box.border_width_top = margin
-	box.border_width_left = margin
-	box.border_width_right = margin
-	box.border_color = Color.BLACK
+	const margin := 1
 
-	box.draw(get_canvas_item(), Rect2(-5 * size, -5 * size, 10 * size, 10 * size))
+	var shape := RegularPolygon2D.get_shape_vertices(5, 9)
+	draw_colored_polygon(shape, Color.WHITE)
+	draw_polyline(shape, Color.BLACK, margin, true)
+	draw_line(shape[-1], shape[0], Color.BLACK, margin, true)
 
 var previous_editor_scale := 1.0
 func _process(_delta) -> void:
@@ -84,7 +82,7 @@ func maintain_shape() -> void:
 	if not _parent is CollisionShape2D:
 		_origin = _parent.offset
 	_from_parent_properties()
-	global_transform = Transform2D(PI / 4, Vector2.ONE / get_viewport_transform().get_scale().x, 0, global_position)
+	global_transform = Transform2D(0, Vector2.ONE / get_viewport_transform().get_scale().x, 0, global_position)
 
 func _clamp_position() -> void:
 	if _shift_clamps.size() == 0:
