@@ -1,7 +1,7 @@
 @tool
 extends Node2D 
 
-var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius]
+var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius, clamp_compass_lines]
 
 var _plugin : EditorPlugin
 var _undo_redo_manager : EditorUndoRedoManager
@@ -104,7 +104,6 @@ func _clamp_position() -> void:
 	position = best_position
 
 func clamp_straight_line() -> Vector2:
-	_origin = Vector2.ZERO
 	var allowed_line := _old_position - _origin
 	var inverse_line := Vector2(-allowed_line.y, allowed_line.x)
 	var a := RegularGeometry2D._find_intersection(position, inverse_line, _origin, allowed_line)
@@ -113,6 +112,15 @@ func clamp_straight_line() -> Vector2:
 func clamp_circle_radius() -> Vector2:
 	var radius := (_old_position - _origin).length()
 	return _origin + (position - _origin).normalized() * radius
+
+func clamp_compass_lines() -> Vector2:
+	var functional_position := position - _origin
+	var angle := atan2(functional_position.y, functional_position.x)
+	var multiplier := floor((angle + TAU / 16) / (TAU / 8))
+
+	angle = multiplier * TAU / 8
+	var slope := Vector2(cos(angle), sin(angle))
+	return Geometry2D.get_closest_point_to_segment_uncapped(position, _origin, _origin + slope)
 
 func _manhattan_distance(point : Vector2) -> float:
 	return abs(point.x) + abs(point.y)
