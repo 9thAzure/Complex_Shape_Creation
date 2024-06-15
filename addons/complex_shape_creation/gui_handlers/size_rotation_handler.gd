@@ -8,7 +8,6 @@ const _SHAPE_REGULAR := 2
 const _SHAPE_STAR := 3
 const _SHAPE_COLLISION := 4
 
-
 func _ready() -> void:
 	shape_type = _get_shape_type(get_parent())
 	super._ready()
@@ -25,7 +24,6 @@ func _get_shape_type(shape : Node2D) -> int:
 			
 	printerr("unrecognized shape given: %s" % shape)
 	return 0
-
 
 func _from_parent_properties() -> void:
 	var offset_rotation : float = _parent.offset_rotation + get_rotation_offset()
