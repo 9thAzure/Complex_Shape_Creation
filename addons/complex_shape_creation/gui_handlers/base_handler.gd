@@ -26,7 +26,6 @@ func _ready() -> void:
 	_parent = get_parent()
 
 	maintain_shape()
-	_from_parent_properties()
 
 func mouse_press(point : Vector2) -> bool:
 	if _manhattan_distance(point - global_position) <= 7 * size / get_viewport_transform().get_scale().x:
@@ -38,9 +37,11 @@ func mouse_press(point : Vector2) -> bool:
 		return true
 	return false
 
+var suppress_from_parent_call := false
 func mouse_release() -> bool:
 	if _being_dragged:
 		_being_dragged = false
+		suppress_from_parent_call = true
 		_mouse_released()
 		modulate = Color.WHITE
 		return true
@@ -67,7 +68,7 @@ var previous_editor_scale := 1.0
 func _process(_delta) -> void:
 	var editor_scale := get_viewport_transform().get_scale().x
 	if not is_equal_approx(editor_scale, previous_editor_scale):
-		maintain_shape()
+		maintain_editor_scale()
 		previous_editor_scale = editor_scale
 
 	if not _being_dragged:
@@ -79,9 +80,15 @@ func _process(_delta) -> void:
 	_update_properties()
 	
 func maintain_shape() -> void:
+	if suppress_from_parent_call:
+		suppress_from_parent_call = false
+		return
+
 	if not _parent is CollisionShape2D:
 		_origin = _parent.offset
 	_from_parent_properties()
+
+func maintain_editor_scale() -> void:
 	global_transform = Transform2D(0, Vector2.ONE / get_viewport_transform().get_scale().x, 0, global_position)
 
 func _clamp_position() -> void:
