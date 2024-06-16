@@ -33,7 +33,7 @@ func _from_parent_properties() -> void:
 func _update_properties() -> void:
 	var functional_position := position - _origin
 	_parent.size = functional_position.length()
-	_parent.offset_rotation = atan2(functional_position.y, functional_position.x) + PI / 2 - get_rotation_offset()
+	_parent.offset_rotation = fmod(atan2(functional_position.y, functional_position.x) + PI / 2 - get_rotation_offset() + TAU, TAU)
 
 func _mouse_released() -> void:
 	_undo_redo_manager.create_action("Resizing and Rotating Shape")
@@ -43,7 +43,7 @@ func _mouse_released() -> void:
 
 	var old_functional_position := (_old_position - _origin)
 	var old_size = old_functional_position.length()
-	var old_rotation = atan2(old_functional_position.y, old_functional_position.x) + PI / 2 - get_rotation_offset()
+	var old_rotation = fmod(atan2(old_functional_position.y, old_functional_position.x) + PI / 2 - get_rotation_offset() + TAU, TAU)
 	_undo_redo_manager.add_undo_property(_parent, &"size", old_size)
 	_undo_redo_manager.add_undo_property(_parent, &"offset_rotation", old_rotation)
 
