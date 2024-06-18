@@ -13,7 +13,7 @@ var _being_dragged := false
 var _old_position := Vector2.ZERO
 
 
-func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 1.0) -> void:
+func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
 	_plugin = plugin
 	_undo_redo_manager = undo_redo_manager
 	_undo_redo_manager.version_changed.connect(maintain_shape)
@@ -28,7 +28,8 @@ func _ready() -> void:
 	maintain_shape()
 
 func mouse_press(point : Vector2) -> bool:
-	if _manhattan_distance(point - global_position) <= 7 * size / get_viewport_transform().get_scale().x:
+	const extra_margin := 2.0
+	if (point - global_position).length_squared() <= ((size + extra_margin) / get_viewport_transform().get_scale().x) ** 2:
 		_old_position = position
 		_being_dragged = true
 		if _old_position == Vector2.ZERO:
@@ -59,7 +60,7 @@ func _mouse_released() -> void:
 func _draw() -> void:
 	const margin := 1
 
-	var shape := RegularPolygon2D.get_shape_vertices(5, 9)
+	var shape := RegularPolygon2D.get_shape_vertices(5, size)
 	draw_colored_polygon(shape, Color.WHITE)
 	draw_polyline(shape, Color.BLACK, margin, true)
 	draw_line(shape[-1], shape[0], Color.BLACK, margin, true)
@@ -129,6 +130,3 @@ func clamp_compass_lines() -> Vector2:
 	angle = multiplier * TAU / 8
 	var slope := Vector2(cos(angle), sin(angle))
 	return Geometry2D.get_closest_point_to_segment_uncapped(position, _origin, _origin + slope)
-
-func _manhattan_distance(point : Vector2) -> float:
-	return abs(point.x) + abs(point.y)
