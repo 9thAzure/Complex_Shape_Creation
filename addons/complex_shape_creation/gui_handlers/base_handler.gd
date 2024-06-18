@@ -84,6 +84,7 @@ func maintain_shape() -> void:
 		suppress_from_parent_call = false
 		return
 
+	_origin = Vector2.ZERO
 	if not _parent is CollisionShape2D:
 		_origin = _parent.offset
 	_from_parent_properties()
