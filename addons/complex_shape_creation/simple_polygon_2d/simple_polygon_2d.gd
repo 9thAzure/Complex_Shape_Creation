@@ -108,6 +108,11 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if offset_position != Vector2.ZERO:
 		self.offset = offset_position
 
+# func _ready() -> void:
+# 	if Engine.is_editor_hint():
+# 		var control := preload("res://addons/complex_shape_creation/gui_handlers/size_rotation_handler.gd").new(self)
+# 		add_child(control)
+
 static var _circle := get_shape_vertices(32)
 
 ## Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
