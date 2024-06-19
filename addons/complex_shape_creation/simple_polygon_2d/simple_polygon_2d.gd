@@ -122,9 +122,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	assert(size > 0, "param 'size' must be positive.")
 	
 	if vertices_count == 1:
-		if size == 1 and offset_rotation == 0.0 and offset_position == Vector2.ZERO:
-			return PackedVector2Array(_circle)
-		return PackedVector2Array(_circle) * Transform2D(offset_rotation, Vector2.ONE * size, 0, offset_position)
+		return _circle * Transform2D(-offset_rotation, Vector2.ONE * size, 0, offset_position)
 
 	var points := PackedVector2Array()
 	points.resize(vertices_count)
