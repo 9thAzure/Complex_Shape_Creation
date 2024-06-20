@@ -81,7 +81,8 @@ All other functions **modify** the array passed in as the argument.
 ## License
 
 This addon is available under the [MIT](https://mit-license.org/) license,
-which is in the addon's [folder](/addons/complex_shape_creation/LICENSE.txt)
+which is in the addon's [folder](/addons/complex_shape_creation/LICENSE.txt).
+A copy is available in the root [folder](/License.md).
 
 ## Plugins / Packages Used
 
