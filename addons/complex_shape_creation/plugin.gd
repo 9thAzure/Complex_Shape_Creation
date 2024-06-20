@@ -46,6 +46,9 @@ func _forward_canvas_gui_input(event) -> bool:
 			return false
 		
 		if event.pressed:
+			if not _select_mode_button_selected():
+				return false
+
 			var viewport := EditorInterface.get_editor_viewport_2d()
 			var transform := viewport.get_final_transform()
 			var size := viewport.size
@@ -61,3 +64,32 @@ func _forward_canvas_gui_input(event) -> bool:
 			return _size_rotation_handler.mouse_release()
 	
 	return false
+
+var _select_mode_button : Button = null
+func _select_mode_button_selected() -> bool:
+	if _select_mode_button == null:
+		_get_select_mode_button()
+		if _select_mode_button == null:
+			return true
+
+	return _select_mode_button.button_pressed
+
+func _get_select_mode_button() -> void:
+	var main_screen := EditorInterface.get_editor_main_screen()
+
+	var found_node : Node = main_screen.get_node_or_null("@CanvasItemEditor@9465/@MarginContainer@9280/@HFlowContainer@9281/@HBoxContainer@9282/@Button@9329")
+	if found_node != null and found_node is Button:
+		_select_mode_button = found_node
+		return
+	
+	found_node = main_screen
+	for i in 5:
+		if found_node == null:
+			return
+		found_node = found_node.get_child(0)
+
+	if found_node != null and found_node is Button:
+		_select_mode_button = found_node
+		return
+	
+	printerr("cannot find select button")
