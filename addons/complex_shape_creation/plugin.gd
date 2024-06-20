@@ -23,7 +23,7 @@ func _edit(object : Object) -> void:
 		if parent != null:
 			parent.remove_child(_size_rotation_handler)
 		_size_rotation_handler.request_ready()
-		object.add_child(_size_rotation_handler, false, INTERNAL_MODE_FRONT)
+		object.add_child(_size_rotation_handler, false, INTERNAL_MODE_BACK)
 
 const BaseHandler := preload("res://addons/complex_shape_creation/gui_handlers/base_handler.gd")
 const SizeRotationHandler := preload("res://addons/complex_shape_creation/gui_handlers/size_rotation_handler.gd")

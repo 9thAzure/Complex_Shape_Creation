@@ -19,6 +19,8 @@ func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, han
 	_undo_redo_manager.version_changed.connect(maintain_shape)
 	_undo_redo_manager.history_changed.connect(maintain_shape)
 	size = handler_size
+	z_as_relative = false
+	z_index = RenderingServer.CANVAS_ITEM_Z_MAX
 
 func _ready() -> void:
 	assert(Engine.is_editor_hint())
