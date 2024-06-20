@@ -29,6 +29,7 @@ func _ready() -> void:
 
 	_parent = get_parent()
 
+	maintain_editor_scale()
 	maintain_position()
 
 func mouse_press(point : Vector2) -> bool:
