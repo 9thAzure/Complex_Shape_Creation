@@ -1,8 +1,8 @@
-This is a copy of the [license](addons/complex_shape_creation/LICENSE.txt) found in the addon's folder.
+This is a copy of the [license](addons/complex_shape_creation/LICENSE.txt) in the addon's folder.
 ```
 MIT License
 
-Copyright (c) 2024 9thAzure (GitHub username)
+Copyright (c) 2024 9thAzure (Github username)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
