@@ -1,4 +1,4 @@
-extends GutTest
+extends GutCollectionTest
 
 var class_script := preload("res://addons/complex_shape_creation/regular_polygon_2d/regular_polygon_2d.gd")
 var sample_polygon := PackedVector2Array([Vector2.ONE, Vector2.RIGHT, Vector2.LEFT])
@@ -54,7 +54,7 @@ func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
 	stub(shape, "_enter_tree").to_do_nothing()
 	add_child(shape)
 
-	shape._pre_redraw()
+	shape.queue_regenerate()
 
 	assert_true(shape.polygon.is_empty(), "Variable 'polygon' should still be an empty array.")
 	await wait_for_signal(get_tree().process_frame, 10)
@@ -65,12 +65,12 @@ func test_pre_redraw__in_tree_using_polygon__delayed_polygon_fill():
 func test_enter_tree__blocked_queue__polygon_not_regenerated():
 	var shape : RegularPolygon2D = partial_double(class_script).new()
 	stub(shape, "uses_polygon_member").to_return(true)
-	stub(shape, "regenerate_polygon").to_do_nothing()
+	stub(shape, "regenerate").to_do_nothing()
 	shape._queue_status = RegularPolygon2D._BLOCK_QUEUE
 
 	shape._enter_tree()
 
-	assert_not_called(shape, "regenerate_polygon")
+	assert_not_called(shape, "regenerate")
 
 func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularPolygon2D._IS_QUEUED, RegularPolygon2D._BLOCK_QUEUE])):
 	var shape : RegularPolygon2D = partial_double(class_script).new()
@@ -80,36 +80,38 @@ func test_enter_tree__not_not_queued__now_not_queued(p= use_parameters([RegularP
 
 	assert_eq(shape._queue_status, RegularPolygon2D._NOT_QUEUED, "Property '_queue_status' should be '_NOT_QUEUED' (0).")
 
-func test_regenerate_polygon__holed_shape_without_drawn_arc__ends_equal():
+func test_regenerate__holed_shape_without_drawn_arc__ends_equal():
 	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
 	shape.vertices_count = 4
 	shape.width = 5
 
-	shape.regenerate_polygon()
+	shape.regenerate()
 
 	var polygon := shape.polygon
 	assert_almost_eq(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
 	assert_almost_eq(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
 
-func test_regenerate_polygon__holed_shape_with_drawn_arc__ends_not_equal():
+func test_regenerate__holed_shape_with_drawn_arc__ends_not_equal():
 	var shape : RegularPolygon2D = autoqfree(RegularPolygon2D.new())
 	shape.vertices_count = 4
 	shape.width = 5
 	shape.drawn_arc = 6
 
-	shape.regenerate_polygon()
+	shape.regenerate()
 
 	var polygon := shape.polygon
 	assert_almost_ne(polygon[0], polygon[4], Vector2.ONE * 0.01, "The first and last points of the outer shape of the generated polygon.")
 	assert_almost_ne(polygon[5], polygon[9], Vector2.ONE * 0.01, "The first and last points of the inner ring of the generated polygon.")
 
-func test_get_shape_vertices__drawn_arc_PI__no_central_point(p = use_parameters([[PI], [-PI]])):
+func test_get_shape_vertices__drawn_arc_PI__no_central_point():
+	var expected := PackedVector2Array([Vector2(0, 7.07107), Vector2(-7.07107, 7.07107), Vector2(-7.07107, -7.07107), Vector2(0, -7.07107)])
 	var shape : PackedVector2Array
 
-	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, p[0])
+	shape = RegularPolygon2D.get_shape_vertices(4, 10, 0, Vector2.ZERO, PI)
 
 	assert_almost_ne(shape[-1], Vector2.ZERO, Vector2.ONE * 0.01, "The last element of the returned array.")
-	assert_eq(shape.size(), 4, "Size of returned array.")
+	# assert_eq(shape.size(), 4, "Size of returned array.")
+	assert_almost_eq_deep(shape, expected, Vector2.ONE * 0.001)
 
 func test_get_shape_vertices__false_central_point_when_drawn_arc_is_TAU_or_PI__no_central_point(p = use_parameters([[TAU], [PI], [-PI]])):
 	var shape : PackedVector2Array
@@ -143,22 +145,183 @@ func test_add_rounded_corners__very_small_corner_size__approximately_equal_vecto
 		assert_almost_eq(shape[index + 1], shape[index], Vector2.ONE * 0.1, "First part of corner of modified array.")
 		assert_almost_eq(shape[index + 2], shape[index], Vector2.ONE * 0.1, "Last part of corner of modified array.")
 
-func test_add_hole_to_points__do_not_close_shape__array_size_doubles():
-	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
-	var previous_size := shape.size()
+func test_add_hole_to_points__do_not_close_shape__expected_shape():
+	const sample_hole_scaler = 0.5
+	var shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10)])
+	var expected_shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10), Vector2(-6.12323e-16, -5), Vector2(-4.33013, 2.5), Vector2(4.33013, 2.5)])
 
-	RegularPolygon2D.add_hole_to_points(shape, 1, false)
-	var new_size := shape.size()
+	RegularPolygon2D.add_hole_to_points(shape, sample_hole_scaler, false)
 
-	assert_eq(new_size, 2 * previous_size, "Size of modified array, 2 * the original size.")
+	assert_almost_eq_deep(shape, expected_shape, Vector2.ONE * 0.0001)
 	
-func test_add_hole_to_points__do_close_shape__array_size_doubles_plus_2():
-	var shape := PackedVector2Array([Vector2.ZERO, Vector2.ONE, Vector2.RIGHT])
-	var previous_size := shape.size()
+func test_add_hole_to_points__do_close_shape__expected_shape():
+	const sample_hole_scaler = 0.5
+	var shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10)])
+	var expected_shape := PackedVector2Array([Vector2(8.66025, 5), Vector2(-8.66025, 5), Vector2(-1.22465e-15, -10), Vector2(8.66025, 5), Vector2(4.33012, 2.5), Vector2(-6.12323e-16, -5), Vector2(-4.33013, 2.5), Vector2(4.33013, 2.5)])
 
-	RegularPolygon2D.add_hole_to_points(shape, 1, true)
-	var new_size := shape.size()
+	RegularPolygon2D.add_hole_to_points(shape, sample_hole_scaler, true)
 
-	assert_eq(new_size, 2 * previous_size + 2, "Size of modified array, 2 + 2 * the original size")
+	assert_almost_eq_deep(shape, expected_shape, Vector2.ONE * 0.0001)
 
+var params_transform_shape := [
+	[4, 10, 100, TAU, 0, 0],
+	[20, 10, 100, TAU, 0, 0],
+	[4, 100, 10, TAU, 0, 0],
+	[4, 10, 5, -PI, 0.5, 3],
+	[8, 30, 15, 2.269, 1, 2],
+]
+func test_apply_transformation__various_shape_types__almost_expected_result(p=use_parameters(params_transform_shape)):
+	const sample_rotation_amount = 2;
+	const sample_scale_amount := PI
+	assert(p[2] >= 0 and p[0] != 2, "param does not have the node use 'polygon'.")
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape._queue_status = RegularPolygon2D._BLOCK_QUEUE
+	shape.vertices_count = p[0]
+	shape.size = p[1]
+	shape.width = p[2]
+	shape.drawn_arc = p[3]
+	shape.corner_size = p[4]
+	shape.corner_smoothness = p[5]
+	shape._queue_status = RegularPolygon2D._NOT_QUEUED
+	var expected := RegularPolygon2D.new()
+	autoqfree(expected)
+	expected.vertices_count = p[0]
+	expected.size = p[1]
+	expected.width = p[2]
+	expected.drawn_arc = p[3]
+	expected.corner_size = p[4]
+	expected.corner_smoothness = p[5]
+	expected.regenerate()
+	shape.polygon = expected.polygon
+	expected.offset_rotation += sample_rotation_amount
+	expected.size *= sample_scale_amount
+	expected.regenerate()
 
+	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, false, false)
+
+	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
+	assert_not_called(shape, "regenerate")
+
+func test_apply_transformation__size_change_creates_ring__shape_regenerated() -> void:
+	const sample_scale_amount := 2
+	var expected_shape := PackedVector2Array([Vector2(14.1421, 14.1421), Vector2(-14.1421, 14.1421), Vector2(-14.1421, -14.1421), Vector2(14.1421, -14.1421), Vector2(14.1421, 14.1421), Vector2(3.53553, 3.53553), Vector2(3.53553, -3.53553), Vector2(-3.53553, -3.53553), Vector2(-3.53553, 3.53553), Vector2(3.53553, 3.53553)])
+	var shape := RegularPolygon2D.new()
+	shape.vertices_count = 4
+	shape.width = 15
+	shape.regenerate()
+	autoqfree(shape)
+
+	shape.apply_transformation(0, sample_scale_amount, false, false)
+
+	assert_almost_eq_deep(shape.polygon, expected_shape, Vector2.ONE * 0.001)
+
+func test_apply_transformation__size_change_removes_ring__shape_regenerated() -> void:
+	const sample_scale_amount := 0.5
+	var expected_shape := PackedVector2Array([Vector2(7.07107, 7.07107), Vector2(-7.07107, 7.07107), Vector2(-7.07107, -7.07107), Vector2(7.07107, -7.07107)])
+	var shape := RegularPolygon2D.new()
+	shape.vertices_count = 4
+	shape.size = 20
+	shape.width = 15
+	shape.regenerate()
+	autoqfree(shape)
+
+	shape.apply_transformation(0, sample_scale_amount, false, false)
+
+	assert_almost_eq_deep(shape.polygon, expected_shape, Vector2.ONE * 0.001)
+
+func test_apply_transformation__width_scaled__expected_shape(p=use_parameters(params_transform_shape)):
+	const sample_scale_amount := 2.3
+	const sample_rotation_amount := 1
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape._queue_status = RegularPolygon2D._BLOCK_QUEUE
+	shape.vertices_count = p[0]
+	shape.size = p[1]
+	shape.width = p[2]
+	shape.drawn_arc = p[3]
+	shape.corner_size = p[4]
+	shape.corner_smoothness = p[5]
+	shape._queue_status = RegularPolygon2D._NOT_QUEUED
+	var expected := RegularPolygon2D.new()
+	autoqfree(expected)
+	expected.vertices_count = p[0]
+	expected.size = p[1]
+	expected.width = p[2]
+	expected.drawn_arc = p[3]
+	expected.corner_size = p[4]
+	expected.corner_smoothness = p[5]
+	expected.regenerate()
+	shape.polygon = expected.polygon
+	expected.offset_rotation += sample_rotation_amount
+	expected.size *= sample_scale_amount
+	expected.width *= sample_scale_amount
+	expected.regenerate()
+
+	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true, false)
+
+	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
+	assert_not_called(shape, "regenerate")
+
+func test_apply_transformation__corner_size_scaled__expected_shape(p=use_parameters(params_transform_shape)):
+	const sample_scale_amount := 2.3
+	const sample_rotation_amount := 1
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape._queue_status = RegularPolygon2D._BLOCK_QUEUE
+	shape.vertices_count = p[0]
+	shape.size = p[1]
+	shape.width = p[2]
+	shape.drawn_arc = p[3]
+	shape.corner_size = p[4]
+	shape.corner_smoothness = p[5]
+	shape._queue_status = RegularPolygon2D._NOT_QUEUED
+	var expected := RegularPolygon2D.new()
+	autoqfree(expected)
+	expected.vertices_count = p[0]
+	expected.size = p[1]
+	expected.width = p[2]
+	expected.drawn_arc = p[3]
+	expected.corner_size = p[4]
+	expected.corner_smoothness = p[5]
+	expected.regenerate()
+	shape.polygon = expected.polygon
+	expected.offset_rotation += sample_rotation_amount
+	expected.size *= sample_scale_amount
+	expected.corner_size *= sample_scale_amount
+	expected.regenerate()
+
+	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, false, true)
+
+	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
+	assert_not_called(shape, "regenerate")
+
+func test_apply_transformation__width_and_corner_size_scaled__expected_shape(p=use_parameters(params_transform_shape)):
+	const sample_scale_amount := 2.3
+	const sample_rotation_amount := 1
+	var shape : RegularPolygon2D = partial_double(class_script).new()
+	shape._queue_status = RegularPolygon2D._BLOCK_QUEUE
+	shape.vertices_count = p[0]
+	shape.size = p[1]
+	shape.width = p[2]
+	shape.drawn_arc = p[3]
+	shape.corner_size = p[4]
+	shape.corner_smoothness = p[5]
+	shape._queue_status = RegularPolygon2D._NOT_QUEUED
+	var expected := RegularPolygon2D.new()
+	autoqfree(expected)
+	expected.vertices_count = p[0]
+	expected.size = p[1]
+	expected.width = p[2]
+	expected.drawn_arc = p[3]
+	expected.corner_size = p[4]
+	expected.corner_smoothness = p[5]
+	expected.regenerate()
+	shape.polygon = expected.polygon
+	expected.offset_rotation += sample_rotation_amount
+	expected.size *= sample_scale_amount
+	expected.width *= sample_scale_amount
+	expected.corner_size *= sample_scale_amount
+	expected.regenerate()
+
+	shape.apply_transformation(sample_rotation_amount, sample_scale_amount, true, true)
+
+	assert_almost_eq_deep(shape.polygon, expected.polygon, Vector2.ONE * 0.001)
+	assert_not_called(shape, "regenerate")

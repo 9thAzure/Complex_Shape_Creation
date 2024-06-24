@@ -3,7 +3,7 @@
 ![Regular Polygon 2D icon](/addons/complex_shape_creation/regular_polygon_2d/regular_polygon_2d.svg)
 
 ![GitHub Release](https://img.shields.io/github/v/release/9thAzure/Complex_Shape_Creation)
-![Static Badge (License, not detected by github because it is in sub folder)](https://img.shields.io/badge/License-MIT-orange)
+![GitHub License](https://img.shields.io/github/license/9thAzure/Complex_Shape_Creation)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/9thAzure/Complex_Shape_Creation)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/9thAzure/Complex_Shape_Creation/total)
 
@@ -81,7 +81,8 @@ All other functions **modify** the array passed in as the argument.
 ## License
 
 This addon is available under the [MIT](https://mit-license.org/) license,
-which is in the addon's [folder](/addons/complex_shape_creation/LICENSE.txt)
+which is in the addon's [folder](/addons/complex_shape_creation/LICENSE.txt).
+A copy is available in the root [folder](/License.md).
 
 ## Plugins / Packages Used
 

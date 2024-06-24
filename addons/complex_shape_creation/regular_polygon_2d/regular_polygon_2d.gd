@@ -9,7 +9,7 @@ extends Polygon2D
 ## It uses methods like [method CanvasItem.draw_colored_polygon] or [method CanvasItem.draw_circle], or use [member Polygon2D.polygon].
 ## Certain properties with circles will use a 32-sided polygon instead.
 ## [br][br][b]Note[/b]: If the node is set to use [member Polygon2D.polygon] when it is outside the [SceneTree],
-## regeneration will be delayed to when it enters it. Use [method regenerate_polygon] to force regeneration.
+## regeneration will be delayed to when it enters it. Use [method regenerate] to force regeneration.
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 ## [br][br]Certain properties with circles will use a 32-sided polygon instead.
@@ -21,7 +21,7 @@ var vertices_count : int = 1:
 		if vertices_count == 2 and width > 0:
 			polygon = PackedVector2Array()
 			return
-		_pre_redraw()
+		queue_regenerate()
 
 ## The length from each corner to the center.
 @export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
@@ -29,7 +29,7 @@ var size : float = 10:
 	set(value):
 		assert(value > 0, "property 'size' must be greater than 0");
 		size = value
-		_pre_redraw()
+		queue_regenerate()
 
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
@@ -43,7 +43,48 @@ var offset_rotation_degrees : float = 0:
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
-		_pre_redraw()
+		queue_regenerate()
+
+## Transforms [member Polygon2D.polygon], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
+## This method modifies the existing [member Polygon2D.polygon], so is generally faster than changing [member size] and [member offset_rotation].
+## This only happens if the transformed shape is congruent to the original. If it is not or [member Polygon2D.polygon] isn't used, the shape is regenerated.
+## [br][br][param scale_width] toggles scaling [member width].
+## [param scale_corner_size] toggles scaling [member corner_size].
+## If these values are [code]false[/code], their respective properties are not altered and the shape is corrected.
+## [br][br][b][color=red]Warning[/color][/b]: Currently method does not check if the [member corner_size] value is clamped due to small side lengths.
+## If this occurs in the original or transformed shape and [param scale_corner_size] is [code]false[/code], the shape will not be accurate to this node's properties.
+func apply_transformation(rotation : float, scale : float, scale_width := true, scale_corner_size := true) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+	_queue_status = _BLOCK_QUEUE
+	offset_rotation += rotation
+	size *= scale
+	if scale_width:
+		width *= scale
+
+	if scale_corner_size:
+		corner_size *= scale
+
+	_queue_status = _NOT_QUEUED
+	
+	if not uses_polygon_member():
+		queue_redraw()
+		return
+
+	if not scale_width and \
+		(width >= size and width < size / scale
+		or width < size and width >= size / scale):
+		regenerate()
+		return
+	
+	var points_per_corner := 0
+	if corner_size > 0:
+		points_per_corner = corner_smoothness if corner_smoothness != 0 else corner_smoothness / vertices_count
+	points_per_corner += 1
+	
+	var shape := polygon
+	RegularGeometry2D.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
+	polygon = shape
+
 
 # ? not sure if this is a good name for it and many of the properties under it, they may need changing.
 @export_group("complex")
@@ -65,7 +106,7 @@ var width : float = -0.001:
 			return
 
 		width = value
-		_pre_redraw()
+		queue_regenerate()
 
 ## The arc of the drawn shape, in degrees, cutting off beyond that arc. 
 ## Values greater than [code]360[/code] or [code]-360[/code] draws a full shape. It starts in the middle of the bottom edge of the shapes. 
@@ -89,7 +130,7 @@ var drawn_arc_degrees : float = 360:
 var drawn_arc : float = TAU:
 	set(value):
 		drawn_arc = value
-		_pre_redraw()
+		queue_regenerate()
 		update_configuration_warnings()
 
 ## The distance from each vertex along the edge to the point where the rounded corner starts.
@@ -101,7 +142,7 @@ var corner_size : float = 0.0:
 	set(value):
 		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
 		corner_size = value
-		_pre_redraw()
+		queue_regenerate()
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 ## This only has an effect if [member corner_size] is used.
@@ -110,7 +151,7 @@ var corner_smoothness : int = 0:
 	set(value):
 		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
 		corner_smoothness = value
-		_pre_redraw()
+		queue_regenerate()
 
 # "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
 const _NOT_QUEUED = 0
@@ -119,9 +160,14 @@ const _BLOCK_QUEUE = 2
 
 var _queue_status : int = _NOT_QUEUED 
 
-# Called when shape properties are updated, before [method _draw]/[method queue_redraw]. Calls [method queue_redraw] automatically.
-# queue-like functionality - pauses, and only 1 call.
+## @deprecated
 func _pre_redraw() -> void:
+	queue_regenerate()
+
+## Queues [method regenerate] for the next process frame. If this method is called multiple times, the shape is only regenerated once.
+## [br][br]If this method is called when the node is outside the [SceneTree], regeneration will be delayed to when the node enters the tree.
+## Call [method regenerate] directly to force initialization.
+func queue_regenerate() -> void:
 	if not uses_polygon_member():
 		# the setting the 'polygon' property already calls queue_redraw
 		queue_redraw()
@@ -139,11 +185,11 @@ func _pre_redraw() -> void:
 	_queue_status = _NOT_QUEUED
 	if not uses_polygon_member():
 		return
-	regenerate_polygon()
+	regenerate()
 
 func _enter_tree() -> void:
 	if _queue_status == _IS_QUEUED and uses_polygon_member():
-		regenerate_polygon()
+		regenerate()
 	_queue_status = _NOT_QUEUED
 
 func _draw() -> void:
@@ -231,9 +277,14 @@ func _draw() -> void:
 	
 	draw_colored_polygon(points, color)
 
+## see [method regenerate]
+## @deprecated
+func regenerate_polygon() -> void:
+	regenerate()
+
 ## Sets [member Polygon2D.polygon] using the properties of this node. 
 ## This method can be used when the node is outside the [SceneTree] to force the regeneration of [member Polygon2D.polygon].
-func regenerate_polygon() -> void:
+func regenerate() -> void:
 	_queue_status = _NOT_QUEUED
 	if drawn_arc == 0:
 		polygon = PackedVector2Array()
@@ -242,14 +293,11 @@ func regenerate_polygon() -> void:
 	var uses_width := width < size
 	var uses_drawn_arc := _uses_drawn_arc()
 	var points = get_shape_vertices(vertices_count, size, offset_rotation, Vector2.ZERO, drawn_arc, not uses_width)
-	if uses_width and uses_drawn_arc:
-		add_hole_to_points(points, 1 - width / size, false)
+	if uses_width:
+		add_hole_to_points(points, 1 - width / size, not uses_drawn_arc)
 
 	if not is_zero_approx(corner_size):
-		add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count)
-
-	if uses_width and not uses_drawn_arc:
-		add_hole_to_points(points, 1 - width / size, true)
+		add_rounded_corners(points, corner_size, corner_smoothness if corner_smoothness != 0 else 32 / vertices_count, uses_width and not uses_drawn_arc)
 	
 	polygon = points
 
@@ -277,6 +325,11 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 	if corner_smoothness != 0:
 		self.corner_smoothness = corner_smoothness
 	
+# func _ready() -> void:
+# 	if Engine.is_editor_hint():
+# 		var control := preload("res://addons/complex_shape_creation/gui_handlers/size_rotation_handler.gd").new(self, 2)
+# 		add_child(control)
+
 func _get_configuration_warnings() -> PackedStringArray:
 	if drawn_arc == 0:
 		return ["nothing will be drawn when 'drawn_arc' is 0."]
@@ -375,62 +428,31 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## Modifies [param points] so that the shape it represents have rounded corners. 
 ## The method uses quadratic Bézier curves for the corners (see [method quadratic_bezier_interpolate]).
 ## [br][br]For [param corner_size] and [param corner_smoothness] documentation, see [member corner_size] and [member corner_smoothness].
-static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int) -> void:
-	assert(points.size() >= 3, "param 'points' must have at least 3 points")
-	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater")
-	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater")
+## [param is_ringed_shape] is used to indicate that the shape to round is a ring (see [method add_hole_to_points]).
+static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int, is_ringed_shaped := false) -> void:
+	if is_ringed_shaped:
+		var functional_length := (points.size() - 2) / 2
+
+		# temp points to have corners rounded to its correct neighbours.
+		var temp_point := points[0]
+		points[0] = points[-functional_length]
+		RegularGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness, functional_length + 2, functional_length)
+		points[0] = temp_point
+
+		temp_point = points[-1]
+		points[-1] = points[functional_length - 1]
+		RegularGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness, 0, functional_length)
+		points[-1] = temp_point
+
+		points[functional_length * (corner_smoothness + 1)] = points[0]
+		points[functional_length * (corner_smoothness + 1) + 1] = points[-1]
+		return
 	
-	var corner_size_squared = corner_size ** 2
-	var array_size := points.size()
-	if corner_smoothness == 0:
-		corner_smoothness = 32 / points.size()
-
-	var corner_index_size := corner_smoothness + 1
-	
-	points.resize(array_size * corner_index_size)
-	for pre_i in array_size:
-		var i := array_size - 1 - pre_i
-		points[i * corner_index_size] = points[i]
-
-	var first_point := points[0]
-	var last_point := points[-corner_index_size]
-	var current_point := points[0]
-	var next_point : Vector2
-	for i in array_size:
-		if i + 1 == array_size:
-			next_point = first_point
-		else:
-			next_point = points[(i + 1) * corner_index_size]
-		# get starting & ending points of corner.
-		var starting_slope := (current_point - last_point)
-		var ending_slope := (current_point - next_point)
-		var starting_point : Vector2
-		var ending_point : Vector2
-		if starting_slope.length_squared() / 4 < corner_size_squared:
-			starting_point = current_point - starting_slope / 2.001
-		else:
-			starting_point = current_point - starting_slope.normalized() * corner_size
-		
-		if ending_slope.length_squared() / 4 < corner_size_squared:
-			ending_point = current_point - ending_slope / 2.001
-		else:
-			ending_point = current_point - ending_slope.normalized() * corner_size
-
-		points[i * corner_index_size] = starting_point
-		points[i * corner_index_size + corner_index_size - 1] = ending_point
-		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no in-between points.
-		var sub_i := 1
-		while sub_i < corner_smoothness:
-			var t_value := sub_i / (corner_smoothness as float)
-			points[i * corner_index_size + sub_i] = quadratic_bezier_interpolate(starting_point, current_point, ending_point, t_value)
-			sub_i += 1
-		
-		# end, prep for next loop.
-		last_point = current_point
-		current_point = next_point
+	RegularGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness)
 
 # Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
 ## [b][color=red]Warning[/color][/b]: This method is not meant to be used outside the class, and will be changed/made private in the future.
+## @deprecated
 static func quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
 
