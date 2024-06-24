@@ -85,7 +85,7 @@ func _get_select_mode_button() -> void:
 	found_node = main_screen
 	for i in 5:
 		if found_node == null:
-			return
+			break
 		found_node = found_node.get_child(0)
 
 	if found_node != null and found_node is Button:
