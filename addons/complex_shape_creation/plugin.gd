@@ -67,12 +67,15 @@ func _forward_canvas_gui_input(event) -> bool:
 
 var _select_mode_button : Button = null
 func _select_mode_button_selected() -> bool:
-	if _select_mode_button == null:
+	if _is_select_mode_button_invalid(_select_mode_button):
 		_get_select_mode_button()
-		if _select_mode_button == null:
+		if _is_select_mode_button_invalid(_select_mode_button):
 			return true
 
 	return _select_mode_button.button_pressed
+
+func _is_select_mode_button_invalid(button : Button) -> bool:
+	return button == null or not is_instance_valid(button) or not button.toggle_mode or button.icon == null
 
 func _get_select_mode_button() -> void:
 	var main_screen := EditorInterface.get_editor_main_screen()
