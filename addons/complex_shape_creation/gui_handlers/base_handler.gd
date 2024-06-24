@@ -16,16 +16,21 @@ var _old_position := Vector2.ZERO
 func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
 	_plugin = plugin
 	_undo_redo_manager = undo_redo_manager
-	_undo_redo_manager.version_changed.connect(maintain_shape)
-	_undo_redo_manager.history_changed.connect(maintain_shape)
+	_undo_redo_manager.version_changed.connect(maintain_position)
+	_undo_redo_manager.version_changed.connect(maintain_editor_scale)
+	_undo_redo_manager.history_changed.connect(maintain_position)
+	_undo_redo_manager.history_changed.connect(maintain_editor_scale)
 	size = handler_size
+	z_as_relative = false
+	z_index = RenderingServer.CANVAS_ITEM_Z_MAX
 
 func _ready() -> void:
 	assert(Engine.is_editor_hint())
 
 	_parent = get_parent()
 
-	maintain_shape()
+	maintain_editor_scale()
+	maintain_position()
 
 func mouse_press(point : Vector2) -> bool:
 	const extra_margin := 2.0
@@ -80,7 +85,7 @@ func _process(_delta) -> void:
 		_clamp_position()
 	_update_properties()
 	
-func maintain_shape() -> void:
+func maintain_position() -> void:
 	if suppress_from_parent_call:
 		suppress_from_parent_call = false
 		return
