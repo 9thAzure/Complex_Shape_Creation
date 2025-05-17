@@ -7,7 +7,70 @@ func _init():
 	printerr("This class is meant to be a singleton, and cannot be instantiated")
 	self.free()
 
-## Modifies [param points] so that the shape it represents have rounded corners. The method uses quadratic Bézier curves for the corners.
+# gets the point on a unit circle for the specified rotation.
+static func _circle_point(rotation : float) -> Vector2:
+	return Vector2(sin(rotation), cos(rotation))
+
+# finds the intersection between 2 points and their slopes. The value returned is not the point itself, but a scaler
+# where the point of intersection is [c] point1 + return_value * slope1 [/c]
+static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vector2, slope2: Vector2) -> float:
+	var numerator := slope2.y * (point2.x - point1.x) - slope2.x * (point2.y - point1.y)
+	var devisor := (slope1.x * slope2.y) - (slope1.y * slope2.x)
+	assert(devisor != 0, "one or both slopes are 0, or are parallel")
+	return numerator / devisor
+
+## Creates and returns a [PackedVector2Array] describing the shape specified by the parameters,
+## and offsetted by [param offset_rotation] and [param offset_position].
+## [br][br]
+## [param vertices_count] determines the number of points on the base shape. If a value of [code]1[/code] is used,
+## A value of [code]32[/code] is used instead.
+## [param sizes] determines the length of each point from the center of the base shape, being repeatedly looped through
+## to get that length.
+## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
+## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
+## if the arc of the shape is a complete circle.
+static func create_shape(vertices_count: int, sizes: PackedInt64Array, offset_rotation := 0.0, offset_position := Vector2.ZERO,
+	arc_start := 0.0, arc_end := TAU, add_central_point := true) -> PackedVector2Array:
+	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
+	assert(sizes.size() != 0, "param 'sizes' must have at least one element")
+	assert(arc_end > arc_start, "param 'arc_end' must be larger than 'arc_start'")
+
+	if vertices_count == 1:
+		vertices_count = 32
+
+	var points := PackedVector2Array()
+	var arc_angle := TAU / vertices_count
+
+	var is_full_arc := false
+	if is_equal_approx(fposmod(arc_start, TAU), fposmod(arc_end, TAU)):
+		is_full_arc = true
+		add_central_point = false
+
+	var starting_vertex_index : int = floorf(arc_start / arc_angle)
+	var ending_vertex_index : int = ceilf(arc_end / arc_angle)
+	var true_vertices_count := ending_vertex_index - starting_vertex_index + (1 if not is_full_arc else 0)
+	points.resize(true_vertices_count + (1 if add_central_point else 0))
+	for i in true_vertices_count:
+		var index := i + starting_vertex_index
+		points[i] = _circle_point(index * arc_angle + offset_rotation) * sizes[index % sizes.size()] + offset_position
+
+	if not is_equal_approx(starting_vertex_index, arc_start / arc_angle):
+		var slope1 := _circle_point(arc_start + offset_rotation)
+		var scaler := _find_intersection(offset_position, slope1, points[0], points[1] - points[0])
+		points[0] = offset_position + slope1 * scaler
+
+	if not is_equal_approx(ending_vertex_index, arc_end / arc_angle):
+		var last_i := -1 + (-1 if add_central_point else 0)
+		var slope1 := _circle_point(arc_end + offset_rotation)
+		var scaler := _find_intersection(offset_position, slope1, points[last_i], points[last_i - 1] - points[last_i])
+		points[last_i] = offset_position + slope1 * scaler
+
+	if add_central_point:
+		points[-1] = offset_position
+
+	return PackedVector2Array()
+
+## Modifies [param points] so that the shape it represents has rounded corners. The method uses quadratic Bézier curves for the corners.
 ## [br][br][param corner_size] determines how long each corner is, from the original point to at most half the side length.
 ## [param corner_smoothness] determines how many [b]lines[/b] are in each corner.
 ## [br][br][param start_index] & [param length] can be used to specify only part of the shape should be rounded.
@@ -208,15 +271,7 @@ static func apply_transformation(points : PackedVector2Array, rotation : float, 
 		points[size / 2 - 1] = points[0] + offsetting_slope
 		points[size / 2] = points[-1] + offsetting_slope
 
-# finds the intersection between 2 points and their slopes. The value returned is not the point itself, but a scaler.
-# The point would be obtained by (where a = returned value of function): point1 + a * slope1
-static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vector2, slope2: Vector2) -> float:
-	var numerator := slope2.y * (point2.x - point1.x) - slope2.x * (point2.y - point1.y)
-	var devisor := (slope1.x * slope2.y) - (slope1.y * slope2.x)
-	assert(devisor != 0, "one or both slopes are 0, or are parallel")
-	return numerator / devisor 
-	
-## sub class that designates how much each method expands the array.
+## sub Singleton that designates how much each method expands the array.
 class SizeIncrease:
 	extends Object
 
