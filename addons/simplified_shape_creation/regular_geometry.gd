@@ -70,6 +70,22 @@ static func create_shape(vertices_count: int, sizes: PackedInt64Array, offset_ro
 
 	return PackedVector2Array()
 
+## Modifies and returns [param shape], adding a duplicate ring of points
+## at a distance that is [param length_proportion] percent of the original point's distance to [param shape_center].
+## [br][br]
+## if [param close_ring] is true, the first point is also appended to the end before adding the ring.
+static func add_ring(shape: PackedVector2Array, length_proportion: float, shape_center := Vector2.ZERO, close_ring := true) -> PackedVector2Array:
+	var original_size := shape.size() + (1 if close_ring else 0)
+
+	shape.resize(original_size * 2)
+	if close_ring:
+		shape[original_size - 1] = shape[0]
+
+	for i in original_size:
+		shape[-i - 1] = shape[i].move_toward(shape_center, length_proportion)
+
+	return shape
+
 ## Modifies [param points] so that the shape it represents has rounded corners. The method uses quadratic Bézier curves for the corners.
 ## [br][br][param corner_size] determines how long each corner is, from the original point to at most half the side length.
 ## [param corner_smoothness] determines how many [b]lines[/b] are in each corner.
