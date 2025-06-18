@@ -9,7 +9,7 @@ func _init():
 
 # gets the point on a unit circle for the specified rotation.
 static func _circle_point(rotation : float) -> Vector2:
-	return Vector2(sin(rotation), cos(rotation))
+	return Vector2(sin(rotation), -cos(rotation))
 
 # finds the intersection between 2 points and their slopes. The value returned is not the point itself, but a scaler
 # where the point of intersection is [c] point1 + return_value * slope1 [/c]
@@ -42,7 +42,10 @@ static func create_shape(vertices_count: int, sizes: PackedInt64Array, offset_ro
 	var arc_angle := TAU / vertices_count
 
 	var is_full_arc := false
-	if is_equal_approx(fposmod(arc_start, TAU), fposmod(arc_end, TAU)):
+#	if is_zero_approx(fmod(arc_end - arc_start, TAU)):
+	# checks if it is approximately a multiple of TAU.
+	if is_zero_approx(sin((arc_end - arc_start) * PI / TAU)):
+#	if is_equal_approx(fposmod(arc_start, TAU), fposmod(arc_end, TAU)):
 		is_full_arc = true
 		add_central_point = false
 
@@ -68,7 +71,7 @@ static func create_shape(vertices_count: int, sizes: PackedInt64Array, offset_ro
 	if add_central_point:
 		points[-1] = offset_position
 
-	return PackedVector2Array()
+	return points
 
 ## Modifies and returns [param shape], adding a duplicate ring of points
 ## at a distance that is [param length_proportion] percent of the original point's distance to [param shape_center].
@@ -82,7 +85,7 @@ static func add_ring(shape: PackedVector2Array, length_proportion: float, shape_
 		shape[original_size - 1] = shape[0]
 
 	for i in original_size:
-		shape[-i - 1] = shape[i].move_toward(shape_center, length_proportion)
+		shape[-i - 1] = shape[i].lerp(shape_center, length_proportion)
 
 	return shape
 
