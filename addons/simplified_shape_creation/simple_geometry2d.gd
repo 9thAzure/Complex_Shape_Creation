@@ -1,5 +1,5 @@
 extends Object
-class_name RegularGeometry2D
+class_name SimpleGeometry2d
 
 ## Holds methods for creating and modifying shapes.
 

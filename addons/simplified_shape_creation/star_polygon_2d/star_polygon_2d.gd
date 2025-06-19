@@ -100,7 +100,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 	points_per_corner += 1
 	
 	var shape := polygon
-	RegularGeometry2D.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
+	SimpleGeometry2d.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
 	polygon = shape
 
 @export_group("complex")
