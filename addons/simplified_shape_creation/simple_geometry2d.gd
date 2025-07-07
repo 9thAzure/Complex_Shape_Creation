@@ -1,11 +1,12 @@
 extends Object
-class_name RegularGeometry2D
+class_name SimpleGeometry2d
 
 ## Holds methods for creating and modifying shapes.
 
-func _init():
-	printerr("This class is meant to be a singleton, and cannot be instantiated")
-	self.free()
+func _init(instantiated_from_cs_singleton : bool):
+	if !instantiated_from_cs_singleton:
+		printerr("This class is meant to be a singleton, and cannot be instantiated")
+		self.free()
 
 # gets the point on a unit circle for the specified rotation.
 static func _circle_point(rotation : float) -> Vector2:
@@ -24,8 +25,8 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## [br][br]
 ## [param vertices_count] determines the number of points on the base shape. If a value of [code]1[/code] is used,
 ## A value of [code]32[/code] is used instead.
-## [param sizes] determines the length of each point from the center of the base shape, being repeatedly looped through
-## to get that length.
+## [param sizes] determines the length of each point from the center of the base shape, being repeatedly iterated through
+## to get the length for each corner.
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
@@ -97,7 +98,7 @@ static func add_ring(shape: PackedVector2Array, length_proportion: float, shape_
 ## [param original_array_size], when used, indicates that the array has already been resized, so the method should add points into the empty space.
 ## This parameter specifies the part of the array that is currently used.
 static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int,
-	start_index := 0, length := -1, limit_ending_slopes := true, original_array_size := 0) -> void:
+	start_index := 0, length := -1, limit_ending_slopes := true, original_array_size := 0) -> PackedVector2Array:
 	# argument prep 
 	var corner_size_squared := corner_size ** 2
 	var points_per_corner := corner_smoothness + 1
@@ -186,6 +187,8 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 		# end, prep for next loop.
 		previous_point = current_point
 		current_point = next_point
+
+	return points
 
 static func _quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)

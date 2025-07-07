@@ -17,6 +17,6 @@ func test_create_shape__various_inputs__expected_outputs(p=use_parameters([
 	var add_central_point : bool = p[6]
 	var expected_shape : PackedVector2Array = p[7]
 
-	var actual_shape := RegularGeometry2D.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
+	var actual_shape := SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
 
 	assert_almost_eq_deep(actual_shape, expected_shape, Vector2.ONE * 0.01)

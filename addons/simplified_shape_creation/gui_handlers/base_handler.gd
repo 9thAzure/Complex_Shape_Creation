@@ -120,7 +120,7 @@ func _clamp_position() -> void:
 func clamp_straight_line() -> Vector2:
 	var allowed_line := _old_position - _origin
 	var inverse_line := Vector2(-allowed_line.y, allowed_line.x)
-	var a := RegularGeometry2D._find_intersection(position, inverse_line, _origin, allowed_line)
+	var a :=            SimpleGeometry2d._find_intersection(position, inverse_line, _origin, allowed_line)
 	return position + inverse_line * a
 
 func clamp_circle_radius() -> Vector2:
