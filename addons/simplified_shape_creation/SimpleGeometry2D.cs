@@ -80,7 +80,7 @@ public static class SimpleGeometry2D
     /// <param name="arcEnd">The ending angle of the arc out of the base shape that is cut out and returned, in radians.</param>
     /// <param name="addCentralPoint">If <c>true</c>, adds a center point to the shape. It is automatically false if the arc of the shape is a complete circle.</param>
     /// <returns>A <see cref="T:Vector2[]"/> describing the shape specified by the parameters.</returns>
-    public static Vector2[] CreateShape(int verticesCount, long[] sizes, double offsetRotation = 0d,
+    public static Vector2[] CreateShape(int verticesCount, double[] sizes, double offsetRotation = 0d,
         Vector2 offsetPosition = default, double arcStart = 0d, double arcEnd = Math.Tau, bool addCentralPoint = true)
     {
         Debug.Assert(Loader.Value.HasMethod(MethodName.CreateShape));

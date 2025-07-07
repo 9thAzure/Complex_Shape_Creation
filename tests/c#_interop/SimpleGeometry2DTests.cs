@@ -13,7 +13,7 @@ public class SimpleGeometry2DTests : TestClass
     [Test]
     public void CreateShape_SampleCall_ExpectedReturnValue()
     {
-        Vector2[] result = SimpleGeometry2D.CreateShape(4, new[]{1L});
+        Vector2[] result = SimpleGeometry2D.CreateShape(4, new[]{1D});
 
         result.ShouldNotBeNull();
         result.Length.ShouldBe(4);
