@@ -10,7 +10,7 @@ extends Node2D
 
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
-@export_range(1, 2000)
+@export_range(1, 200)
 var vertices_count : int = 1:
 	set(value):
 		assert(value > 0, "property 'vertices_count' must be greater than 0")
@@ -67,6 +67,53 @@ var offset : Vector2 = Vector2.ZERO:
 		offset = value
 		queue_redraw()
 
+@export_range(-0.001, 10, 0.001, "or_greater", "hide_slider")
+var width : float = -0.001:
+	set(value):
+		width = value
+		queue_redraw()
+
+@export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
+var arc_start : float = 0.0:
+	set(value):
+		arc_start = value
+		queue_redraw()
+
+@export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
+var arc_end : float = TAU:
+	set(value):
+		arc_end = value
+		queue_redraw()
+
+var arc_start_degrees : float = 0.0:
+	get:
+		return rad_to_deg(arc_start)
+	set(value):
+		arc_start = deg_to_rad(value)
+
+var arc_end_degrees : float = TAU:
+	get:
+		return rad_to_deg(arc_end)
+	set(value):
+		arc_end = deg_to_rad(value)
+
+
+@export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
+var corner_size : float = 0.0:
+	set(value):
+		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
+		corner_size = value
+		queue_regenerate()
+
+## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
+## This only has an effect if [member corner_size] is used.
+@export_range(0, 50)
+var corner_smoothness : int = 0:
+	set(value):
+		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
+		corner_smoothness = value
+		queue_regenerate()
+
 ## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func queue_regenerate() -> void:
 	queue_redraw()
@@ -76,6 +123,12 @@ func regenerate() -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	var shape : PackedVector2Array
+	var is_outline := is_zero_approx(width)
+	var is_ring_shape := 0 < width and width < size and not is_outline
+	var uses_arc := not is_equal_approx(arc_end - arc_start, TAU)
+	var rounded_corners := not is_zero_approx(corner_size)
+	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
 	if (vertices_count == 1):
 		draw_circle(offset, size, color)
 		return
@@ -93,8 +146,23 @@ func _draw() -> void:
 		const sqrt_two_over_two := 0.707106781
 		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
-		
-	draw_colored_polygon(get_shape_vertices(vertices_count, size, offset_rotation, offset), color)
+
+	shape = SimpleGeometry2d.create_shape(vertices_count, [size], offset_rotation, offset_position, arc_start, arc_end, not is_ring_shape)
+	if not uses_arc and rounded_corners:
+		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+	if is_ring_shape:
+		SimpleGeometry2d.add_ring(shape, width / size, offset_position, not uses_arc)
+	if uses_arc and rounded_corners:
+		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+
+	if is_outline:
+		draw_polyline(shape, color)
+		draw_line(shape[-1], shape[0], color)
+		return
+
+	var hulls := Geometry2D.decompose_polygon_in_convex(shape)
+	for hull in hulls:
+		draw_colored_polygon(hull, color)
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
