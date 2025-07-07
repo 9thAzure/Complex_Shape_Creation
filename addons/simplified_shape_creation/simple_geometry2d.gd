@@ -30,7 +30,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
-static func create_shape(vertices_count: int, sizes: PackedInt64Array, offset_rotation := 0.0, offset_position := Vector2.ZERO,
+static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_rotation := 0.0, offset_position := Vector2.ZERO,
 	arc_start := 0.0, arc_end := TAU, add_central_point := true) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(sizes.size() != 0, "param 'sizes' must have at least one element")

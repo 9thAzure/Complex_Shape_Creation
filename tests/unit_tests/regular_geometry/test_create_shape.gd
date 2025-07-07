@@ -9,7 +9,7 @@ func test_create_shape__various_inputs__expected_outputs(p=use_parameters([
 ])) -> void:
 
 	var vertices_count: int = p[0]
-	var sizes: PackedInt64Array = p[1]
+	var sizes: PackedFloat64Array = p[1]
 	var offset_rotation : float = p[2]
 	var offset_position : Vector2 = p[3]
 	var arc_start : float = p[4]

@@ -80,9 +80,10 @@ public static class SimpleGeometry2D
     /// <param name="arcEnd">The ending angle of the arc out of the base shape that is cut out and returned, in radians.</param>
     /// <param name="addCentralPoint">If <c>true</c>, adds a center point to the shape. It is automatically false if the arc of the shape is a complete circle.</param>
     /// <returns>A <see cref="T:Vector2[]"/> describing the shape specified by the parameters.</returns>
-    public static Vector2[] CreateShape(int verticesCount, long[] sizes, double offsetRotation = 0d,
+    public static Vector2[] CreateShape(int verticesCount, double[] sizes, double offsetRotation = 0d,
         Vector2 offsetPosition = default, double arcStart = 0d, double arcEnd = Math.Tau, bool addCentralPoint = true)
     {
+        Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
         Debug.Assert(Loader.Value.HasMethod(MethodName.CreateShape));
         return Loader.Value.Call(MethodName.CreateShape, verticesCount, sizes, offsetRotation, offsetPosition,
             arcStart, arcEnd, addCentralPoint).AsVector2Array();
@@ -98,6 +99,7 @@ public static class SimpleGeometry2D
     /// <returns>A <see cref="T:Vector2[]"/>, representing the shape of <paramref name="shape"/> with an added ring.</returns>
     public static Vector2[] AddRing(Vector2[] shape, double lengthProportion, Vector2 shapeCenter = default, bool closeRing = true)
     {
+        Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
         Debug.Assert(Loader.Value.HasMethod(MethodName.AddRing));
         return Loader.Value.Call(MethodName.AddRing, shape, lengthProportion, shapeCenter, closeRing).AsVector2Array();
     }
@@ -112,6 +114,7 @@ public static class SimpleGeometry2D
     /// <returns>A <see cref="T:Vector2[]"/>, representing the shape of <paramref name="shape"/> with rounded corners.</returns>
     public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerSmoothness)
     {
+        Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
         Debug.Assert(Loader.Value.HasMethod(MethodName.AddRoundedCorners));
         return Loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerSmoothness).AsVector2Array();
     }
