@@ -25,8 +25,8 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## [br][br]
 ## [param vertices_count] determines the number of points on the base shape. If a value of [code]1[/code] is used,
 ## A value of [code]32[/code] is used instead.
-## [param sizes] determines the length of each point from the center of the base shape, being repeatedly looped through
-## to get that length.
+## [param sizes] determines the length of each point from the center of the base shape, being repeatedly iterated through
+## to get the length for each corner.
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
