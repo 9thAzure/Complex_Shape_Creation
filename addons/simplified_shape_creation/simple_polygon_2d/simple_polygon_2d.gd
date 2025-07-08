@@ -10,7 +10,7 @@ extends Node2D
 
 
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
-@export_range(1, 200)
+@export_range(1, 1000)
 var vertices_count : int = 1:
 	set(value):
 		assert(value > 0, "property 'vertices_count' must be greater than 0")
@@ -18,11 +18,26 @@ var vertices_count : int = 1:
 		queue_redraw()
 
 ## The length from each corner to the center of the shape.
-@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
+#@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
 var size : float = 10:
+	get:
+		return sizes[0]
 	set(value):
-		size = value
-		assert(value > 0, "property 'size' must be greater than 0.");
+		sizes[0] = value
+		queue_redraw()
+
+@export
+var sizes : PackedFloat64Array = PackedFloat64Array([10]):
+	set(value):
+		if value.size() == 0:
+			return
+
+		for i in value.size():
+			if value[i] < 0.001:
+				value[i] = 0.001 if i >= sizes.size() else sizes[i]
+
+
+		sizes = value
 		queue_redraw()
 
 ## The offset rotation of the shape, in degrees.
@@ -156,7 +171,7 @@ func _draw() -> void:
 		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 
-	shape = SimpleGeometry2d.create_shape(vertices_count, [size], offset_rotation, offset_position, arc_start, arc_end, not is_ring_shape)
+	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, not is_ring_shape)
 	if not uses_arc and rounded_corners:
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 	if is_ring_shape:
