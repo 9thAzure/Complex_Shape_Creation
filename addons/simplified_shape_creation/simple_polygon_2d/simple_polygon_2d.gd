@@ -77,12 +77,14 @@ var width : float = -0.001:
 var arc_start : float = 0.0:
 	set(value):
 		arc_start = value
+		update_configuration_warnings()
 		queue_redraw()
 
 @export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
 var arc_end : float = TAU:
 	set(value):
 		arc_end = value
+		update_configuration_warnings()
 		queue_redraw()
 
 var arc_start_degrees : float = 0.0:
@@ -121,6 +123,13 @@ func queue_regenerate() -> void:
 ## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func regenerate() -> void:
 	queue_redraw()
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	if is_equal_approx(arc_start, arc_end):
+		warnings.push_back("the arc of the shape is 0º, so nothing will be created")
+
+	return warnings
 
 func _draw() -> void:
 	var shape : PackedVector2Array
