@@ -114,6 +114,21 @@ var arc_end_degrees : float = TAU:
 	set(value):
 		arc_end = deg_to_rad(value)
 
+## Strategies for closing an open shape.
+enum ClosingStrategy {
+	## Shape is closed with two lines between the ends and the center of the shape.
+	SLICE,
+	## Shape is closed by connected the 2 ends together directly.
+	CHORD,
+	## Shape is left open. This only has an effect for lines, and is otherwise equivalent to [constant ClosingStrategy.CHORD].
+	ARC,
+}
+
+@export
+var closing_strategy : ClosingStrategy = ClosingStrategy.SLICE:
+	set(value):
+		closing_strategy = value
+		queue_redraw()
 
 @export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
 var corner_size : float = 0.0:
@@ -171,17 +186,18 @@ func _draw() -> void:
 		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 
-	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, not is_ring_shape)
+	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, closing_strategy == ClosingStrategy.SLICE)
 	if not uses_arc and rounded_corners:
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 	if is_ring_shape:
-		SimpleGeometry2d.add_ring(shape, width / size, offset_position, not uses_arc)
+		SimpleGeometry2d.add_ring(shape, width / size, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
 	if uses_arc and rounded_corners:
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 
 	if is_outline:
 		draw_polyline(shape, color)
-		draw_line(shape[-1], shape[0], color)
+		if closing_strategy != ClosingStrategy.ARC:
+			draw_line(shape[-1], shape[0], color)
 		return
 
 	var hulls := Geometry2D.decompose_polygon_in_convex(shape)
