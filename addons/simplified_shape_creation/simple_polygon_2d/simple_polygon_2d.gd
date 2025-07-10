@@ -191,6 +191,13 @@ func _draw() -> void:
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 	if is_ring_shape:
 		SimpleGeometry2d.add_ring(shape, width / size, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
+		if closing_strategy == ClosingStrategy.SLICE and uses_arc:
+			var size = shape.size()
+			for i in size / 2 - 1:
+				shape[size / 2 + i] = shape[size / 2 + i + 1]
+			shape[-1] = shape[size / 2 - 1]
+			shape[-2] = shape[-2].lerp(shape[-3], width / size)
+			shape[size / 2] = shape[size / 2].lerp(shape[size / 2 + 1], width / size)
 	if uses_arc and rounded_corners:
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 
@@ -200,9 +207,17 @@ func _draw() -> void:
 			draw_line(shape[-1], shape[0], color)
 		return
 
+#	draw_polyline(shape, Color.RED)
+#	draw_line(shape[-1], shape[0], Color.RED)
+
 	var hulls := Geometry2D.decompose_polygon_in_convex(shape)
 	for hull in hulls:
 		draw_colored_polygon(hull, color)
+#		draw_polyline(hull, Color.BLUE)
+#		draw_line(hull[-1], hull[0], Color.BLUE)
+
+#	draw_polyline(shape, Color.RED)
+#	draw_line(shape[-1], shape[0], Color.RED)
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
