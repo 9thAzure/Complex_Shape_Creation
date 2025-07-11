@@ -130,6 +130,12 @@ var closing_strategy : ClosingStrategy = ClosingStrategy.SLICE:
 		closing_strategy = value
 		queue_redraw()
 
+@export
+var round_arc_ends : bool = false:
+	set(value):
+		round_arc_ends = value
+		queue_redraw()
+
 @export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
 var corner_size : float = 0.0:
 	set(value):
@@ -187,8 +193,20 @@ func _draw() -> void:
 		return
 
 	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, closing_strategy == ClosingStrategy.SLICE)
-	if not uses_arc and rounded_corners:
-		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+
+	# rounding order
+	#
+	print('a')
+	if rounded_corners:
+		if not uses_arc:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+		elif not round_arc_ends or closing_strategy == ClosingStrategy.ARC:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if closing_strategy == ClosingStrategy.SLICE else 2))
+		elif closing_strategy == ClosingStrategy.CHORD:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+		elif closing_strategy == ClosingStrategy.SLICE:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
+
 	if is_ring_shape:
 		SimpleGeometry2d.add_ring(shape, width / size, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
 		if closing_strategy == ClosingStrategy.SLICE and uses_arc:
@@ -198,8 +216,12 @@ func _draw() -> void:
 			shape[-1] = shape[size / 2 - 1]
 			shape[-2] = shape[-2].lerp(shape[-3], width / size)
 			shape[size / 2] = shape[size / 2].lerp(shape[size / 2 + 1], width / size)
-	if uses_arc and rounded_corners:
-		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+
+	if rounded_corners:
+		if uses_arc and round_arc_ends and closing_strategy == ClosingStrategy.ARC:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, shape.size() / 2 - 1, 2, true)
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, 1, true)
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, shape.size() - 1, 1, true)
 
 	if is_outline:
 		draw_polyline(shape, color)
