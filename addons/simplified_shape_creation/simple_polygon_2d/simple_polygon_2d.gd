@@ -171,7 +171,8 @@ func _draw() -> void:
 	var shape : PackedVector2Array
 	var is_outline := is_zero_approx(width)
 	var is_ring_shape := 0 < width and width < size and not is_outline
-	var uses_arc := not is_equal_approx(arc_end - arc_start, TAU)
+	var arc_rotation := arc_end - arc_start
+	var uses_arc := not is_equal_approx(arc_rotation, TAU)
 	var rounded_corners := not is_zero_approx(corner_size)
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
 	if (vertices_count == 1):
@@ -196,7 +197,6 @@ func _draw() -> void:
 
 	# rounding order
 	#
-	print('a')
 	if rounded_corners:
 		if not uses_arc:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
@@ -208,14 +208,19 @@ func _draw() -> void:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
 
 	if is_ring_shape:
-		SimpleGeometry2d.add_ring(shape, width / size, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
-		if closing_strategy == ClosingStrategy.SLICE and uses_arc:
-			var size = shape.size()
-			for i in size / 2 - 1:
-				shape[size / 2 + i] = shape[size / 2 + i + 1]
-			shape[-1] = shape[size / 2 - 1]
-			shape[-2] = shape[-2].lerp(shape[-3], width / size)
-			shape[size / 2] = shape[size / 2].lerp(shape[size / 2 + 1], width / size)
+		var ratio := width / size
+		if not uses_arc or closing_strategy != ClosingStrategy.SLICE:
+			SimpleGeometry2d.add_ring(shape, ratio, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
+		else:
+			var inner_arc_start := arc_start + TAU * ratio / 2 / vertices_count
+			var inner_arc_end := arc_end - TAU * ratio / 2 / vertices_count
+			if inner_arc_start < inner_arc_end:
+				var inner_ring := SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
+
+				shape.resize(shape.size() + inner_ring.size() + 1)
+				shape[-1] = offset_position
+				for i in inner_ring.size():
+					shape[-i - 2] = inner_ring[i].lerp(offset_position, ratio)
 
 	if rounded_corners:
 		if uses_arc and round_arc_ends and closing_strategy == ClosingStrategy.ARC:
@@ -252,11 +257,6 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 		self.color = color
 	if offset_position != Vector2.ZERO:
 		self.offset = offset_position
-
-# func _ready() -> void:
-# 	if Engine.is_editor_hint():
-# 		var control := preload("res://addons/simplified_shape_creation/gui_handlers/size_rotation_handler.gd").new(self)
-# 		add_child(control)
 
 static var _circle := get_shape_vertices(32)
 
