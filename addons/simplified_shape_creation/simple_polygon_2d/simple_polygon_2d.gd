@@ -193,22 +193,25 @@ func _draw() -> void:
 		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
 		return
 
-	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, closing_strategy == ClosingStrategy.SLICE)
+	var add_central_point := closing_strategy == ClosingStrategy.SLICE or closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1)
+	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
 
 	if rounded_corners:
 		if not uses_arc:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
-		elif not round_arc_ends or closing_strategy == ClosingStrategy.ARC:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if closing_strategy == ClosingStrategy.SLICE else 2))
+		elif not round_arc_ends or round_arc_ends and closing_strategy == ClosingStrategy.ARC and is_outline:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if add_central_point else 2))
+		elif closing_strategy == ClosingStrategy.SLICE:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
 		elif closing_strategy == ClosingStrategy.CHORD:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
-		elif closing_strategy == ClosingStrategy.SLICE:
+		elif closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1):
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
 
 	if is_ring_shape:
 		if not uses_arc or closing_strategy != ClosingStrategy.SLICE:
 			SimpleGeometry2d.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
-		else:
+		else: # uses_arc and closing_strategy == ClosingStrategy.SLICE
 			var inner_arc_start := arc_start + TAU * ring_ratio / 2 / vertices_count
 			var inner_arc_end := arc_end - TAU * ring_ratio / 2 / vertices_count
 			if inner_arc_start < inner_arc_end:
@@ -219,11 +222,22 @@ func _draw() -> void:
 				for i in inner_ring.size():
 					shape[-i - 2] = inner_ring[i].lerp(offset_position, ring_ratio)
 
-	if rounded_corners:
-		if uses_arc and round_arc_ends and closing_strategy == ClosingStrategy.ARC:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, shape.size() / 2 - 1, 2, true)
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, 1, true)
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, shape.size() - 1, 1, true)
+				if rounded_corners:
+					var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
+					var inner_start := shape.size() - inner_ring.size()
+					var inner_length := inner_ring.size() - 1
+					if not round_arc_ends:
+						inner_start += 1
+						inner_length -= 2
+
+					SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, inner_start, inner_length, false)
+
+	if rounded_corners and uses_arc and closing_strategy == ClosingStrategy.ARC and round_arc_ends and is_ring_shape:
+		var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
+		var original_size := shape.size()
+
+		SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
+		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
 
 	if is_outline:
 		draw_polyline(shape, color)
