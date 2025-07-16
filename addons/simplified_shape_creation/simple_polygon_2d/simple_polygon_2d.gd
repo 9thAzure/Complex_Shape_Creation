@@ -60,13 +60,6 @@ func apply_transformation(rotation : float, scale : float) -> void:
 	offset_rotation += rotation
 	size *= scale
 
-## The color of the shape.
-@export
-var color : Color = Color.WHITE:
-	set(value):
-		color = value
-		queue_redraw()
-
 ## see [member offset]
 ## @deprecated
 @export
@@ -156,6 +149,43 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		queue_regenerate()
 
+@export_group("usage")
+
+@export
+var draw_shape := true:
+	set(value):
+		draw_shape = value
+		queue_redraw()
+
+## The color of the shape.
+@export
+var color : Color = Color.WHITE:
+	set(value):
+		color = value
+		queue_redraw()
+
+@export_flags("Editor:1", "Run Time:2")
+var export_behaviour : int = ExportBehaviour.DISABLED
+
+enum ExportBehaviour {
+	DISABLED = 0,
+	EDITOR = 1,
+	RUN_TIME = 2,
+}
+
+@export
+var export_as_decomposed_hulls := false
+
+@export
+var targets : Array[NodePath] = []:
+	set(value):
+		if value == null:
+			return
+		targets = value
+		update_configuration_warnings()
+
+signal shape_updated(shape : Variant)
+
 ## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func queue_regenerate() -> void:
 	queue_redraw()
@@ -167,7 +197,56 @@ func regenerate() -> void:
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
 	if is_equal_approx(arc_start, arc_end):
-		warnings.push_back("the arc of the shape is 0º, so nothing will be created")
+		warnings.push_back("The arc of the shape is 0º, so nothing will be created")
+
+	for i in targets.size():
+		var path := targets[i]
+		print("\nprocessing %s" % i)
+		print(path, " | ", path == null)
+		if path.is_empty():
+			warnings.push_back("The export path at index %s is unassigned." % i)
+			continue
+
+		var node_path := NodePath(String(path.get_concatenated_names()))
+		print("n: ", node_path)
+		var node := get_node_or_null(node_path)
+		if node == null:
+			warnings.push_back("The export path at index %s points to a non existant node" % i)
+			continue
+
+		print("p: ", path.get_concatenated_subnames())
+		if path.get_subname_count() == 0:
+			warnings.push_back("The export path at index %s does not reference a property" % i)
+			continue
+
+		var previous_object : Variant = node
+		var failure := false
+		for i2 in path.get_subname_count() - 1:
+			var property := path.get_subname(i2)
+			if not (property in previous_object):
+				warnings.push_back("The export path at index %s has a non-existant property reference at subname #%s (%s)" % [i, i2, property])
+				failure = true
+				break
+
+			previous_object = previous_object.get(property)
+			if typeof(previous_object) != TYPE_OBJECT or previous_object == null:
+				warnings.push_back("The export path at index %s has a property reference which is null or isn't of type Object at subname #%s (type: %s)" % [i, i2, "null" if previous_object == null else type_string(typeof(previous_object))])
+				failure = true
+				break
+
+		if failure:
+			continue
+
+		var last_i = path.get_subname_count() - 1
+		var property := path.get_subname(last_i)
+		if not (property in previous_object):
+			warnings.push_back("The export path at index %s points to a non-existant property (%s)" % [i, path.get_concatenated_subnames()])
+			continue
+
+		var type := typeof(previous_object.get(property))
+		if type != TYPE_PACKED_VECTOR2_ARRAY and type != TYPE_ARRAY:
+			warnings.push_back("The export path at index %s points to a property that is either currently null or not an Array or PackedVector2Array (type: %s)" % [i, type_string(type)])
+			continue
 
 	return warnings
 
@@ -243,23 +322,24 @@ func _draw() -> void:
 		SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
 
-	if is_outline:
-		draw_polyline(shape, color)
-		if closing_strategy != ClosingStrategy.ARC:
-			draw_line(shape[-1], shape[0], color)
-		return
+	if draw_shape:
+		if is_outline:
+			draw_polyline(shape, color)
+			if closing_strategy != ClosingStrategy.ARC:
+				draw_line(shape[-1], shape[0], color)
+			return
 
-#	draw_polyline(shape, Color.RED)
-#	draw_line(shape[-1], shape[0], Color.RED)
+	#	draw_polyline(shape, Color.RED)
+	#	draw_line(shape[-1], shape[0], Color.RED)
 
-	var hulls := Geometry2D.decompose_polygon_in_convex(shape)
-	for hull in hulls:
-		draw_colored_polygon(hull, color)
-#		draw_polyline(hull, Color.BLUE)
-#		draw_line(hull[-1], hull[0], Color.BLUE)
+		var hulls := Geometry2D.decompose_polygon_in_convex(shape)
+		for hull in hulls:
+			draw_colored_polygon(hull, color)
+	#		draw_polyline(hull, Color.BLUE)
+	#		draw_line(hull[-1], hull[0], Color.BLUE)
 
-#	draw_polyline(shape, Color.RED)
-#	draw_line(shape[-1], shape[0], Color.RED)
+	#	draw_polyline(shape, Color.RED)
+	#	draw_line(shape[-1], shape[0], Color.RED)
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
