@@ -15,7 +15,7 @@ var vertices_count : int = 1:
 	set(value):
 		assert(value > 0, "property 'vertices_count' must be greater than 0")
 		vertices_count = value
-		queue_redraw()
+		queue_regenerate()
 
 ## The length from each corner to the center of the shape.
 #@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
@@ -24,7 +24,7 @@ var size : float = 10:
 		return sizes[0]
 	set(value):
 		sizes[0] = value
-		queue_redraw()
+		queue_regenerate()
 
 @export
 var sizes : PackedFloat64Array = PackedFloat64Array([10]):
@@ -38,7 +38,7 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10]):
 
 
 		sizes = value
-		queue_redraw()
+		queue_regenerate()
 
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
@@ -52,7 +52,7 @@ var offset_rotation_degrees : float = 0:
 var offset_rotation : float = 0:
 	set(value):
 		offset_rotation = value
-		queue_redraw()
+		queue_regenerate()
 
 ## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
 func apply_transformation(rotation : float, scale : float) -> void:
@@ -73,27 +73,27 @@ var offset_position := Vector2.ZERO:
 var offset : Vector2 = Vector2.ZERO:
 	set(value):
 		offset = value
-		queue_redraw()
+		queue_regenerate()
 
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:
 	set(value):
 		ring_ratio = value
-		queue_redraw()
+		queue_regenerate()
 
 @export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
 var arc_start : float = 0.0:
 	set(value):
 		arc_start = value
 		update_configuration_warnings()
-		queue_redraw()
+		queue_regenerate()
 
 @export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
 var arc_angle : float = TAU:
 	set(value):
 		arc_angle = value
 		update_configuration_warnings()
-		queue_redraw()
+		queue_regenerate()
 
 var arc_end : float = TAU:
 	get: return arc_start + arc_angle
@@ -125,13 +125,13 @@ enum ClosingStrategy {
 var closing_strategy : ClosingStrategy = ClosingStrategy.SLICE:
 	set(value):
 		closing_strategy = value
-		queue_redraw()
+		queue_regenerate()
 
 @export
 var round_arc_ends : bool = false:
 	set(value):
 		round_arc_ends = value
-		queue_redraw()
+		queue_regenerate()
 
 @export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
 var corner_size : float = 0.0:
@@ -186,13 +186,119 @@ var targets : Array[NodePath] = []:
 
 signal shape_updated(shape : Variant)
 
+var _created_shape : PackedVector2Array = []:
+	set(value):
+		_created_shape = value
+		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
+
+var _decomposed_created_shape : Array[PackedVector2Array] = []:
+	set(value):
+		_decomposed_created_shape = value
+		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
+
+# "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
+const _NOT_QUEUED        := 0
+const _IS_QUEUED         := 1
+const _QUEUE_PROPAGATION := 2
+
+var _queue_status : int = _NOT_QUEUED
+
 ## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func queue_regenerate() -> void:
-	queue_redraw()
+	if _queue_status == _IS_QUEUED:
+		return
+
+	_queue_status = _IS_QUEUED
+	if not is_inside_tree():
+		return
+
+	await get_tree().process_frame
+	if _queue_status != _IS_QUEUED:
+		return
+
+	regenerate()
+
+func _enter_tree() -> void:
+	if _queue_status == _IS_QUEUED:
+		regenerate()
+	_queue_status = _NOT_QUEUED
 
 ## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func regenerate() -> void:
+	_queue_status = _NOT_QUEUED
+
+	var shape : PackedVector2Array
+	var is_outline := is_zero_approx(ring_ratio)
+	var is_ring_shape :=  not is_outline and ring_ratio < 1
+	var arc_rotation := arc_end - arc_start
+	var uses_arc := not is_equal_approx(arc_rotation, TAU)
+	var rounded_corners := not is_zero_approx(corner_size)
+	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
+
+	var add_central_point := closing_strategy == ClosingStrategy.SLICE or closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1)
+	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
+
+	if rounded_corners:
+		if not uses_arc:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+		elif not round_arc_ends or round_arc_ends and closing_strategy == ClosingStrategy.ARC and is_outline:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if add_central_point else 2))
+		elif closing_strategy == ClosingStrategy.SLICE:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
+		elif closing_strategy == ClosingStrategy.CHORD:
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+		elif closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1):
+			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
+
+	if is_ring_shape:
+		if not uses_arc or closing_strategy != ClosingStrategy.SLICE:
+			SimpleGeometry2d.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
+		else: # uses_arc and closing_strategy == ClosingStrategy.SLICE
+			var inner_arc_start := arc_start + TAU * ring_ratio / 2 / vertices_count
+			var inner_arc_end := arc_end - TAU * ring_ratio / 2 / vertices_count
+			if inner_arc_start < inner_arc_end:
+				var inner_ring := SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
+
+				shape.resize(shape.size() + inner_ring.size() + 1)
+				shape[-1] = offset_position
+				for i in inner_ring.size():
+					shape[-i - 2] = inner_ring[i].lerp(offset_position, ring_ratio)
+
+				if rounded_corners:
+					var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
+					var inner_start := shape.size() - inner_ring.size()
+					var inner_length := inner_ring.size() - 1
+					if not round_arc_ends:
+						inner_start += 1
+						inner_length -= 2
+
+					SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, inner_start, inner_length, false)
+
+	if rounded_corners and uses_arc and closing_strategy == ClosingStrategy.ARC and round_arc_ends and is_ring_shape:
+		var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
+		var original_size := shape.size()
+
+		SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
+		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
+
+	_created_shape = shape
+	_decomposed_created_shape = Geometry2D.decompose_polygon_in_convex(shape)
 	queue_redraw()
+
+func _get_property_list() -> Array[Dictionary]:
+	var properties : Array[Dictionary] = []
+	properties.append({
+		name = "_created_shape",
+		type = TYPE_PACKED_VECTOR2_ARRAY,
+		usage = PROPERTY_USAGE_STORAGE
+	})
+	properties.append({
+		name = "_decomposed_created_shape",
+		type = TYPE_ARRAY,
+		usage = PROPERTY_USAGE_STORAGE
+	})
+
+	return properties
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
@@ -251,90 +357,37 @@ func _get_configuration_warnings() -> PackedStringArray:
 	return warnings
 
 func _draw() -> void:
-	var shape : PackedVector2Array
-	var is_outline := is_zero_approx(ring_ratio)
-	var is_ring_shape :=  not is_outline and ring_ratio < 1
-	var arc_rotation := arc_end - arc_start
-	var uses_arc := not is_equal_approx(arc_rotation, TAU)
-	var rounded_corners := not is_zero_approx(corner_size)
-	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
-	if (vertices_count == 1):
-		draw_circle(offset, size, color)
-		return
-	
-	if (vertices_count == 2):
-		if offset_rotation == 0:
-			draw_line(Vector2.UP * size + offset, Vector2.DOWN * size + offset, color)
-			return
-		
-		var point1 := Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
-		draw_line(point1 + offset, -point1 + offset, color)
-		return
-	
-	if (vertices_count == 4 && offset_rotation == 0):
-		const sqrt_two_over_two := 0.707106781
-		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+#	if (vertices_count == 1):
+#		draw_circle(offset, size, color)
+#		return
+#
+#	if (vertices_count == 2):
+#		if offset_rotation == 0:
+#			draw_line(Vector2.UP * size + offset, Vector2.DOWN * size + offset, color)
+#			return
+#
+#		var point1 := Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
+#		draw_line(point1 + offset, -point1 + offset, color)
+#		return
+#
+#	if (vertices_count == 4 && offset_rotation == 0):
+#		const sqrt_two_over_two := 0.707106781
+#		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
+#		return
+	if not draw_shape:
 		return
 
-	var add_central_point := closing_strategy == ClosingStrategy.SLICE or closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1)
-	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
-
-	if rounded_corners:
-		if not uses_arc:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
-		elif not round_arc_ends or round_arc_ends and closing_strategy == ClosingStrategy.ARC and is_outline:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if add_central_point else 2))
-		elif closing_strategy == ClosingStrategy.SLICE:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
-		elif closing_strategy == ClosingStrategy.CHORD:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
-		elif closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1):
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
-
-	if is_ring_shape:
-		if not uses_arc or closing_strategy != ClosingStrategy.SLICE:
-			SimpleGeometry2d.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
-		else: # uses_arc and closing_strategy == ClosingStrategy.SLICE
-			var inner_arc_start := arc_start + TAU * ring_ratio / 2 / vertices_count
-			var inner_arc_end := arc_end - TAU * ring_ratio / 2 / vertices_count
-			if inner_arc_start < inner_arc_end:
-				var inner_ring := SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
-
-				shape.resize(shape.size() + inner_ring.size() + 1)
-				shape[-1] = offset_position
-				for i in inner_ring.size():
-					shape[-i - 2] = inner_ring[i].lerp(offset_position, ring_ratio)
-
-				if rounded_corners:
-					var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
-					var inner_start := shape.size() - inner_ring.size()
-					var inner_length := inner_ring.size() - 1
-					if not round_arc_ends:
-						inner_start += 1
-						inner_length -= 2
-
-					SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, inner_start, inner_length, false)
-
-	if rounded_corners and uses_arc and closing_strategy == ClosingStrategy.ARC and round_arc_ends and is_ring_shape:
-		var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
-		var original_size := shape.size()
-
-		SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
-		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
-
-	if draw_shape:
-		if is_outline:
-			draw_polyline(shape, color)
-			if closing_strategy != ClosingStrategy.ARC:
-				draw_line(shape[-1], shape[0], color)
-			return
+	if is_zero_approx(ring_ratio):
+		draw_polyline(_created_shape, color)
+		if closing_strategy != ClosingStrategy.ARC:
+			draw_line(_created_shape[-1], _created_shape[0], color)
+		return
 
 	#	draw_polyline(shape, Color.RED)
 	#	draw_line(shape[-1], shape[0], Color.RED)
 
-		var hulls := Geometry2D.decompose_polygon_in_convex(shape)
-		for hull in hulls:
-			draw_colored_polygon(hull, color)
+	for hull in _decomposed_created_shape:
+		draw_colored_polygon(hull, color)
 	#		draw_polyline(hull, Color.BLUE)
 	#		draw_line(hull[-1], hull[0], Color.BLUE)
 
