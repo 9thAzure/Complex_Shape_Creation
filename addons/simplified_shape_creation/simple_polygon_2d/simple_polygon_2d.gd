@@ -189,17 +189,21 @@ signal shape_updated(shape : Variant)
 var _created_shape : PackedVector2Array = []:
 	set(value):
 		_created_shape = value
-		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
+		queue_disperse()
+		queue_redraw()
+#		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
 
 var _decomposed_created_shape : Array[PackedVector2Array] = []:
 	set(value):
 		_decomposed_created_shape = value
-		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
+		queue_disperse()
+		queue_redraw()
+#		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
 
 # "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
-const _NOT_QUEUED        := 0
-const _IS_QUEUED         := 1
-const _QUEUE_PROPAGATION := 2
+const _NOT_QUEUED     := 0
+const _IS_QUEUED      := 1
+const _QUEUE_DISPERSE := 2
 
 var _queue_status : int = _NOT_QUEUED
 
@@ -221,7 +225,9 @@ func queue_regenerate() -> void:
 func _enter_tree() -> void:
 	if _queue_status == _IS_QUEUED:
 		regenerate()
-	_queue_status = _NOT_QUEUED
+	if _queue_status == _QUEUE_DISPERSE:
+		disperse()
+#	_queue_status = _NOT_QUEUED
 
 ## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func regenerate() -> void:
@@ -299,6 +305,34 @@ func _get_property_list() -> Array[Dictionary]:
 	})
 
 	return properties
+
+func queue_disperse() -> void:
+	if _queue_status == _QUEUE_DISPERSE:
+		return
+
+	_queue_status = _QUEUE_DISPERSE
+	if not is_inside_tree():
+		return
+
+	await get_tree().process_frame
+	if _queue_status != _QUEUE_DISPERSE:
+		return
+
+	disperse()
+
+func disperse() -> void:
+	_queue_status = _NOT_QUEUED
+	print("dispersal")
+	var in_editor := Engine.is_editor_hint()
+	if not (in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0):
+		return
+
+	var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
+	shape_updated.emit(exported_objects)
+	for path in targets:
+		var node := self if path.get_name_count() == 0 else get_node(NodePath(String(path.get_concatenated_names())))
+		assert(node != null)
+		node.set_indexed(NodePath(String(path.get_concatenated_subnames())), exported_objects)
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
