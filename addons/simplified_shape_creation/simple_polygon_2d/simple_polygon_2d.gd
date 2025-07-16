@@ -96,23 +96,27 @@ var arc_start : float = 0.0:
 		queue_redraw()
 
 @export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
-var arc_end : float = TAU:
+var arc_angle : float = TAU:
 	set(value):
-		arc_end = value
+		arc_angle = value
 		update_configuration_warnings()
 		queue_redraw()
 
-var arc_start_degrees : float = 0.0:
-	get:
-		return rad_to_deg(arc_start)
-	set(value):
-		arc_start = deg_to_rad(value)
+var arc_end : float = TAU:
+	get: return arc_start + arc_angle
+	set(value): arc_angle = value - arc_start
 
-var arc_end_degrees : float = TAU:
-	get:
-		return rad_to_deg(arc_end)
-	set(value):
-		arc_end = deg_to_rad(value)
+var arc_start_degrees : float:
+	get: return rad_to_deg(arc_start)
+	set(value): arc_start = deg_to_rad(value)
+
+var arc_angle_degrees : float:
+	get: return rad_to_deg(arc_angle)
+	set(value): arc_angle = deg_to_rad(value)
+
+var arc_end_degrees : float:
+	get: return rad_to_deg(arc_end)
+	set(value): arc_end = deg_to_rad(value)
 
 ## Strategies for closing an open shape.
 enum ClosingStrategy {
