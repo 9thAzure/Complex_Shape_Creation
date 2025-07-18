@@ -81,6 +81,22 @@ var ring_ratio : float = 1.0:
 		ring_ratio = value
 		queue_regenerate()
 
+@export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
+var corner_size : float = 0.0:
+	set(value):
+		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
+		corner_size = value
+		queue_regenerate()
+
+## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
+## This only has an effect if [member corner_size] is used.
+@export_range(0, 50)
+var corner_smoothness : int = 0:
+	set(value):
+		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
+		corner_smoothness = value
+		queue_regenerate()
+
 @export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
 var arc_start : float = 0.0:
 	set(value):
@@ -112,7 +128,7 @@ var arc_end_degrees : float:
 	set(value): arc_end = deg_to_rad(value)
 
 ## Strategies for closing an open shape.
-enum ClosingStrategy {
+enum ClosingMethod {
 	## Shape is closed with two lines between the ends and the center of the shape.
 	SLICE,
 	## Shape is closed by connected the 2 ends together directly.
@@ -122,9 +138,9 @@ enum ClosingStrategy {
 }
 
 @export
-var closing_strategy : ClosingStrategy = ClosingStrategy.SLICE:
+var closing_method : ClosingMethod = ClosingMethod.SLICE:
 	set(value):
-		closing_strategy = value
+		closing_method = value
 		queue_regenerate()
 
 @export
@@ -133,23 +149,7 @@ var round_arc_ends : bool = false:
 		round_arc_ends = value
 		queue_regenerate()
 
-@export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
-var corner_size : float = 0.0:
-	set(value):
-		assert(value >= 0, "property 'corner_size' must be greater than or equal to 0")
-		corner_size = value
-		queue_regenerate()
-
-## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
-## This only has an effect if [member corner_size] is used.
-@export_range(0, 50)
-var corner_smoothness : int = 0:
-	set(value):
-		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
-		corner_smoothness = value
-		queue_regenerate()
-
-@export_group("usage")
+@export_group("Drawing")
 
 @export
 var draw_shape := true:
@@ -164,13 +164,15 @@ var color : Color = Color.WHITE:
 		color = value
 		queue_redraw()
 
+@export_group("Exporting")
+
 @export_flags("Editor:1", "Run Time:2")
 var export_behaviour : int = ExportBehaviour.DISABLED:
 	set(value):
 		var was_exporting := is_exporting()
 		export_behaviour = value
 		if not was_exporting and is_exporting():
-			queue_disperse()
+			queue_export()
 
 enum ExportBehaviour {
 	DISABLED = 0,
@@ -182,15 +184,17 @@ enum ExportBehaviour {
 var export_as_decomposed_hulls := false
 
 @export
-var targets : Array[NodePath] = []:
+var auto_free := false
+
+@export_group("Exporting", "export")
+
+@export
+var export_targets : Array[NodePath] = []:
 	set(value):
 		if value == null:
 			return
-		targets = value
+		export_targets = value
 		update_configuration_warnings()
-
-@export
-var auto_free := false
 
 signal shape_updated(shape : Variant)
 
@@ -199,7 +203,7 @@ var _created_shape : PackedVector2Array = []:
 		_created_shape = value
 		if _queue_status != _QUEUE_DISPERSE:
 			_queue_status = _UNQUEUED
-			queue_disperse()
+			queue_export()
 		queue_redraw()
 
 var _decomposed_created_shape : Array[PackedVector2Array] = []:
@@ -207,7 +211,7 @@ var _decomposed_created_shape : Array[PackedVector2Array] = []:
 		_decomposed_created_shape = value
 		if _queue_status != _QUEUE_DISPERSE:
 			_queue_status = _UNQUEUED
-			queue_disperse()
+			queue_export()
 		queue_redraw()
 
 func is_exporting() -> bool:
@@ -222,6 +226,13 @@ const _QUEUE_DISPERSE   := 1
 const _QUEUE_REGENERATE := 2
 
 var _queue_status : int = _UNQUEUED
+
+func _enter_tree() -> void:
+	if _queue_status == _QUEUE_REGENERATE:
+		regenerate()
+	if _queue_status == _QUEUE_DISPERSE:
+		_queue_status = _UNQUEUED
+		queue_export()
 
 ## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func queue_regenerate() -> void:
@@ -238,13 +249,6 @@ func queue_regenerate() -> void:
 
 	regenerate()
 
-func _enter_tree() -> void:
-	if _queue_status == _QUEUE_REGENERATE:
-		regenerate()
-	if _queue_status == _QUEUE_DISPERSE:
-		_queue_status = _UNQUEUED
-		queue_disperse()
-
 ## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func regenerate() -> void:
 	_queue_status = _UNQUEUED
@@ -257,24 +261,24 @@ func regenerate() -> void:
 	var rounded_corners := not is_zero_approx(corner_size)
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
 
-	var add_central_point := closing_strategy == ClosingStrategy.SLICE or closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1)
+	var add_central_point := closing_method == ClosingMethod.SLICE or closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1)
 	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
 
 	if rounded_corners:
 		if not uses_arc:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
-		elif not round_arc_ends or round_arc_ends and closing_strategy == ClosingStrategy.ARC and is_outline:
+		elif not round_arc_ends or round_arc_ends and closing_method == ClosingMethod.ARC and is_outline:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if add_central_point else 2))
-		elif closing_strategy == ClosingStrategy.SLICE:
+		elif closing_method == ClosingMethod.SLICE:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
-		elif closing_strategy == ClosingStrategy.CHORD:
+		elif closing_method == ClosingMethod.CHORD:
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
-		elif closing_strategy == ClosingStrategy.ARC and is_equal_approx(ring_ratio, 1):
+		elif closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1):
 			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
 
 	if is_ring_shape:
-		if not uses_arc or closing_strategy != ClosingStrategy.SLICE:
-			SimpleGeometry2d.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_strategy == ClosingStrategy.CHORD)
+		if not uses_arc or closing_method != ClosingMethod.SLICE:
+			SimpleGeometry2d.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_method == ClosingMethod.CHORD)
 		else: # uses_arc and closing_strategy == ClosingStrategy.SLICE
 			var inner_arc_start := arc_start + TAU * ring_ratio / 2 / vertices_count
 			var inner_arc_end := arc_end - TAU * ring_ratio / 2 / vertices_count
@@ -296,7 +300,7 @@ func regenerate() -> void:
 
 					SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, inner_start, inner_length, false)
 
-	if rounded_corners and uses_arc and closing_strategy == ClosingStrategy.ARC and round_arc_ends and is_ring_shape:
+	if rounded_corners and uses_arc and closing_method == ClosingMethod.ARC and round_arc_ends and is_ring_shape:
 		var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
 		var original_size := shape.size()
 
@@ -307,7 +311,7 @@ func regenerate() -> void:
 	_queue_status = _QUEUE_DISPERSE
 	_created_shape = shape
 	_decomposed_created_shape = Geometry2D.decompose_polygon_in_convex(shape)
-	disperse()
+	export()
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties : Array[Dictionary] = []
@@ -324,7 +328,7 @@ func _get_property_list() -> Array[Dictionary]:
 
 	return properties
 
-func queue_disperse() -> void:
+func queue_export() -> void:
 	if _queue_status >= _QUEUE_DISPERSE:
 		return
 
@@ -336,15 +340,15 @@ func queue_disperse() -> void:
 	if _queue_status != _QUEUE_DISPERSE:
 		return
 
-	disperse()
+	export()
 
-func disperse() -> void:
+func export() -> void:
 	_queue_status = _UNQUEUED
 
 	if is_exporting():
 		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
 		shape_updated.emit(exported_objects)
-		for path in targets:
+		for path in export_targets:
 			var node := self if path.get_name_count() == 0 else get_node(NodePath(String(path.get_concatenated_names())))
 			assert(node != null)
 			node.set_indexed(NodePath(String(path.get_concatenated_subnames())), exported_objects)
@@ -357,8 +361,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if is_equal_approx(arc_start, arc_end):
 		warnings.push_back("The arc of the shape is 0º, so nothing will be created")
 
-	for i in targets.size():
-		var path := targets[i]
+	for i in export_targets.size():
+		var path := export_targets[i]
 		print("\nprocessing %s" % i)
 		print(path, " | ", path == null)
 		if path.is_empty():
@@ -409,42 +413,17 @@ func _get_configuration_warnings() -> PackedStringArray:
 	return warnings
 
 func _draw() -> void:
-#	if (vertices_count == 1):
-#		draw_circle(offset, size, color)
-#		return
-#
-#	if (vertices_count == 2):
-#		if offset_rotation == 0:
-#			draw_line(Vector2.UP * size + offset, Vector2.DOWN * size + offset, color)
-#			return
-#
-#		var point1 := Vector2(sin(offset_rotation), -cos(offset_rotation)) * size
-#		draw_line(point1 + offset, -point1 + offset, color)
-#		return
-#
-#	if (vertices_count == 4 && offset_rotation == 0):
-#		const sqrt_two_over_two := 0.707106781
-#		draw_rect(Rect2(offset - Vector2.ONE * sqrt_two_over_two * size, Vector2.ONE * sqrt_two_over_two * size * 2), color)
-#		return
 	if not draw_shape:
 		return
 
 	if is_zero_approx(ring_ratio):
 		draw_polyline(_created_shape, color)
-		if closing_strategy != ClosingStrategy.ARC:
+		if closing_method != ClosingMethod.ARC:
 			draw_line(_created_shape[-1], _created_shape[0], color)
 		return
 
-	#	draw_polyline(shape, Color.RED)
-	#	draw_line(shape[-1], shape[0], Color.RED)
-
 	for hull in _decomposed_created_shape:
 		draw_colored_polygon(hull, color)
-	#		draw_polyline(hull, Color.BLUE)
-	#		draw_line(hull[-1], hull[0], Color.BLUE)
-
-	#	draw_polyline(shape, Color.RED)
-	#	draw_line(shape[-1], shape[0], Color.RED)
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
