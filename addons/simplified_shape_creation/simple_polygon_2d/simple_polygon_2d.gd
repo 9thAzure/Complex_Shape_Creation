@@ -184,6 +184,9 @@ var targets : Array[NodePath] = []:
 		targets = value
 		update_configuration_warnings()
 
+@export
+var auto_free := false
+
 signal shape_updated(shape : Variant)
 
 var _created_shape : PackedVector2Array = []:
@@ -226,8 +229,8 @@ func _enter_tree() -> void:
 	if _queue_status == _IS_QUEUED:
 		regenerate()
 	if _queue_status == _QUEUE_DISPERSE:
-		disperse()
-#	_queue_status = _NOT_QUEUED
+		_queue_status = _NOT_QUEUED
+		queue_disperse()
 
 ## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func regenerate() -> void:
@@ -322,17 +325,18 @@ func queue_disperse() -> void:
 
 func disperse() -> void:
 	_queue_status = _NOT_QUEUED
-	print("dispersal")
-	var in_editor := Engine.is_editor_hint()
-	if not (in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0):
-		return
 
-	var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
-	shape_updated.emit(exported_objects)
-	for path in targets:
-		var node := self if path.get_name_count() == 0 else get_node(NodePath(String(path.get_concatenated_names())))
-		assert(node != null)
-		node.set_indexed(NodePath(String(path.get_concatenated_subnames())), exported_objects)
+	var in_editor := Engine.is_editor_hint()
+	if in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0:
+		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
+		shape_updated.emit(exported_objects)
+		for path in targets:
+			var node := self if path.get_name_count() == 0 else get_node(NodePath(String(path.get_concatenated_names())))
+			assert(node != null)
+			node.set_indexed(NodePath(String(path.get_concatenated_subnames())), exported_objects)
+
+	if not in_editor and auto_free:
+		queue_free()
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
