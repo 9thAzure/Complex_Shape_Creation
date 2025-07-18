@@ -199,51 +199,48 @@ var _created_shape : PackedVector2Array = []:
 		_created_shape = value
 		queue_disperse()
 		queue_redraw()
-#		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
 
 var _decomposed_created_shape : Array[PackedVector2Array] = []:
 	set(value):
 		_decomposed_created_shape = value
 		queue_disperse()
 		queue_redraw()
-#		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
 
 func is_exporting() -> bool:
 	var in_editor := Engine.is_editor_hint()
 	return in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0
 
-# "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
-const _NOT_QUEUED     := 0
-const _IS_QUEUED      := 1
-const _QUEUE_DISPERSE := 2
+const _UNQUEUED         := 0
+const _QUEUE_DISPERSE   := 1
+const _QUEUE_REGENERATE := 2
 
-var _queue_status : int = _NOT_QUEUED
+var _queue_status : int = _UNQUEUED
 
 ## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func queue_regenerate() -> void:
-	if _queue_status == _IS_QUEUED:
+	if _queue_status >= _QUEUE_REGENERATE:
 		return
 
-	_queue_status = _IS_QUEUED
+	_queue_status = _QUEUE_REGENERATE
 	if not is_inside_tree():
 		return
 
 	await get_tree().process_frame
-	if _queue_status != _IS_QUEUED:
+	if _queue_status != _QUEUE_REGENERATE:
 		return
 
 	regenerate()
 
 func _enter_tree() -> void:
-	if _queue_status == _IS_QUEUED:
+	if _queue_status == _QUEUE_REGENERATE:
 		regenerate()
 	if _queue_status == _QUEUE_DISPERSE:
-		_queue_status = _NOT_QUEUED
+		_queue_status = _UNQUEUED
 		queue_disperse()
 
 ## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
 func regenerate() -> void:
-	_queue_status = _NOT_QUEUED
+	_queue_status = _UNQUEUED
 
 	var shape : PackedVector2Array
 	var is_outline := is_zero_approx(ring_ratio)
@@ -299,9 +296,11 @@ func regenerate() -> void:
 		SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
 
+	# block _create_shape from queueing 'disperse' call.
+	_queue_status = _QUEUE_DISPERSE
 	_created_shape = shape
 	_decomposed_created_shape = Geometry2D.decompose_polygon_in_convex(shape)
-	queue_redraw()
+	disperse()
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties : Array[Dictionary] = []
@@ -319,7 +318,7 @@ func _get_property_list() -> Array[Dictionary]:
 	return properties
 
 func queue_disperse() -> void:
-	if _queue_status == _QUEUE_DISPERSE:
+	if _queue_status >= _QUEUE_DISPERSE:
 		return
 
 	_queue_status = _QUEUE_DISPERSE
@@ -333,7 +332,7 @@ func queue_disperse() -> void:
 	disperse()
 
 func disperse() -> void:
-	_queue_status = _NOT_QUEUED
+	_queue_status = _UNQUEUED
 
 	if is_exporting():
 		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
