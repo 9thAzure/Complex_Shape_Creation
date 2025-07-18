@@ -165,7 +165,12 @@ var color : Color = Color.WHITE:
 		queue_redraw()
 
 @export_flags("Editor:1", "Run Time:2")
-var export_behaviour : int = ExportBehaviour.DISABLED
+var export_behaviour : int = ExportBehaviour.DISABLED:
+	set(value):
+		var was_exporting := is_exporting()
+		export_behaviour = value
+		if not was_exporting and is_exporting():
+			queue_disperse()
 
 enum ExportBehaviour {
 	DISABLED = 0,
@@ -202,6 +207,10 @@ var _decomposed_created_shape : Array[PackedVector2Array] = []:
 		queue_disperse()
 		queue_redraw()
 #		if not is_inside_tree(): _queue_status = _QUEUE_PROPAGATION
+
+func is_exporting() -> bool:
+	var in_editor := Engine.is_editor_hint()
+	return in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0
 
 # "_BLOCK_QUEUE" is used by _init to prevent regeneration of the shape when it is already set by PackedScene.instantiate().
 const _NOT_QUEUED     := 0
@@ -326,8 +335,7 @@ func queue_disperse() -> void:
 func disperse() -> void:
 	_queue_status = _NOT_QUEUED
 
-	var in_editor := Engine.is_editor_hint()
-	if in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0:
+	if is_exporting():
 		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
 		shape_updated.emit(exported_objects)
 		for path in targets:
@@ -335,7 +343,7 @@ func disperse() -> void:
 			assert(node != null)
 			node.set_indexed(NodePath(String(path.get_concatenated_subnames())), exported_objects)
 
-	if not in_editor and auto_free:
+	if not Engine.is_editor_hint() and auto_free:
 		queue_free()
 
 func _get_configuration_warnings() -> PackedStringArray:
