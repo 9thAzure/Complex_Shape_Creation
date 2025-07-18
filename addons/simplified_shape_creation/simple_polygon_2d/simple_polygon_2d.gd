@@ -210,6 +210,9 @@ func is_exporting() -> bool:
 	var in_editor := Engine.is_editor_hint()
 	return in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0
 
+func get_created_shape() -> PackedVector2Array: return _created_shape
+func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomposed_created_shape
+
 const _UNQUEUED         := 0
 const _QUEUE_DISPERSE   := 1
 const _QUEUE_REGENERATE := 2
