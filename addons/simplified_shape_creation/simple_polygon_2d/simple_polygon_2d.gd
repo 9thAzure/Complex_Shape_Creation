@@ -197,7 +197,7 @@ signal shape_updated(shape : Variant)
 var _created_shape : PackedVector2Array = []:
 	set(value):
 		_created_shape = value
-		if _queue_status != _QUEUE_DISPESSE:
+		if _queue_status != _QUEUE_DISPERSE:
 			_queue_status = _UNQUEUED
 			queue_disperse()
 		queue_redraw()
@@ -205,7 +205,7 @@ var _created_shape : PackedVector2Array = []:
 var _decomposed_created_shape : Array[PackedVector2Array] = []:
 	set(value):
 		_decomposed_created_shape = value
-		if _queue_status != _QUEUE_DISPESSE:
+		if _queue_status != _QUEUE_DISPERSE:
 			_queue_status = _UNQUEUED
 			queue_disperse()
 		queue_redraw()
