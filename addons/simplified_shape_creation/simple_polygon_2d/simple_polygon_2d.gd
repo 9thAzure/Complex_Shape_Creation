@@ -202,7 +202,7 @@ var export_targets : Array[NodePath] = []:
 		export_targets = value
 		update_configuration_warnings()
 
-signal shape_updated(shape : Variant)
+signal shape_created(shape : PackedVector2Array, decomposed_shape : Array[PackedVector2Array], shape_type : ShapeType)
 
 var _created_shape : PackedVector2Array = []:
 	set(value):
@@ -290,6 +290,7 @@ func regenerate() -> void:
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = shape
 		_decomposed_created_shape = [shape]
+		shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 		export()
 		return
 
@@ -348,6 +349,7 @@ func regenerate() -> void:
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = shape
 		_decomposed_created_shape = decomposed_shape
+		shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 		export()
 		return
 
@@ -355,6 +357,7 @@ func regenerate() -> void:
 	_queue_status = _QUEUE_DISPERSE
 	_created_shape = shape
 	_decomposed_created_shape = Geometry2D.decompose_polygon_in_convex(shape)
+	shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 	export()
 
 func _get_property_list() -> Array[Dictionary]:
@@ -391,7 +394,6 @@ func export() -> void:
 
 	if is_exporting():
 		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
-		shape_updated.emit(exported_objects)
 		for path in export_targets:
 			var node := self if path.get_name_count() == 0 else get_node(NodePath(String(path.get_concatenated_names())))
 			assert(node != null)
