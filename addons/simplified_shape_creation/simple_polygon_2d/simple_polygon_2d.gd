@@ -157,6 +157,12 @@ var draw_shape := true:
 		draw_shape = value
 		queue_redraw()
 
+@export_range(0, 10, 0.001, "or_greater", "hide_slider")
+var line_width : float = 0.0:
+	set(value):
+		line_width = value
+		queue_regenerate()
+
 ## The color of the shape.
 @export
 var color : Color = Color.WHITE:
@@ -221,6 +227,17 @@ func is_exporting() -> bool:
 func get_created_shape() -> PackedVector2Array: return _created_shape
 func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomposed_created_shape
 
+enum ShapeType {
+	POLYGON,
+	POLYLINE,
+	MULTILINE,
+}
+
+func get_created_shape_type() -> ShapeType:
+	if vertices_count == 2: return ShapeType.MULTILINE
+	if is_zero_approx(ring_ratio): return ShapeType.POLYLINE
+	return ShapeType.POLYGON
+
 const _UNQUEUED         := 0
 const _QUEUE_DISPERSE   := 1
 const _QUEUE_REGENERATE := 2
@@ -260,6 +277,21 @@ func regenerate() -> void:
 	var uses_arc := not is_equal_approx(arc_rotation, TAU)
 	var rounded_corners := not is_zero_approx(corner_size)
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
+
+	if vertices_count == 2:
+		shape = SimpleGeometry2d.create_shape(maxi(sizes.size(), 2), sizes, offset_rotation, offset_position, arc_start, arc_end, false)
+		shape.resize(shape.size() * 2)
+		for i in shape.size() / 2:
+			var index := shape.size() / 2 - i - 1
+			var point := shape[index]
+			shape[index * 2] = point
+			shape[index * 2 + 1] = point.lerp(offset_position, ring_ratio)
+
+		_queue_status = _QUEUE_DISPERSE
+		_created_shape = shape
+		_decomposed_created_shape = [shape]
+		export()
+		return
 
 	var add_central_point := closing_method == ClosingMethod.SLICE or closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1)
 	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
@@ -306,6 +338,18 @@ func regenerate() -> void:
 
 		SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
 		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
+
+	if is_outline:
+		if not uses_arc or closing_method != ClosingMethod.ARC:
+			shape.push_back(shape[0])
+
+		var decomposed_shape : Array[PackedVector2Array] = [shape]
+
+		_queue_status = _QUEUE_DISPERSE
+		_created_shape = shape
+		_decomposed_created_shape = decomposed_shape
+		export()
+		return
 
 	# block _create_shape from queueing 'disperse' call.
 	_queue_status = _QUEUE_DISPERSE
@@ -416,14 +460,16 @@ func _draw() -> void:
 	if not draw_shape:
 		return
 
-	if is_zero_approx(ring_ratio):
-		draw_polyline(_created_shape, color)
-		if closing_method != ClosingMethod.ARC:
-			draw_line(_created_shape[-1], _created_shape[0], color)
-		return
-
-	for hull in _decomposed_created_shape:
-		draw_colored_polygon(hull, color)
+	match get_created_shape_type():
+		ShapeType.POLYGON:
+			for hull in _decomposed_created_shape:
+				draw_colored_polygon(hull, color)
+		ShapeType.POLYLINE:
+			draw_polyline(_created_shape, color, line_width if line_width > 0 else -1)
+		ShapeType.MULTILINE:
+			draw_multiline(_created_shape, color, line_width if line_width > 0 else -1)
+		_:
+			assert(false, "unexpected match case: %s" % get_created_shape_type())
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
