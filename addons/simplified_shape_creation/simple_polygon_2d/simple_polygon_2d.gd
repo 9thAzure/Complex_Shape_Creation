@@ -409,20 +409,16 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 	for i in export_targets.size():
 		var path := export_targets[i]
-		print("\nprocessing %s" % i)
-		print(path, " | ", path == null)
 		if path.is_empty():
 			warnings.push_back("The export path at index %s is unassigned." % i)
 			continue
 
 		var node_path := NodePath(String(path.get_concatenated_names()))
-		print("n: ", node_path)
 		var node := get_node_or_null(node_path)
 		if node == null:
 			warnings.push_back("The export path at index %s points to a non existant node" % i)
 			continue
 
-		print("p: ", path.get_concatenated_subnames())
 		if path.get_subname_count() == 0:
 			warnings.push_back("The export path at index %s does not reference a property" % i)
 			continue
@@ -445,7 +441,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 		if failure:
 			continue
 
-		var last_i = path.get_subname_count() - 1
+		var last_i := path.get_subname_count() - 1
 		var property := path.get_subname(last_i)
 		if not (property in previous_object):
 			warnings.push_back("The export path at index %s points to a non-existant property (%s)" % [i, path.get_concatenated_subnames()])
@@ -472,6 +468,10 @@ func _draw() -> void:
 			draw_multiline(_created_shape, color, line_width if line_width > 0 else -1)
 		_:
 			assert(false, "unexpected match case: %s" % get_created_shape_type())
+
+#	draw_polyline(_created_shape, Color.BLUE)
+#	for point in _created_shape:
+#		draw_circle(point, 0.2, Color(1, 1, 1, 0.5))
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:

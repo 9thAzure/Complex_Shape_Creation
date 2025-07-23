@@ -43,10 +43,8 @@ static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_
 	var arc_angle := TAU / vertices_count
 
 	var is_full_arc := false
-#	if is_zero_approx(fmod(arc_end - arc_start, TAU)):
 	# checks if it is approximately a multiple of TAU.
 	if is_zero_approx(sin((arc_end - arc_start) * PI / TAU)):
-#	if is_equal_approx(fposmod(arc_start, TAU), fposmod(arc_end, TAU)):
 		is_full_arc = true
 		add_central_point = false
 
@@ -63,8 +61,8 @@ static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_
 		var scaler := _find_intersection(offset_position, slope1, points[0], points[1] - points[0])
 		points[0] = offset_position + slope1 * scaler
 
-	if not is_equal_approx(ending_vertex_index, arc_end / arc_angle):
-		var last_i := -1 + (-1 if add_central_point else 0)
+	if not is_equal_approx(ending_vertex_index, arc_end / arc_angle) and not is_full_arc:
+		var last_i := true_vertices_count - 1
 		var slope1 := _circle_point(arc_end + offset_rotation)
 		var scaler := _find_intersection(offset_position, slope1, points[last_i], points[last_i - 1] - points[last_i])
 		points[last_i] = offset_position + slope1 * scaler
