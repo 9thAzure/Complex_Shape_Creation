@@ -10,7 +10,7 @@ namespace SimplifiedShapeCreation.Tests;
 public class SimplePolygon2DTests : TestClass
 {
     // readonly GDLog _log = new GDLog(nameof(SimplePolygon2D));
-    readonly SimplePolygon2D polygon = new();
+    readonly BasicPolygon2D polygon = new();
     public SimplePolygon2DTests(Node testScene) : base(testScene)
     {
     }
@@ -66,7 +66,7 @@ public class SimplePolygon2DTests : TestClass
     [Test]
     public void GetShapeVertices_DiamondShape_Returns4LengthArray()
     {
-        var array = SimplePolygon2D.GetShapeVertices(4, 1, Mathf.DegToRad(45));
+        var array = BasicPolygon2D.GetShapeVertices(4, 1, Mathf.DegToRad(45));
 
         array.Length.ShouldBe(4);
     }

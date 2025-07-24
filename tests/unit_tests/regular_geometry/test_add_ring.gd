@@ -10,6 +10,6 @@ func test_add_ring__various_inputs__expected_outputs(p=use_parameters([
 	var close_ring : bool = p[3]
 	var expected_shape : PackedVector2Array = p[4]
 
-	var actual_shape := SimpleGeometry2d.add_ring(shape, length_proportion, shape_center, close_ring)
+	var actual_shape := BasicGeometry2D.add_ring(shape, length_proportion, shape_center, close_ring)
 
 	assert_almost_eq_deep(actual_shape, expected_shape, Vector2.ONE * 0.001)

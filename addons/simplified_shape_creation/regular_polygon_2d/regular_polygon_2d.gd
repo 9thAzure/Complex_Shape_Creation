@@ -82,7 +82,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 	points_per_corner += 1
 	
 	var shape := polygon
-	SimpleGeometry2d.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
+	BasicGeometry2D.apply_transformation(shape, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
 	polygon = shape
 
 
@@ -436,19 +436,19 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 		# temp points to have corners rounded to its correct neighbours.
 		var temp_point := points[0]
 		points[0] = points[-functional_length]
-		SimpleGeometry2d.add_rounded_corners(points, corner_size, corner_smoothness, functional_length + 2, functional_length)
+		BasicGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness, functional_length + 2, functional_length)
 		points[0] = temp_point
 
 		temp_point = points[-1]
 		points[-1] = points[functional_length - 1]
-		SimpleGeometry2d.add_rounded_corners(points, corner_size, corner_smoothness, 0, functional_length)
+		BasicGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness, 0, functional_length)
 		points[-1] = temp_point
 
 		points[functional_length * (corner_smoothness + 1)] = points[0]
 		points[functional_length * (corner_smoothness + 1) + 1] = points[-1]
 		return
 	
-	SimpleGeometry2d.add_rounded_corners(points, corner_size, corner_smoothness)
+	BasicGeometry2D.add_rounded_corners(points, corner_size, corner_smoothness)
 
 # Returns the point at the given [param t] on the Bézier curve with the given [param start], [param end], and single [param control] point.
 ## [b][color=red]Warning[/color][/b]: This method is not meant to be used outside the class, and will be changed/made private in the future.

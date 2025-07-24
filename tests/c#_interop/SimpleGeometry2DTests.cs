@@ -13,7 +13,7 @@ public class SimpleGeometry2DTests : TestClass
     [Test]
     public void CreateShape_SampleCall_ExpectedReturnValue()
     {
-        Vector2[] result = SimpleGeometry2D.CreateShape(4, new[]{1D});
+        Vector2[] result = BasicGeometry2D.CreateShape(4, new[]{1D});
 
         result.ShouldNotBeNull();
         result.Length.ShouldBe(4);
@@ -25,7 +25,7 @@ public class SimpleGeometry2DTests : TestClass
         Vector2[] shape = new[] { Vector2.Up, Vector2.Down };
         float lengthProportion = 0.5f;
 
-        Vector2[] result = SimpleGeometry2D.AddRing(shape, lengthProportion);
+        Vector2[] result = BasicGeometry2D.AddRing(shape, lengthProportion);
 
         result.ShouldNotBeNull();
         result.Length.ShouldBe(6);
@@ -38,7 +38,7 @@ public class SimpleGeometry2DTests : TestClass
         float cornerSize = 0.1f;
         int cornerSmoothness = 2;
 
-        Vector2[] result = SimpleGeometry2D.AddRoundedCorners(shape, cornerSize, cornerSmoothness);
+        Vector2[] result = BasicGeometry2D.AddRoundedCorners(shape, cornerSize, cornerSmoothness);
 
         result.ShouldNotBeNull();
         result.Length.ShouldBe(9);
