@@ -277,7 +277,6 @@ func regenerate() -> void:
 	var rounded_corners := not is_zero_approx(corner_size)
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
 
-	prints(arc_angle, is_zero_approx(arc_angle))
 	if is_zero_approx(arc_angle):
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = []
@@ -484,10 +483,6 @@ func _draw() -> void:
 			draw_multiline(_created_shape, color, line_width if line_width > 0 else -1)
 		_:
 			assert(false, "unexpected match case: %s" % get_created_shape_type())
-
-	draw_polyline(_created_shape, Color.BLUE)
-	for point in _created_shape:
-		draw_circle(point, 0.2, Color(1, 1, 1, 0.5))
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
