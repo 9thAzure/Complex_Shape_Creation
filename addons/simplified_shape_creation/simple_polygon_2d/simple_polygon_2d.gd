@@ -97,7 +97,7 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		queue_regenerate()
 
-@export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
+@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
 var arc_start : float = 0.0:
 	set(value):
 		arc_start = value
@@ -273,10 +273,18 @@ func regenerate() -> void:
 	var shape : PackedVector2Array
 	var is_outline := is_zero_approx(ring_ratio)
 	var is_ring_shape :=  not is_outline and ring_ratio < 1
-	var arc_rotation := arc_end - arc_start
-	var uses_arc := not is_equal_approx(arc_rotation, TAU)
+	var uses_arc := not is_equal_approx(arc_angle, TAU)
 	var rounded_corners := not is_zero_approx(corner_size)
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
+
+	prints(arc_angle, is_zero_approx(arc_angle))
+	if is_zero_approx(arc_angle):
+		_queue_status = _QUEUE_DISPERSE
+		_created_shape = []
+		_decomposed_created_shape = []
+		shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
+		export()
+		return
 
 	if vertices_count == 2:
 		shape = SimpleGeometry2d.create_shape(maxi(sizes.size(), 2), sizes, offset_rotation, offset_position, arc_start, arc_end, false)
@@ -313,10 +321,15 @@ func regenerate() -> void:
 		if not uses_arc or closing_method != ClosingMethod.SLICE:
 			SimpleGeometry2d.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_method == ClosingMethod.CHORD)
 		else: # uses_arc and closing_strategy == ClosingStrategy.SLICE
-			var inner_arc_start := arc_start + TAU * ring_ratio / 2 / vertices_count
-			var inner_arc_end := arc_end - TAU * ring_ratio / 2 / vertices_count
+			var arc_change := minf(TAU - arc_angle, -TAU * ring_ratio * (1 - arc_angle / TAU) / 4)
+			var inner_arc_start := arc_start - arc_change / 2
+			var inner_arc_end := arc_end + arc_change / 2
 			if inner_arc_start < inner_arc_end:
 				var inner_ring := SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
+				if is_equal_approx(inner_arc_end - inner_arc_start, TAU):
+					inner_ring.resize(inner_ring.size() + 2)
+					inner_ring[-2] = inner_ring[0]
+					inner_ring[-1] = offset_position
 
 				shape.resize(shape.size() + inner_ring.size() + 1)
 				shape[-1] = offset_position
@@ -458,6 +471,9 @@ func _draw() -> void:
 	if not draw_shape:
 		return
 
+	if is_zero_approx(arc_angle):
+		return
+
 	match get_created_shape_type():
 		ShapeType.POLYGON:
 			for hull in _decomposed_created_shape:
@@ -469,9 +485,9 @@ func _draw() -> void:
 		_:
 			assert(false, "unexpected match case: %s" % get_created_shape_type())
 
-#	draw_polyline(_created_shape, Color.BLUE)
-#	for point in _created_shape:
-#		draw_circle(point, 0.2, Color(1, 1, 1, 0.5))
+	draw_polyline(_created_shape, Color.BLUE)
+	for point in _created_shape:
+		draw_circle(point, 0.2, Color(1, 1, 1, 0.5))
 
 func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
 	if vertices_count != 1:
