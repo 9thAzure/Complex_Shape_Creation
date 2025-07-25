@@ -13,7 +13,7 @@ namespace SimplifiedShapeCreation;
 /// <br/><br/>If the <see cref="MainLoop"/> is implemented as a <see cref="SceneTree"/>, <see cref="Dispose"/> will
 /// automatically be called when the root <see cref="Window"/> node is exiting the tree.
 /// </remarks>
-public static class SimpleGeometry2D
+public static class BasicGeometry2D
 {
     private static readonly ScriptLoader Loader = new();
     private class ScriptLoader : Lazy<GodotObject>, IDisposable
@@ -28,7 +28,7 @@ public static class SimpleGeometry2D
         {
             if (Engine.GetMainLoop() is SceneTree tree)
             {
-                tree.Root.TreeExiting += SimpleGeometry2D.Dispose;
+                tree.Root.TreeExiting += BasicGeometry2D.Dispose;
             }
             return Script.New(true).AsGodotObject();
         }
@@ -63,7 +63,7 @@ public static class SimpleGeometry2D
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
     public static class MethodName
     {
-        public static readonly StringName Dispose = new(nameof(SimpleGeometry2D.Dispose));
+        public static readonly StringName Dispose = new(nameof(BasicGeometry2D.Dispose));
         public static readonly StringName CreateShape = new("create_shape");
         public static readonly StringName AddRing = new("add_ring");
         public static readonly StringName AddRoundedCorners = new("add_rounded_corners");

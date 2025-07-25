@@ -121,7 +121,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 			shape.points = points
 			return
 
-		SimpleGeometry2d.apply_transformation(points, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
+		BasicGeometry2D.apply_transformation(points, rotation, scale, 0 < width and width < size, points_per_corner, scale_width, scale_corner_size)
 		shape.points = points
 		return
 
@@ -134,19 +134,19 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 	if is_line:
 		if is_zero_approx(width):
 			if scale_corner_size and has_rounded_corners:
-				SimpleGeometry2d.apply_transformation(segments, rotation, scale)
+				BasicGeometry2D.apply_transformation(segments, rotation, scale)
 				shape.segments = segments
 				return 
 			
 			segments[0] *= scale
 			segments[-1] *= scale
-			SimpleGeometry2d.apply_transformation(segments, rotation, 1)
+			BasicGeometry2D.apply_transformation(segments, rotation, 1)
 			shape.segments = segments
 			return
 
 		
 		if scale_width and (scale_corner_size or not has_rounded_corners):
-			SimpleGeometry2d.apply_transformation(segments, rotation, scale)
+			BasicGeometry2D.apply_transformation(segments, rotation, scale)
 			shape.segments = segments
 			return 
 			
@@ -155,7 +155,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 			regenerate()
 			return
 
-		SimpleGeometry2d.apply_transformation(segments, rotation, 1)
+		BasicGeometry2D.apply_transformation(segments, rotation, 1)
 
 		# extend segments
 		if not has_rounded_corners:
@@ -221,7 +221,7 @@ func apply_transformation(rotation : float, scale : float, scale_width := true, 
 			segments[i - 1] = segments[i]
 		segments[-2] = temp
 
-	SimpleGeometry2d.apply_transformation(segments, rotation, scale, is_ringed_shape, points_per_corner, scale_width, scale_corner_size)
+	BasicGeometry2D.apply_transformation(segments, rotation, scale, is_ringed_shape, points_per_corner, scale_width, scale_corner_size)
 
 	if offset_points:
 		var temp := segments[0]

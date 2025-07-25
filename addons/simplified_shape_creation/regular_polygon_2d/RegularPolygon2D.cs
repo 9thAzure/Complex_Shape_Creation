@@ -11,7 +11,7 @@ namespace SimplifiedShapeCreation;
 /// </summary>
 public class RegularPolygon2D
 {
-    /// <inheritdoc cref="SimplePolygon2D.GDScriptEquivalentPath"/>
+    /// <inheritdoc cref="BasicPolygon2D.GDScriptEquivalentPath"/>
     public const string GDScriptEquivalentPath = "res://addons/simplified_shape_creation/regular_polygon_2d/regular_polygon_2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
@@ -20,25 +20,25 @@ public class RegularPolygon2D
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public Polygon2D Instance { get; }
     
-    /// <inheritdoc cref="SimplePolygon2D.VerticesCount"/>
+    /// <inheritdoc cref="BasicPolygon2D.VerticesCount"/>
     public int VerticesCount
     {
         get => (int)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.Size"/>
+    /// <inheritdoc cref="BasicPolygon2D.Size"/>
     public float Size
     {
         get => (float)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.OffsetRotationDegrees"/>
+    /// <inheritdoc cref="BasicPolygon2D.OffsetRotationDegrees"/>
     public float OffsetRotationDegrees
     {
         get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.OffsetRotation"/>
+    /// <inheritdoc cref="BasicPolygon2D.OffsetRotation"/>
     public float OffsetRotation
     {
         get => (float)Instance.Get(PropertyName.OffsetRotation);
@@ -106,44 +106,44 @@ public class RegularPolygon2D
         get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.Color"/>
+    /// <inheritdoc cref="BasicPolygon2D.Color"/>
     public Color Color
     {
         get => Instance.Color;
         set => Instance.Color = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.OffsetPosition"/>
+    /// <inheritdoc cref="BasicPolygon2D.OffsetPosition"/>
     public Vector2 OffsetPosition
     {
         get => Instance.Offset;
         set => Instance.Offset = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.Position"/>
+    /// <inheritdoc cref="BasicPolygon2D.Position"/>
     public Vector2 Position
     {
         get => Instance.Position; 
         set => Instance.Position = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.Rotation"/>
+    /// <inheritdoc cref="BasicPolygon2D.Rotation"/>
     public float Rotation
     {
         get => Instance.Rotation;
         set => Instance.Rotation = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.RotationDegrees"/>
+    /// <inheritdoc cref="BasicPolygon2D.RotationDegrees"/>
     public float RotationDegrees
     {
         get => Instance.RotationDegrees;
         set => Instance.RotationDegrees = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.Scale"/>
+    /// <inheritdoc cref="BasicPolygon2D.Scale"/>
     public Vector2 Scale
     {
         get => Instance.Scale;
         set => Instance.Scale = value;
     }
 
-    /// <inheritdoc cref="SimplePolygon2D.ApplyTransformation(float, float)"/>
+    /// <inheritdoc cref="BasicPolygon2D.ApplyTransformation(float, float)"/>
     /// <summary>
     /// Transforms <see cref="Polygon2D.Polygon"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
     /// </summary>
@@ -202,7 +202,7 @@ public class RegularPolygon2D
         Instance = RegularPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition,
             width, drawnArc, cornerSize, cornerSmoothness);
     }
-    /// <inheritdoc cref="SimplePolygon2D.New(int, float, float, Color?, Vector2)"/>
+    /// <inheritdoc cref="BasicPolygon2D.New(int, float, float, Color?, Vector2)"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     /// <param name="width">The width of the shape. Negative values draw a full shape.</param>
     /// <param name="drawnArc">The drawn arc of the shape. It starts in the middle of the base. Positive values go clockwise, negative values go counterclockwise.</param>
@@ -217,7 +217,7 @@ public class RegularPolygon2D
             width, drawnArc, cornerSize, cornerSmoothness).As<Polygon2D>();
     }
 
-    /// <inheritdoc cref="SimplePolygon2D.GetShapeVertices(int, float, float, Vector2)"/>
+    /// <inheritdoc cref="BasicPolygon2D.GetShapeVertices(int, float, float, Vector2)"/>
     /// <param name="drawnArc">
     /// The drawn arc of the shape. It starts in the middle of the base. Positive values go clockwise and negative values counter-clockwise.
     /// </param>

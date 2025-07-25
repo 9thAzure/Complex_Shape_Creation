@@ -11,7 +11,7 @@ namespace SimplifiedShapeCreation;
 /// </summary>
 public class RegularCollisionPolygon2D
 {
-    /// <inheritdoc cref="SimplePolygon2D.GDScriptEquivalentPath"/>
+    /// <inheritdoc cref="BasicPolygon2D.GDScriptEquivalentPath"/>
     public const string GDScriptEquivalentPath = "res://addons/simplified_shape_creation/regular_collision_polygon_2d/regular_collision_polygon_2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
@@ -20,25 +20,25 @@ public class RegularCollisionPolygon2D
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public CollisionShape2D Instance { get; }
 
-    /// <inheritdoc cref="SimplePolygon2D.VerticesCount"/>
+    /// <inheritdoc cref="BasicPolygon2D.VerticesCount"/>
     public int VerticesCount
     {
         get => (int)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.Size"/>
+    /// <inheritdoc cref="BasicPolygon2D.Size"/>
     public float Size
     {
         get => (float)Instance.Get(PropertyName.Size);
         set => Instance.Set(PropertyName.Size, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.OffsetRotationDegrees"/>
+    /// <inheritdoc cref="BasicPolygon2D.OffsetRotationDegrees"/>
     public float OffsetRotationDegrees
     {
         get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.OffsetRotation"/>
+    /// <inheritdoc cref="BasicPolygon2D.OffsetRotation"/>
     public float OffsetRotation
     {
         get => (float)Instance.Get(PropertyName.OffsetRotation);
@@ -79,25 +79,25 @@ public class RegularCollisionPolygon2D
         get => (int)Instance.Get(PropertyName.CornerSmoothness);
         set => Instance.Set(PropertyName.CornerSmoothness, value);
     }
-    /// <inheritdoc cref="SimplePolygon2D.Position"/>
+    /// <inheritdoc cref="BasicPolygon2D.Position"/>
     public Vector2 Position
     {
         get => Instance.Position; 
         set => Instance.Position = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.Rotation"/>
+    /// <inheritdoc cref="BasicPolygon2D.Rotation"/>
     public float Rotation
     {
         get => Instance.Rotation;
         set => Instance.Rotation = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.RotationDegrees"/>
+    /// <inheritdoc cref="BasicPolygon2D.RotationDegrees"/>
     public float RotationDegrees
     {
         get => Instance.RotationDegrees;
         set => Instance.RotationDegrees = value;
     }
-    /// <inheritdoc cref="SimplePolygon2D.Scale"/>
+    /// <inheritdoc cref="BasicPolygon2D.Scale"/>
     public Vector2 Scale
     {
         get => Instance.Scale;

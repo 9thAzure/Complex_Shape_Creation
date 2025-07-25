@@ -11,7 +11,7 @@ func test_add_rounded_corners__various_shapes_with_0_corner_size__expected_shape
 	var original := PackedVector2Array(shape)
 	var expected_size := shape.size() * (corner_smoothness + 1)
 
-	SimpleGeometry2d.add_rounded_corners(shape, 0, corner_smoothness)
+	BasicGeometry2D.add_rounded_corners(shape, 0, corner_smoothness)
 
 	assert_eq(shape.size(), expected_size, "Size of modified array should be %s but was %s" % [expected_size, shape.size()])
 	for i in original.size():
@@ -29,7 +29,7 @@ func test_add_rounded_corners__oversized_corner_size__corner_size_limited():
 		Vector2.UP, Vector2(0.75, -0.75), Vector2.RIGHT
 	]
 
-	SimpleGeometry2d.add_rounded_corners(shape, oversized_corner_size, sample_corner_smoothness)
+	BasicGeometry2D.add_rounded_corners(shape, oversized_corner_size, sample_corner_smoothness)
 
 	assert_almost_eq_deep(shape, expected_shape, Vector2.ONE * 0.01)
 
@@ -47,7 +47,7 @@ func test_add_rounded_corners___custom_start_and_length__expected_shape(p=use_pa
 	var length : int = p[1]
 	var expected_shape : PackedVector2Array = p[2]
 
-	SimpleGeometry2d.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length)
+	BasicGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)
 
@@ -63,7 +63,7 @@ func test_add_rounded_corners__full_shape_with_resizing__expected_shape():
 	var sample_shape : PackedVector2Array = [Vector2(1, 1), Vector2(-1, 1), Vector2(-1, -1), Vector2(1, -1)]
 	sample_shape.resize(expected_shape.size())
 
-	SimpleGeometry2d.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, 0, -1, true, 4)
+	BasicGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, 0, -1, true, 4)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)
 
@@ -76,7 +76,7 @@ func test_add_rounded_corners__partial_shape_with_resizing__expected_shape(p=use
 	var expected_shape : PackedVector2Array = p[2]
 	sample_shape.resize(expected_shape.size())
 
-	SimpleGeometry2d.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, true, 4)
+	BasicGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, true, 4)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)
 
@@ -91,7 +91,7 @@ func test_add_rounded_corners__partial_shape_with_resizing_and_extra_empties_exp
 	expected_shape.resize(expected_shape.size() + extra_empty_spaces_amount)
 	sample_shape.resize(expected_shape.size())
 
-	SimpleGeometry2d.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, true, 4)
+	BasicGeometry2D.add_rounded_corners(sample_shape, sample_corner_size, sample_corner_smoothness, start_index, length, true, 4)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)
 
@@ -103,6 +103,6 @@ func test_add_rounded_corners__non_limited_ending_slopes__expected_result():
 	var sample_shape : PackedVector2Array = [Vector2(1, 1), Vector2(-1, 1), Vector2.UP]
 	var expected_shape : PackedVector2Array = [Vector2(1, 1), Vector2(-1, 1), Vector2(-1, 1), Vector2(1, 1)]
 
-	SimpleGeometry2d.add_rounded_corners(sample_shape, oversized_corner_size, sample_corner_smoothness, sample_start_index, sample_length, false)
+	BasicGeometry2D.add_rounded_corners(sample_shape, oversized_corner_size, sample_corner_smoothness, sample_start_index, sample_length, false)
 
 	assert_almost_eq_deep(sample_shape, expected_shape, Vector2.ONE * 0.01)

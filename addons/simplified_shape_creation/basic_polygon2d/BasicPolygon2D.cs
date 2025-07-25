@@ -6,13 +6,13 @@ using SimplifiedShapeCreation.MemberNames;
 namespace SimplifiedShapeCreation;
 
 /// <summary>
-/// A Wrapper for a <see cref="Node2D"/> which contains the script specified in <see cref="SimplePolygon2D.GDScriptEquivalent"/>.
+/// A Wrapper for a <see cref="Node2D"/> which contains the script specified in <see cref="BasicPolygon2D.GDScriptEquivalent"/>.
 /// It also provides ways for creating such nodes.
 /// </summary>
-public partial class SimplePolygon2D
+public partial class BasicPolygon2D
 {
     /// <summary>The string path to the script this class wraps around.</summary>
-    public const string GDScriptEquivalentPath = "res://addons/simplified_shape_creation/simple_polygon_2d/simple_polygon_2d.gd";
+    public const string GDScriptEquivalentPath = "res://addons/simplified_shape_creation/basic_polygon2d/basic_polygon2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
     private static readonly Lazy<Node2D> _shared = new(() => GDScriptEquivalent.New().As<Node2D>());
@@ -90,7 +90,7 @@ public partial class SimplePolygon2D
     }
 
     /// <summary>
-    /// Transforms <see cref="SimplePolygon2D"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
+    /// Transforms <see cref="BasicPolygon2D"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
     /// </summary>
     /// <remarks>Unlike other methods, this simply affects <see cref="OffsetRotation"/> and <see cref="Size"/>, regenerating the shape </remarks>
     /// <param name="rotation">The amount to rotate the shape in radians.</param>
@@ -101,11 +101,11 @@ public partial class SimplePolygon2D
     /// <inheritdoc cref="CanvasItem.QueueRedraw"/>
     public void QueueRedraw() => Instance.QueueRedraw();
 
-    /// <summary>Creates and wraps a <see cref="SimplePolygon2D"/> around <paramref name="instance"/>.</summary>
+    /// <summary>Creates and wraps a <see cref="BasicPolygon2D"/> around <paramref name="instance"/>.</summary>
     /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>
     /// <exception cref="ArgumentNullException"><paramref name="instance"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="instance"/> isn't a instance of <see cref="GDScriptEquivalent"/>.</exception>
-    public SimplePolygon2D(Node2D instance)
+    public BasicPolygon2D(Node2D instance)
     {
         if (instance is null)
             throw new ArgumentNullException(nameof(instance));
@@ -115,11 +115,11 @@ public partial class SimplePolygon2D
         Instance = instance;
     }
     /// <inheritdoc cref="New"/>
-    /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="SimplePolygon2D"/>.</summary>
+    /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="BasicPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public SimplePolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
+    public BasicPolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
     {
-        Instance = SimplePolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition);
+        Instance = BasicPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition);
     }
     /// <inheritdoc cref="GetShapeVertices"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
@@ -140,6 +140,6 @@ public partial class SimplePolygon2D
     public static Vector2[] GetShapeVertices(int verticesCount, float size = 1, float offsetRotation = 0, Vector2 offsetPosition = default)
     => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
 
-    public static implicit operator Node2D(SimplePolygon2D instance) => instance.Instance;
-    public static explicit operator SimplePolygon2D(Node2D instance) => new(instance);
+    public static implicit operator Node2D(BasicPolygon2D instance) => instance.Instance;
+    public static explicit operator BasicPolygon2D(Node2D instance) => new(instance);
 }
