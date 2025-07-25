@@ -79,6 +79,7 @@ var offset : Vector2 = Vector2.ZERO:
 var ring_ratio : float = 1.0:
 	set(value):
 		ring_ratio = value
+		update_configuration_warnings()
 		queue_regenerate()
 
 @export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
@@ -141,6 +142,7 @@ enum ClosingMethod {
 var closing_method : ClosingMethod = ClosingMethod.SLICE:
 	set(value):
 		closing_method = value
+		update_configuration_warnings()
 		queue_regenerate()
 
 @export
@@ -155,6 +157,7 @@ var round_arc_ends : bool = false:
 var draw_shape := true:
 	set(value):
 		draw_shape = value
+		update_configuration_warnings()
 		queue_redraw()
 
 @export_range(0, 10, 0.001, "or_greater", "hide_slider")
@@ -271,6 +274,7 @@ func regenerate() -> void:
 	_queue_status = _UNQUEUED
 
 	var shape : PackedVector2Array
+	var decomposed_shape : Array[PackedVector2Array]
 	var is_outline := is_zero_approx(ring_ratio)
 	var is_ring_shape :=  not is_outline and ring_ratio < 1
 	var uses_arc := not is_equal_approx(arc_angle, TAU)
@@ -278,6 +282,9 @@ func regenerate() -> void:
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
 
 	if is_zero_approx(arc_angle):
+		if not Engine.is_editor_hint():
+			printerr("Unable to draw a shape whoose arc angle is 0º")
+
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = []
 		_decomposed_created_shape = []
@@ -286,7 +293,7 @@ func regenerate() -> void:
 		return
 
 	if vertices_count == 2:
-		shape = SimpleGeometry2d.create_shape(maxi(sizes.size(), 2), sizes, offset_rotation, offset_position, arc_start, arc_end, false)
+		shape = BasicGeometry2D.create_shape(maxi(sizes.size(), 2), sizes, offset_rotation, offset_position, arc_start, arc_end, false)
 		shape.resize(shape.size() * 2)
 		for i in shape.size() / 2:
 			var index := shape.size() / 2 - i - 1
@@ -302,29 +309,29 @@ func regenerate() -> void:
 		return
 
 	var add_central_point := closing_method == ClosingMethod.SLICE or closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1)
-	shape = SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
+	shape = BasicGeometry2D.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
 
 	if rounded_corners:
 		if not uses_arc:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 		elif not round_arc_ends or round_arc_ends and closing_method == ClosingMethod.ARC and is_outline:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if add_central_point else 2))
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if add_central_point else 2))
 		elif closing_method == ClosingMethod.SLICE:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
 		elif closing_method == ClosingMethod.CHORD:
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 		elif closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1):
-			SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
 
 	if is_ring_shape:
 		if not uses_arc or closing_method != ClosingMethod.SLICE:
-			SimpleGeometry2d.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_method == ClosingMethod.CHORD)
+			BasicGeometry2D.add_ring(shape, ring_ratio, offset_position, not uses_arc or closing_method == ClosingMethod.CHORD)
 		else: # uses_arc and closing_strategy == ClosingStrategy.SLICE
 			var arc_change := minf(TAU - arc_angle, -TAU * ring_ratio * (1 - arc_angle / TAU) / 4)
 			var inner_arc_start := arc_start - arc_change / 2
 			var inner_arc_end := arc_end + arc_change / 2
 			if inner_arc_start < inner_arc_end:
-				var inner_ring := SimpleGeometry2d.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
+				var inner_ring := BasicGeometry2D.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
 				if is_equal_approx(inner_arc_end - inner_arc_start, TAU):
 					inner_ring.resize(inner_ring.size() + 2)
 					inner_ring[-2] = inner_ring[0]
@@ -343,20 +350,20 @@ func regenerate() -> void:
 						inner_start += 1
 						inner_length -= 2
 
-					SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, inner_start, inner_length, false)
+					BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, inner_start, inner_length, false)
 
 	if rounded_corners and uses_arc and closing_method == ClosingMethod.ARC and round_arc_ends and is_ring_shape:
 		var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
 		var original_size := shape.size()
 
-		SimpleGeometry2d.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
-		SimpleGeometry2d.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
+		BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
+		BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
 
 	if is_outline:
 		if not uses_arc or closing_method != ClosingMethod.ARC:
 			shape.push_back(shape[0])
 
-		var decomposed_shape : Array[PackedVector2Array] = [shape]
+		decomposed_shape = [shape]
 
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = shape
@@ -365,10 +372,15 @@ func regenerate() -> void:
 		export()
 		return
 
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
+		decomposed_shape = [shape]
+	else:
+		decomposed_shape = Geometry2D.decompose_polygon_in_convex(shape)
+
 	# block _create_shape from queueing 'disperse' call.
 	_queue_status = _QUEUE_DISPERSE
 	_created_shape = shape
-	_decomposed_created_shape = Geometry2D.decompose_polygon_in_convex(shape)
+	_decomposed_created_shape = decomposed_shape
 	shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 	export()
 
@@ -418,6 +430,9 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
 	if is_equal_approx(arc_start, arc_end):
 		warnings.push_back("The arc of the shape is 0º, so nothing will be created")
+
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD and draw_shape:
+		warnings.push_back("Unable to draw a ring shape that is closed as a chord when the arc angle is less than or equal to 180º")
 
 	for i in export_targets.size():
 		var path := export_targets[i]
@@ -471,6 +486,11 @@ func _draw() -> void:
 		return
 
 	if is_zero_approx(arc_angle):
+		return
+
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
+		if not Engine.is_editor_hint():
+			printerr("Unable to draw a ring shape that is closed as a chord when the arc angle is less than or equal to 180º")
 		return
 
 	match get_created_shape_type():
