@@ -27,6 +27,7 @@ var one_way_collision_margin := 1.0:
 			_collision_object_parent.shape_owner_set_one_way_collision_margin(_owner_id, value)
 
 @export_group("Generation")
+
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 @export_range(1, 1000)
 var vertices_count : int = 1:
@@ -109,6 +110,14 @@ var round_arc_ends : bool = false:
 	get: return _basic_polygon_instance.round_arc_ends
 	set(value): _basic_polygon_instance.round_arc_ends = value
 
+var _created_shape : PackedVector2Array:
+	get: return _basic_polygon_instance._created_shape
+	set(value): _basic_polygon_instance._created_shape = value
+
+var _decomposed_created_shape : Array[PackedVector2Array]:
+	get: return _basic_polygon_instance._decomposed_created_shape
+	set(value): _basic_polygon_instance._decomposed_created_shape = value
+
 var _collision_shapes : Array[Shape2D] = []:
 	set(value):
 		assert(value != null)
@@ -134,6 +143,16 @@ var _collision_shapes : Array[Shape2D] = []:
 
 func _get_property_list() -> Array[Dictionary]:
 	return [{
+		name = "_decomposed_created_shape",
+		type = TYPE_ARRAY,
+		usage = PROPERTY_USAGE_STORAGE
+	},
+	{
+		name = "_created_shape",
+		type = TYPE_PACKED_VECTOR2_ARRAY,
+		usage = PROPERTY_USAGE_STORAGE
+	},
+	{
 		name = "_collision_shapes",
 		type = TYPE_ARRAY,
 		usage = PROPERTY_USAGE_STORAGE
@@ -254,3 +273,9 @@ func _get_configuration_warnings() -> PackedStringArray:
 		warnings.push_back("The One Way Collision property will be ignored when the collision object is an Area2D.")
 
 	return warnings
+
+func shape_count() -> int: return _collision_shapes.size()
+
+func get_shape(index : int) -> Shape2D: return _collision_shapes[index]
+
+func get_basic_polygon() -> BasicPolygon2D: return _basic_polygon_instance

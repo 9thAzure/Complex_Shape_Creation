@@ -341,7 +341,7 @@ func regenerate() -> void:
 	var uses_inner_size := inner_size > 0
 
 	if vertices_count == 2 and not uses_inner_size or vertices_count == 1 and uses_inner_size:
-		var point1 := SimplePolygon2D._get_vertices(offset_rotation) * size
+		var point1 := BasicPolygon2D._get_vertices(offset_rotation) * size
 		var point2 := -point1
 		if uses_inner_size:
 			point1 *= inner_size / size
@@ -381,7 +381,7 @@ func regenerate() -> void:
 			_set_shape(line)
 			return
 		
-		point2 = SimplePolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
+		point2 = BasicPolygon2D._get_vertices(offset_rotation + drawn_arc + PI) * size
 		var lines := ConcavePolygonShape2D.new()
 		if is_zero_approx(corner_size):
 			var array := PackedVector2Array()

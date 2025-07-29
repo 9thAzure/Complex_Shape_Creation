@@ -358,7 +358,7 @@ static func get_shape_vertices(vertices_count : int, size : float = 1, offset_ro
 	assert(drawn_arc != 0, "param 'drawn_arc' cannot be 0")
 
 	if drawn_arc <= -TAU or TAU <= drawn_arc:
-		return SimplePolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
+		return BasicPolygon2D.get_shape_vertices(vertices_count, size, offset_rotation, offset_position)
 	
 	if vertices_count == 1:
 		vertices_count = 32

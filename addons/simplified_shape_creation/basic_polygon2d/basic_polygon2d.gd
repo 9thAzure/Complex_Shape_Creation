@@ -288,7 +288,6 @@ func regenerate() -> void:
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = []
 		_decomposed_created_shape = []
-		shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 		export()
 		return
 
@@ -304,7 +303,6 @@ func regenerate() -> void:
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = shape
 		_decomposed_created_shape = [shape]
-		shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 		export()
 		return
 
@@ -368,7 +366,6 @@ func regenerate() -> void:
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = shape
 		_decomposed_created_shape = decomposed_shape
-		shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 		export()
 		return
 
@@ -381,7 +378,6 @@ func regenerate() -> void:
 	_queue_status = _QUEUE_DISPERSE
 	_created_shape = shape
 	_decomposed_created_shape = decomposed_shape
-	shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 	export()
 
 func _get_property_list() -> Array[Dictionary]:
@@ -416,6 +412,7 @@ func queue_export() -> void:
 func export() -> void:
 	_queue_status = _UNQUEUED
 
+	shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 	if is_exporting():
 		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
 		for path in export_targets:
