@@ -166,7 +166,7 @@ func _on_shape_created(shape : PackedVector2Array, decomposed : Array[PackedVect
 			var polyline := shape.duplicate()
 			polyline.resize(polyline.size() * 2 - 2)
 			for i in shape.size() - 1:
-				var index := shape.size() - i - 2
+				var index := shape.size() - i - 1
 				polyline[-i * 2 - 1] = polyline[index]
 				polyline[-i * 2 - 2] = polyline[index - 1]
 
