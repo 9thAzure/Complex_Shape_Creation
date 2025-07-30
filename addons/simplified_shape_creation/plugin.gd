@@ -40,7 +40,7 @@ func _is_handled_node(object : Object) -> bool:
 	return (
 		object is BasicPolygon2D or
 		object is BasicCollisionPolygon2D
-	)
+	) and object.get_class() != "EditorDebuggerRemoteObject"
 
 func _edit(object : Object) -> void:
 	if object == null:
