@@ -272,25 +272,39 @@ libraries = {
 [node name="VerticesCount" type="Node2D" parent="IndividualProperties"]
 position = Vector2(15, 15)
 script = ExtResource("1_nx66f")
+sizes = PackedFloat64Array(10)
+_created_shape = PackedVector2Array(0, -10, 8.66025, 5, -8.66025, 5)
+_decomposed_created_shape = Array[PackedVector2Array]([PackedVector2Array(0, -10, 8.66025, 5, -8.66025, 5)])
 
 [node name="Size" type="Node2D" parent="IndividualProperties"]
 position = Vector2(45, 15)
 script = ExtResource("1_nx66f")
-size = 1e-06
+sizes = PackedFloat64Array(5.36194)
+_created_shape = PackedVector2Array(0, -5.36194, 1.04606, -5.25891, 2.05192, -4.95378, 2.97893, -4.45829, 3.79146, -3.79146, 4.45829, -2.97893, 4.95378, -2.05192, 5.25891, -1.04606, 5.36194, -3.28324e-16, 5.25891, 1.04606, 4.95378, 2.05192, 4.45829, 2.97893, 3.79146, 3.79146, 2.97893, 4.45829, 2.05192, 4.95378, 1.04606, 5.25891, 6.56648e-16, 5.36194, -1.04606, 5.25891, -2.05192, 4.95378, -2.97893, 4.45829, -3.79146, 3.79146, -4.45829, 2.97893, -4.95378, 2.05192, -5.25891, 1.04606, -5.36194, 9.84972e-16, -5.25891, -1.04606, -4.95378, -2.05192, -4.45829, -2.97893, -3.79146, -3.79146, -2.97893, -4.45829, -2.05192, -4.95378, -1.04606, -5.25891)
+_decomposed_created_shape = Array[PackedVector2Array]([PackedVector2Array(0, -5.36194, 1.04606, -5.25891, 2.05192, -4.95378, 2.97893, -4.45829, 3.79146, -3.79146, 4.45829, -2.97893, 4.95378, -2.05192, 5.25891, -1.04606, 5.36194, -3.28324e-16, 5.25891, 1.04606, 4.95378, 2.05192, 4.45829, 2.97893, 3.79146, 3.79146, 2.97893, 4.45829, 2.05192, 4.95378, 1.04606, 5.25891, 6.56648e-16, 5.36194, -1.04606, 5.25891, -2.05192, 4.95378, -2.97893, 4.45829, -3.79146, 3.79146, -4.45829, 2.97893, -4.95378, 2.05192, -5.25891, 1.04606, -5.36194, 9.84972e-16, -5.25891, -1.04606, -4.95378, -2.05192, -4.45829, -2.97893, -3.79146, -3.79146, -2.97893, -4.45829, -2.05192, -4.95378, -1.04606, -5.25891)])
 
 [node name="OffsetRotation" type="Node2D" parent="IndividualProperties"]
 position = Vector2(75, 16)
 script = ExtResource("1_nx66f")
 vertices_count = 3
+sizes = PackedFloat64Array(10)
+_created_shape = PackedVector2Array(-2.25453, 9.74254, -7.31003, -6.82375, 9.56455, -2.91879)
+_decomposed_created_shape = Array[PackedVector2Array]([PackedVector2Array(-2.25453, 9.74254, -7.31003, -6.82375, 9.56455, -2.91879)])
 
 [node name="Color" type="Node2D" parent="IndividualProperties"]
 position = Vector2(105, 15)
 script = ExtResource("1_nx66f")
+sizes = PackedFloat64Array(10)
+_created_shape = PackedVector2Array()
+_decomposed_created_shape = Array[PackedVector2Array]([])
 
 [node name="OffsetPosition" type="Node2D" parent="IndividualProperties"]
 position = Vector2(135, 15)
 script = ExtResource("1_nx66f")
 vertices_count = 3
+sizes = PackedFloat64Array(10)
+_created_shape = PackedVector2Array(0, -18.0429, 8.66025, -3.0429, -8.66025, -3.0429)
+_decomposed_created_shape = Array[PackedVector2Array]([PackedVector2Array(0, -18.0429, 8.66025, -3.0429, -8.66025, -3.0429)])
 
 [node name="AllProperties" type="AnimationPlayer" parent="."]
 libraries = {
@@ -300,6 +314,9 @@ libraries = {
 [node name="SimplePolygon2D" type="Node2D" parent="AllProperties"]
 position = Vector2(15, 45)
 script = ExtResource("1_nx66f")
+sizes = PackedFloat64Array(10)
+_created_shape = PackedVector2Array(-5.23031, 7.23461, -7.94104, -1.64812, 1.107, 0.445687)
+_decomposed_created_shape = Array[PackedVector2Array]([PackedVector2Array(-5.23031, 7.23461, -7.94104, -1.64812, 1.107, 0.445687)])
 
 [node name="AllPropertiesIndividually" type="Node" parent="."]
 script = ExtResource("2_rp1v7")
@@ -309,7 +326,13 @@ properties = Array[Array]([["vertices_count", 1, 8], ["size", 0.1, 20.0], ["offs
 [node name="SimplePolygon2D" type="Node2D" parent="AllPropertiesIndividually"]
 position = Vector2(45, 45)
 script = ExtResource("1_nx66f")
-offset_rotation = -6.28319
+vertices_count = 5
+sizes = PackedFloat64Array(0.1)
+offset_rotation = 6.28319
+offset_position = Vector2(0, -10)
+color = Color(0.906404, 0.506684, 0, 1)
+_created_shape = PackedVector2Array(-2.44929e-17, -10.1, 0.0951057, -10.0309, 0.0587785, -9.9191, -0.0587785, -9.9191, -0.0951057, -10.0309)
+_decomposed_created_shape = Array[PackedVector2Array]([PackedVector2Array(-2.44929e-17, -10.1, 0.0951057, -10.0309, 0.0587785, -9.9191, -0.0587785, -9.9191, -0.0951057, -10.0309)])
 
 [node name="SquareMostProperties" type="Node" parent="."]
 script = ExtResource("2_rp1v7")
@@ -320,6 +343,11 @@ properties = Array[Array]([["size", 0.001, 20.0], ["color", Color(0, 0, 0, 1), C
 position = Vector2(75, 45)
 script = ExtResource("1_nx66f")
 vertices_count = 4
+sizes = PackedFloat64Array(7.85884)
+offset_position = Vector2(-4.39849, -2.14365)
+color = Color(0, 0.642294, 0.695475, 1)
+_created_shape = PackedVector2Array(-4.39849, -10.0025, 3.46035, -2.14365, -4.39849, 5.71519, -12.2573, -2.14365)
+_decomposed_created_shape = Array[PackedVector2Array]([PackedVector2Array(-4.39849, -10.0025, 3.46035, -2.14365, -4.39849, 5.71519, -12.2573, -2.14365)])
 
 [node name="Table" type="Node2D" parent="."]
 position = Vector2(15, 75)
