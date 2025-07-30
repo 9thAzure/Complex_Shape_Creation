@@ -3,6 +3,7 @@ extends EditorPlugin
 
 const BaseHandler := preload("res://addons/simplified_shape_creation/gui_handlers/base_handler.gd")
 const SizeRotationHandler := preload("res://addons/simplified_shape_creation/gui_handlers/size_rotation_handler.gd")
+const ScaleSizeHandler := preload("res://addons/simplified_shape_creation/gui_handlers/scale_size_handler.gd")
 
 var _current_object : Node2D = null
 var _handlers : Array[BaseHandler] = []
@@ -58,6 +59,7 @@ func create_handlers() -> void:
 	_size_handler_count = _current_object.sizes.size()
 	for i in _current_object.sizes.size():
 		_handlers.append(SizeRotationHandler.new(self, get_undo_redo(), i))
+	_handlers.append(ScaleSizeHandler.new(self, get_undo_redo()))
 
 	for handler in _handlers:
 		_current_object.add_child(handler, false, INTERNAL_MODE_FRONT)

@@ -3,6 +3,7 @@ extends Node2D
 
 const Plugin := preload("res://addons/simplified_shape_creation/plugin.gd")
 
+var always_clamp := false
 var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius, clamp_compass_lines]
 
 var _plugin : Plugin
@@ -90,7 +91,7 @@ func _process(_delta) -> void:
 		return
 
 	global_position = get_global_mouse_position()
-	if Input.is_key_pressed(KEY_SHIFT):
+	if always_clamp or Input.is_key_pressed(KEY_SHIFT):
 		_clamp_position()
 	_update_properties()
 	
