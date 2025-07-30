@@ -10,6 +10,7 @@ func _ready() -> void:
 	_shift_clamps = [clamp_straight_line]
 	always_clamp = true
 	_old_rotation = _shape.offset_rotation
+	super()
 
 func get_max_size() -> float:
 	var max_size := -0.0

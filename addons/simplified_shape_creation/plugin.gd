@@ -17,10 +17,11 @@ func _enable_plugin() -> void:
 	undoredo.version_changed.connect(_on_version_change)
 
 func _disable_plugin() -> void:
-	var undoredo := get_undo_redo()
-	undoredo.history_changed.disconnect(_on_version_change)
-	undoredo.version_changed.disconnect(_on_version_change)
 	remove_handlers()
+	var undoredo := get_undo_redo()
+	if undoredo.version_changed.is_connected(_on_version_change):
+		undoredo.history_changed.disconnect(_on_version_change)
+		undoredo.version_changed.disconnect(_on_version_change)
 
 func _on_version_change() -> void:
 	if _current_object == null:
@@ -54,6 +55,11 @@ func _edit(object : Object) -> void:
 		remove_handlers()
 		_current_object = object
 		create_handlers()
+
+	# just in case it get disconnected somehow, typically due to file edit while plugin is active.
+	if not get_undo_redo().version_changed.is_connected(_on_version_change):
+		get_undo_redo().version_changed.connect(_on_version_change)
+		get_undo_redo().history_changed.connect(_on_version_change)
 
 func create_handlers() -> void:
 	_size_handler_count = _current_object.sizes.size()
