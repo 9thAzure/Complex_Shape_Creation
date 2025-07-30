@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/simplified_shape_creation/simple_polygon_2d/simple_polygon_2d.svg")
+@icon("res://addons/simplified_shape_creation/basic_polygon2d/basic_polygon2d.svg")
 class_name BasicPolygon2D
 extends Node2D
 
