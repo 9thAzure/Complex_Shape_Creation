@@ -8,6 +8,7 @@ var _current_object : Node2D = null
 var _handlers : Array[BaseHandler] = []
 var _pressed_handler : BaseHandler = null
 var _size_handler_count := 0
+var _has_sent_not_found_button_warning := false
 
 func _enable_plugin() -> void:
 	var undoredo := get_undo_redo()
@@ -122,7 +123,7 @@ func _get_select_mode_button() -> void:
 	if found_node != null and found_node is Button:
 		_select_mode_button = found_node
 		return
-	
+
 	found_node = main_screen
 	for i in 5:
 		if found_node == null:
@@ -132,5 +133,7 @@ func _get_select_mode_button() -> void:
 	if found_node != null and found_node is Button:
 		_select_mode_button = found_node
 		return
-	
-	printerr("cannot find select button")
+
+	if not _has_sent_not_found_button_warning:
+		push_warning("(Simplified Shape Creation plugin) - Unable to find the select mode button. Handlers for the nodes provided by this plugin will always be selectable, even if other modes are selected")
+		_has_sent_not_found_button_warning = true
