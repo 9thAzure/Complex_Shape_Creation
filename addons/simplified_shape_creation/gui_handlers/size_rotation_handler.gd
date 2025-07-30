@@ -53,6 +53,9 @@ func _mouse_released() -> void:
 	_shape.notify_property_list_changed()
 
 func get_rotation_offset() -> float:
-	var offset := 0.0
-	offset += _size_index * TAU / _shape.vertices_count
-	return offset
+	var vertices_count : int = _shape.vertices_count
+	if vertices_count == 1:
+		vertices_count = 32
+	elif vertices_count == 2:
+		vertices_count = maxi(2, _shape.sizes.size())
+	return _size_index * TAU / vertices_count
