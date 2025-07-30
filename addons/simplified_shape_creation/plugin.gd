@@ -1,44 +1,81 @@
 @tool
 extends EditorPlugin
 
+const BaseHandler := preload("res://addons/simplified_shape_creation/gui_handlers/base_handler.gd")
+const SizeRotationHandler := preload("res://addons/simplified_shape_creation/gui_handlers/size_rotation_handler.gd")
+const ScaleSizeHandler := preload("res://addons/simplified_shape_creation/gui_handlers/scale_size_handler.gd")
+
+var _current_object : Node2D = null
+var _handlers : Array[BaseHandler] = []
+var _pressed_handler : BaseHandler = null
+var _size_handler_count := 0
+var _has_sent_not_found_button_warning := false
+
+func _enable_plugin() -> void:
+	var undoredo := get_undo_redo()
+	undoredo.history_changed.connect(_on_version_change)
+	undoredo.version_changed.connect(_on_version_change)
+
+func _disable_plugin() -> void:
+	remove_handlers()
+	var undoredo := get_undo_redo()
+	if undoredo.version_changed.is_connected(_on_version_change):
+		undoredo.history_changed.disconnect(_on_version_change)
+		undoredo.version_changed.disconnect(_on_version_change)
+
+func _on_version_change() -> void:
+	if _current_object == null:
+		return
+
+	var _new_size_handler_count = _current_object.sizes.size()
+	if _new_size_handler_count != _size_handler_count:
+		_size_handler_count = _new_size_handler_count
+		remove_handlers()
+		create_handlers()
+
+	for handler in _handlers:
+		handler.version_change()
+
 func _handles(object : Object) -> bool:
 	return _is_handled_node(object)
 
 func _is_handled_node(object : Object) -> bool:
 	return (
-		object is SimplePolygon2D or
-		object is RegularPolygon2D or
-		object is RegularCollisionPolygon2D or
-		object is StarPolygon2D
-	)
+		object is BasicPolygon2D or
+		object is BasicCollisionPolygon2D
+	) and object.get_class() != "EditorDebuggerRemoteObject"
 
 func _edit(object : Object) -> void:
-	var parent := _size_rotation_handler.get_parent()
 	if object == null:
-		if parent != null:
-			parent.remove_child(_size_rotation_handler)
+		remove_handlers()
+		_current_object = null
 		return
 
-	if not is_same(object, parent):
-		if parent != null:
-			parent.remove_child(_size_rotation_handler)
-		_size_rotation_handler.request_ready()
-		object.add_child(_size_rotation_handler, false, INTERNAL_MODE_BACK)
+	if not is_same(object, _current_object):
+		remove_handlers()
+		_current_object = object
+		create_handlers()
 
-const BaseHandler := preload("res://addons/simplified_shape_creation/gui_handlers/base_handler.gd")
-const SizeRotationHandler := preload("res://addons/simplified_shape_creation/gui_handlers/size_rotation_handler.gd")
-var _size_rotation_handler : SizeRotationHandler
-func _make_visible(visible) -> void:
-	if visible:
-		_size_rotation_handler = SizeRotationHandler.new(self, get_undo_redo())
-	else:
-		_remove(_size_rotation_handler)
+	# just in case it get disconnected somehow, typically due to file edit while plugin is active.
+	if not get_undo_redo().version_changed.is_connected(_on_version_change):
+		get_undo_redo().version_changed.connect(_on_version_change)
+		get_undo_redo().history_changed.connect(_on_version_change)
 
-func _remove(node : Node) -> void:
-	var parent := node.get_parent()
-	if parent != null:
-		parent.remove_child(node)
-	node.queue_free()
+func create_handlers() -> void:
+	_size_handler_count = _current_object.sizes.size()
+	for i in _current_object.sizes.size():
+		_handlers.append(SizeRotationHandler.new(self, get_undo_redo(), i))
+	_handlers.append(ScaleSizeHandler.new(self, get_undo_redo()))
+
+	for handler in _handlers:
+		_current_object.add_child(handler, false, INTERNAL_MODE_FRONT)
+
+func remove_handlers() -> void:
+	for handler in _handlers:
+		if _current_object != null:
+			_current_object.remove_child(handler)
+		handler.queue_free()
+	_handlers.clear()
 
 func _forward_canvas_gui_input(event) -> bool:
 	if event is InputEventMouseButton:
@@ -56,13 +93,23 @@ func _forward_canvas_gui_input(event) -> bool:
 			lower_bound = Vector2(lower_bound.x / transform.get_scale().x, lower_bound.y / transform.get_scale().y)
 			var upper_bound := lower_bound + Vector2(size.x / transform.get_scale().x, size.y / transform.get_scale().y)
 
-			var mouse_position = viewport.get_mouse_position()
-			if (lower_bound.x <= mouse_position.x and mouse_position.x <= upper_bound.x and
+			var mouse_position := viewport.get_mouse_position()
+			if not (lower_bound.x <= mouse_position.x and mouse_position.x <= upper_bound.x and
 				lower_bound.y <= mouse_position.y and mouse_position.y <= upper_bound.y):
-				return _size_rotation_handler.mouse_press(mouse_position)
+				return false
+			for handler in _handlers:
+				var intercepts := handler.mouse_press(mouse_position)
+				if intercepts:
+					_pressed_handler = handler
+					return true
+			return false
 		else:
-			return _size_rotation_handler.mouse_release()
-	
+			if _pressed_handler == null:
+				return false
+			var result := _pressed_handler.mouse_release()
+			_pressed_handler = null
+			return result
+
 	return false
 
 var _select_mode_button : Button = null
@@ -84,7 +131,7 @@ func _get_select_mode_button() -> void:
 	if found_node != null and found_node is Button:
 		_select_mode_button = found_node
 		return
-	
+
 	found_node = main_screen
 	for i in 5:
 		if found_node == null:
@@ -94,5 +141,7 @@ func _get_select_mode_button() -> void:
 	if found_node != null and found_node is Button:
 		_select_mode_button = found_node
 		return
-	
-	printerr("cannot find select button")
+
+	if not _has_sent_not_found_button_warning:
+		push_warning("(Simplified Shape Creation plugin) - Unable to find the select mode button. Handlers for the nodes provided by this plugin will always be selectable, even if other modes are selected")
+		_has_sent_not_found_button_warning = true

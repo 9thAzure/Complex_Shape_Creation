@@ -1,33 +1,32 @@
 @tool
-extends Node2D 
+extends Node2D
 
+const Plugin := preload("res://addons/simplified_shape_creation/plugin.gd")
+
+var always_clamp := false
 var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius, clamp_compass_lines]
 
-var _plugin : EditorPlugin
+var _plugin : Plugin
 var _undo_redo_manager : EditorUndoRedoManager
-var _parent : Node2D = null
-var _origin := Vector2.ZERO
+var _shape : Node2D =  null
+var _origin         := Vector2.ZERO
 var size := 1.0
 
 var _being_dragged := false
 var _old_position := Vector2.ZERO
 
 
-func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
+func _init(plugin : Plugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
 	_plugin = plugin
+	_shape = plugin._current_object
 	_undo_redo_manager = undo_redo_manager
-	_undo_redo_manager.version_changed.connect(maintain_position)
-	_undo_redo_manager.version_changed.connect(maintain_editor_scale)
-	_undo_redo_manager.history_changed.connect(maintain_position)
-	_undo_redo_manager.history_changed.connect(maintain_editor_scale)
 	size = handler_size
 	z_as_relative = false
 	z_index = RenderingServer.CANVAS_ITEM_Z_MAX
 
+
 func _ready() -> void:
 	assert(Engine.is_editor_hint())
-
-	_parent = get_parent()
 
 	maintain_editor_scale()
 	maintain_position()
@@ -39,6 +38,7 @@ func mouse_press(point : Vector2) -> bool:
 		_being_dragged = true
 		if _old_position == Vector2.ZERO:
 			_old_position = Vector2.RIGHT
+		_mouse_pressed()
 		modulate = Color.LIME_GREEN
 		return true
 	return false
@@ -53,11 +53,18 @@ func mouse_release() -> bool:
 		return true
 	return false
 
+func version_change() -> void:
+	maintain_editor_scale()
+	maintain_position()
+
 func _from_parent_properties() -> void:
 	printerr("'_from_parent_properties' is abstract")
 
 func _update_properties() -> void:
 	printerr("'_update_properties' is abstract")
+
+func _mouse_pressed() -> void:
+	printerr("'_mouse_pressed' is abstract")
 
 func _mouse_released() -> void:
 	printerr("'_mouse_released' is abstract")
@@ -65,7 +72,7 @@ func _mouse_released() -> void:
 func _draw() -> void:
 	const margin := 1
 
-	var shape := RegularPolygon2D.get_shape_vertices(5, size)
+	var shape := BasicGeometry2D.create_shape(5, [size])
 	draw_colored_polygon(shape, Color.WHITE)
 	draw_polyline(shape, Color.BLACK, margin, true)
 	draw_line(shape[-1], shape[0], Color.BLACK, margin, true)
@@ -77,11 +84,14 @@ func _process(_delta) -> void:
 		maintain_editor_scale()
 		previous_editor_scale = editor_scale
 
+	if _plugin._pressed_handler != null:
+		maintain_position()
+
 	if not _being_dragged:
 		return
 
 	global_position = get_global_mouse_position()
-	if Input.is_key_pressed(KEY_SHIFT):
+	if always_clamp or Input.is_key_pressed(KEY_SHIFT):
 		_clamp_position()
 	_update_properties()
 	
@@ -91,8 +101,8 @@ func maintain_position() -> void:
 		return
 
 	_origin = Vector2.ZERO
-	if not _parent is CollisionShape2D:
-		_origin = _parent.offset
+	if not _shape is CollisionShape2D:
+		_origin = _shape.offset_position
 	_from_parent_properties()
 
 func maintain_editor_scale() -> void:
