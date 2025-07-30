@@ -7,6 +7,7 @@ const SizeRotationHandler := preload("res://addons/simplified_shape_creation/gui
 var _current_object : Node2D = null
 var _handlers : Array[BaseHandler] = []
 var _pressed_handler : BaseHandler = null
+var _size_handler_count := 0
 
 func _enable_plugin() -> void:
 	var undoredo := get_undo_redo()
@@ -17,8 +18,18 @@ func _disable_plugin() -> void:
 	var undoredo := get_undo_redo()
 	undoredo.history_changed.disconnect(_on_version_change)
 	undoredo.version_changed.disconnect(_on_version_change)
+	remove_handlers()
 
 func _on_version_change() -> void:
+	if _current_object == null:
+		return
+
+	var _new_size_handler_count = _current_object.sizes.size()
+	if _new_size_handler_count != _size_handler_count:
+		_size_handler_count = _new_size_handler_count
+		remove_handlers()
+		create_handlers()
+
 	for handler in _handlers:
 		handler.version_change()
 
@@ -33,45 +44,29 @@ func _is_handled_node(object : Object) -> bool:
 
 func _edit(object : Object) -> void:
 	if object == null:
-		if _current_object != null:
-			remove_handlers()
+		remove_handlers()
 		_current_object = null
 		return
 
-	if not is_same(object, parent):
-		if _current_object != null:
-			remove_handlers()
+	if not is_same(object, _current_object):
+		remove_handlers()
 		_current_object = object
 		create_handlers()
-#		_size_rotation_handler.request_ready()
-#		object.add_child(_size_rotation_handler, false, INTERNAL_MODE_BACK)
-
-#var _size_rotation_handler : SizeRotationHandler
-func _make_visible(visible) -> void:
-	if visible:
-		pass
-#		_size_rotation_handler = SizeRotationHandler.new(self, get_undo_redo())
-	else:
-		pass
-#		_remove(_size_rotation_handler)
 
 func create_handlers() -> void:
-	_handlers.append(SizeRotationHandler.new(self, get_undo_redo()))
+	_size_handler_count = _current_object.sizes.size()
+	for i in _current_object.sizes.size():
+		_handlers.append(SizeRotationHandler.new(self, get_undo_redo(), i))
 
 	for handler in _handlers:
-		_current_object.add_child(handler)
+		_current_object.add_child(handler, false, INTERNAL_MODE_FRONT)
 
 func remove_handlers() -> void:
 	for handler in _handlers:
-		_current_object.remove_child(handler)
+		if _current_object != null:
+			_current_object.remove_child(handler)
 		handler.queue_free()
 	_handlers.clear()
-
-#func _remove(node : Node) -> void:
-#	var parent := node.get_parent()
-#	if parent != null:
-#		parent.remove_child(node)
-#	node.queue_free()
 
 func _forward_canvas_gui_input(event) -> bool:
 	if event is InputEventMouseButton:
@@ -102,7 +97,9 @@ func _forward_canvas_gui_input(event) -> bool:
 		else:
 			if _pressed_handler == null:
 				return false
-			return _pressed_handler.mouse_release()
+			var result := _pressed_handler.mouse_release()
+			_pressed_handler = null
+			return result
 
 	return false
 

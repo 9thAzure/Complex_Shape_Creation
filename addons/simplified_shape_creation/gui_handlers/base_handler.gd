@@ -1,29 +1,31 @@
 @tool
-extends Node2D 
+extends Node2D
+
+const Plugin := preload("res://addons/simplified_shape_creation/plugin.gd")
 
 var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius, clamp_compass_lines]
 
-var _plugin : EditorPlugin
+var _plugin : Plugin
 var _undo_redo_manager : EditorUndoRedoManager
-var _parent : Node2D = null
-var _origin := Vector2.ZERO
+var _shape : Node2D =  null
+var _origin         := Vector2.ZERO
 var size := 1.0
 
 var _being_dragged := false
 var _old_position := Vector2.ZERO
 
 
-func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
+func _init(plugin : Plugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
 	_plugin = plugin
+	_shape = plugin._current_object
 	_undo_redo_manager = undo_redo_manager
 	size = handler_size
 	z_as_relative = false
 	z_index = RenderingServer.CANVAS_ITEM_Z_MAX
 
+
 func _ready() -> void:
 	assert(Engine.is_editor_hint())
-
-	_parent = get_parent()
 
 	maintain_editor_scale()
 	maintain_position()
@@ -51,8 +53,8 @@ func mouse_release() -> bool:
 	return false
 
 func version_change() -> void:
-	maintain_position()
 	maintain_editor_scale()
+	maintain_position()
 
 func _from_parent_properties() -> void:
 	printerr("'_from_parent_properties' is abstract")
@@ -81,6 +83,9 @@ func _process(_delta) -> void:
 		maintain_editor_scale()
 		previous_editor_scale = editor_scale
 
+	if _plugin._pressed_handler != null:
+		maintain_position()
+
 	if not _being_dragged:
 		return
 
@@ -95,8 +100,8 @@ func maintain_position() -> void:
 		return
 
 	_origin = Vector2.ZERO
-	if not _parent is CollisionShape2D:
-		_origin = _parent.offset_position
+	if not _shape is CollisionShape2D:
+		_origin = _shape.offset_position
 	_from_parent_properties()
 
 func maintain_editor_scale() -> void:
