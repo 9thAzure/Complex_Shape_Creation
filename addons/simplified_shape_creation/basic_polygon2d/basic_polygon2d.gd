@@ -34,7 +34,7 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10]):
 
 		for i in value.size():
 			if value[i] < 0.001:
-				value[i] = 0.001 if i >= sizes.size() else sizes[i]
+				value[i] = 10 if i >= sizes.size() else sizes[i]
 
 
 		sizes = value
