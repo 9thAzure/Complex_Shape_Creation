@@ -63,9 +63,10 @@ func _edit(object : Object) -> void:
 
 func create_handlers() -> void:
 	_size_handler_count = _current_object.sizes.size()
-	for i in _current_object.sizes.size():
+	for i in _size_handler_count:
 		_handlers.append(SizeRotationHandler.new(self, get_undo_redo(), i))
-	_handlers.append(ScaleSizeHandler.new(self, get_undo_redo()))
+	if _size_handler_count > 1:
+		_handlers.append(ScaleSizeHandler.new(self, get_undo_redo()))
 
 	for handler in _handlers:
 		_current_object.add_child(handler, false, INTERNAL_MODE_FRONT)
