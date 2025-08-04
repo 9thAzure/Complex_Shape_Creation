@@ -527,12 +527,10 @@ func _draw() -> void:
 	if not draw_shape:
 		return
 
-	if is_zero_approx(arc_angle):
+	if is_zero_approx(arc_angle) or is_zero_approx(_created_shape.size()):
 		return
 
 	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
-		if not Engine.is_editor_hint():
-			printerr("Unable to draw a ring shape that is closed as a chord when the arc angle is less than or equal to 180º")
 		return
 
 	match get_created_shape_type():
