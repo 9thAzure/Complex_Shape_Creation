@@ -8,7 +8,7 @@ extends Node2D
 ## A node that draws a regular shape, using methods like [method CanvasItem.draw_colored_polygon] and [method CanvasItem.draw_circle]. 
 ## If more complex features are needed, use [RegularPolygon2D].
 
-
+@export_group("Generation")
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 @export_range(1, 1000)
 var vertices_count : int = 1:
@@ -40,64 +40,6 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10]):
 		sizes = value
 		queue_regenerate()
 
-@export_subgroup("Offset tranform", "offset")
-
-## @deprecated
-@export
-var offset_position := Vector2.ZERO:
-	set(value):
-		offset_position = value
-		queue_regenerate()
-
-## The offset position of the shape.
-var offset : Vector2 = Vector2.ZERO:
-	set(value):
-		printerr("don't use")
-		offset = value
-		queue_regenerate()
-
-## The offset rotation of the shape, in degrees.
-var offset_rotation_degrees : float = 0:
-	set(value):
-		offset_rotation = deg_to_rad(value)
-	get:
-		return rad_to_deg(offset_rotation)
-
-## The offset rotation of the shape, in radians.
-@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
-var offset_rotation : float = 0:
-	set(value):
-		offset_rotation = value
-		queue_regenerate()
-
-## @deprecated
-## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
-func apply_transformation(rotation : float, scale : float) -> void:
-	assert(scale > 0, "param 'scale' should be positive.")
-	offset_rotation += rotation
-	size *= scale
-
-@export
-var offset_scale := Vector2.ONE:
-	set(value):
-		offset_scale = value
-		queue_regenerate()
-
-@export_range(-89.9, 89.9, 0.1, "radians")
-var offset_skew := 0.0:
-	set(value):
-		offset_skew = value
-		queue_regenerate()
-
-var offset_transform := Transform2D.IDENTITY:
-	get: return Transform2D(offset_rotation, offset_scale, offset_skew, offset_position)
-	set(value):
-		offset_rotation = value.get_rotation()
-		offset_position = value.get_origin()
-		offset_skew = value.get_skew()
-		offset_scale = value.get_scale()
-
-@export_subgroup("")
 
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:
@@ -174,6 +116,63 @@ var round_arc_ends : bool = false:
 	set(value):
 		round_arc_ends = value
 		queue_regenerate()
+
+@export_subgroup("Offset tranform", "offset")
+
+@export
+var offset_position := Vector2.ZERO:
+	set(value):
+		offset_position = value
+		queue_regenerate()
+
+## @deprecated
+## The offset position of the shape.
+var offset : Vector2 = Vector2.ZERO:
+	set(value):
+		printerr("don't use")
+		offset = value
+		queue_regenerate()
+
+## The offset rotation of the shape, in degrees.
+var offset_rotation_degrees : float = 0:
+	set(value):
+		offset_rotation = deg_to_rad(value)
+	get:
+		return rad_to_deg(offset_rotation)
+
+## The offset rotation of the shape, in radians.
+@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
+var offset_rotation : float = 0:
+	set(value):
+		offset_rotation = value
+		queue_regenerate()
+
+## @deprecated
+## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
+func apply_transformation(rotation : float, scale : float) -> void:
+	assert(scale > 0, "param 'scale' should be positive.")
+	offset_rotation += rotation
+	size *= scale
+
+@export
+var offset_scale := Vector2.ONE:
+	set(value):
+		offset_scale = value
+		queue_regenerate()
+
+@export_range(-89.9, 89.9, 0.1, "radians")
+var offset_skew := 0.0:
+	set(value):
+		offset_skew = value
+		queue_regenerate()
+
+var offset_transform := Transform2D.IDENTITY:
+	get: return Transform2D(offset_rotation, offset_scale, offset_skew, offset_position)
+	set(value):
+		offset_rotation = value.get_rotation()
+		offset_position = value.get_origin()
+		offset_skew = value.get_skew()
+		offset_scale = value.get_scale()
 
 @export_group("Drawing")
 
