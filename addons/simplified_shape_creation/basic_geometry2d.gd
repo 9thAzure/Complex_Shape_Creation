@@ -30,7 +30,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
-static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_rotation := 0.0, offset_position := Vector2.ZERO,
+static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_transform = Transform2D.IDENTITY,
 	arc_start := 0.0, arc_end := TAU, add_central_point := true) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(sizes.size() != 0, "param 'sizes' must have at least one element")
@@ -54,21 +54,24 @@ static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_
 	points.resize(true_vertices_count + (1 if add_central_point else 0))
 	for i in true_vertices_count:
 		var index := i + starting_vertex_index
-		points[i] = _circle_point(index * arc_angle + offset_rotation) * sizes[index % sizes.size()] + offset_position
+		points[i] = _circle_point(index * arc_angle) * sizes[index % sizes.size()]
 
 	if not is_equal_approx(starting_vertex_index, arc_start / arc_angle):
-		var slope1 := _circle_point(arc_start + offset_rotation)
-		var scaler := _find_intersection(offset_position, slope1, points[0], points[1] - points[0])
-		points[0] = offset_position + slope1 * scaler
+		var slope1 := _circle_point(arc_start)
+		var scaler := _find_intersection(Vector2.ZERO, slope1, points[0], points[1] - points[0])
+		points[0] = slope1 * scaler
 
 	if not is_equal_approx(ending_vertex_index, arc_end / arc_angle) and not is_full_arc:
 		var last_i := true_vertices_count - 1
-		var slope1 := _circle_point(arc_end + offset_rotation)
-		var scaler := _find_intersection(offset_position, slope1, points[last_i], points[last_i - 1] - points[last_i])
-		points[last_i] = offset_position + slope1 * scaler
+		var slope1 := _circle_point(arc_end)
+		var scaler := _find_intersection(Vector2.ZERO, slope1, points[last_i], points[last_i - 1] - points[last_i])
+		points[last_i] = slope1 * scaler
 
 	if add_central_point:
-		points[-1] = offset_position
+		points[-1] = Vector2.ZERO
+
+	for i in points.size():
+		points[i] = offset_transform.basis_xform(points[i]) + offset_transform.get_origin()
 
 	return points
 

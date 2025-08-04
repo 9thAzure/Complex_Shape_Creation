@@ -9,4 +9,35 @@
     <PackageReference Include="Chickensoft.GoDotTest" Version="1.4.0" />
     <PackageReference Include="Shouldly" Version="4.2.1" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="testing\tests\.gdignore" />
+    <Content Include="testing\tests\array_expansion_test\array_test.gd" />
+    <Content Include="testing\tests\array_expansion_test\test_manager.gd" />
+    <Content Include="testing\tests\array_expansion_test\test_manager.tscn" />
+    <Content Include="testing\tests\berzier_curves\berzier_curve.gd" />
+    <Content Include="testing\tests\berzier_curves\berzier_curve.tscn" />
+    <Content Include="testing\tests\berzier_curves\berzier_quadratic_offset.gd" />
+    <Content Include="testing\tests\berzier_curves\berzier_quadratic_offset.tscn" />
+    <Content Include="testing\tests\intersecting_calculations\calculator.gd" />
+    <Content Include="testing\tests\intersecting_calculations\intersecting_calculations.tscn" />
+    <Content Include="testing\tests\memory_test\memory_report.txt" />
+    <Content Include="testing\tests\memory_test\memory_tester.gd" />
+    <Content Include="testing\tests\memory_test\memory_tests.tscn" />
+    <Content Include="testing\tests\overriding test\overiding_test.gd" />
+    <Content Include="testing\tests\overriding test\overiding_test.tscn" />
+    <Content Include="testing\tests\queue_test\queue_test.tscn" />
+    <Content Include="testing\tests\queue_test\test1.gd" />
+    <Content Include="testing\tests\queue_test\test2.gd" />
+    <Content Include="testing\tests\queue_test\test3.gd" />
+    <Content Include="testing\tests\queue_test\tester.gd" />
+    <Content Include="testing\tests\queue_test\test_base.gd" />
+    <Content Include="testing\tests\rotate_shape\apply_size_scale.gd" />
+    <Content Include="testing\tests\rotate_shape\apply_size_scale.tscn" />
+    <Content Include="testing\tests\rotate_shape\apply_transform.tscn" />
+    <Content Include="testing\tests\rotate_shape\apply_transform2.tscn" />
+    <Content Include="testing\tests\rotate_shape\conclusion.txt" />
+    <Content Include="testing\tests\rotate_shape\rotate_shape.gd" />
+    <Content Include="testing\tests\rotate_shape\rotate_shape.tscn" />
+    <Content Include="testing\tests\rotate_shape\transformer.gd" />
+  </ItemGroup>
 </Project>

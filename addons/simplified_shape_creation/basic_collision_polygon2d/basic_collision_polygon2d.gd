@@ -40,6 +40,13 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10]):
 	get: return _basic_polygon_instance.sizes
 	set(value): _basic_polygon_instance.sizes = value
 
+@export_subgroup("Offset Transform", "offset")
+
+@export
+var offset_position := Vector2.ZERO:
+	get: return _basic_polygon_instance.offset_position
+	set(value): _basic_polygon_instance.offset_position = value
+
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
@@ -54,9 +61,20 @@ var offset_rotation : float = 0:
 	set(value): _basic_polygon_instance.offset_rotation = value
 
 @export
-var offset_position := Vector2.ZERO:
-	get: return _basic_polygon_instance.offset_position
-	set(value): _basic_polygon_instance.offset_position = value
+var offset_scale := Vector2.ONE:
+	get: return _basic_polygon_instance.offset_scale
+	set(value): _basic_polygon_instance.offset_scale = value
+
+@export_range(-89.9, 89.9, 0.1, "radians")
+var offset_skew := 0.0:
+	get: return _basic_polygon_instance.offset_skew
+	set(value): _basic_polygon_instance.offset_skew = value
+
+var offset_transform := Transform2D.IDENTITY:
+	get: return _basic_polygon_instance.offset_transform
+	set(value): _basic_polygon_instance.offset_transform = value
+
+@export_subgroup("")
 
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:

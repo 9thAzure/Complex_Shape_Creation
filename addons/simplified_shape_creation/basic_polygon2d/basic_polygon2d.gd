@@ -40,6 +40,22 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10]):
 		sizes = value
 		queue_regenerate()
 
+@export_subgroup("Offset tranform", "offset")
+
+## @deprecated
+@export
+var offset_position := Vector2.ZERO:
+	set(value):
+		offset_position = value
+		queue_regenerate()
+
+## The offset position of the shape.
+var offset : Vector2 = Vector2.ZERO:
+	set(value):
+		printerr("don't use")
+		offset = value
+		queue_regenerate()
+
 ## The offset rotation of the shape, in degrees.
 var offset_rotation_degrees : float = 0:
 	set(value):
@@ -54,26 +70,34 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		queue_regenerate()
 
+## @deprecated
 ## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
 func apply_transformation(rotation : float, scale : float) -> void:
 	assert(scale > 0, "param 'scale' should be positive.")
 	offset_rotation += rotation
 	size *= scale
 
-## see [member offset]
-## @deprecated
 @export
-var offset_position := Vector2.ZERO:
+var offset_scale := Vector2.ONE:
 	set(value):
-		offset = value
-	get:
-		return offset
-
-## The offset position of the shape.
-var offset : Vector2 = Vector2.ZERO:
-	set(value):
-		offset = value
+		offset_scale = value
 		queue_regenerate()
+
+@export_range(-89.9, 89.9, 0.1, "radians")
+var offset_skew := 0.0:
+	set(value):
+		offset_skew = value
+		queue_regenerate()
+
+var offset_transform := Transform2D.IDENTITY:
+	get: return Transform2D(offset_rotation, offset_scale, offset_skew, offset_position)
+	set(value):
+		offset_rotation = value.get_rotation()
+		offset_position = value.get_origin()
+		offset_skew = value.get_skew()
+		offset_scale = value.get_scale()
+
+@export_subgroup("")
 
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:
@@ -292,7 +316,7 @@ func regenerate() -> void:
 		return
 
 	if vertices_count == 2:
-		shape = BasicGeometry2D.create_shape(maxi(sizes.size(), 2), sizes, offset_rotation, offset_position, arc_start, arc_end, false)
+		shape = BasicGeometry2D.create_shape(maxi(sizes.size(), 2), sizes, offset_transform, arc_start, arc_end, false)
 		shape.resize(shape.size() * 2)
 		for i in shape.size() / 2:
 			var index := shape.size() / 2 - i - 1
@@ -307,7 +331,7 @@ func regenerate() -> void:
 		return
 
 	var add_central_point := closing_method == ClosingMethod.SLICE or closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1)
-	shape = BasicGeometry2D.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
+	shape = BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, arc_start, arc_end, add_central_point)
 
 	if rounded_corners:
 		if not uses_arc:
@@ -329,7 +353,7 @@ func regenerate() -> void:
 			var inner_arc_start := arc_start - arc_change / 2
 			var inner_arc_end := arc_end + arc_change / 2
 			if inner_arc_start < inner_arc_end:
-				var inner_ring := BasicGeometry2D.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
+				var inner_ring := BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, inner_arc_start, inner_arc_end)
 				if is_equal_approx(inner_arc_end - inner_arc_start, TAU):
 					inner_ring.resize(inner_ring.size() + 2)
 					inner_ring[-2] = inner_ring[0]
