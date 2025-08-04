@@ -15,6 +15,7 @@ var vertices_count : int = 1:
 	set(value):
 		assert(value > 0, "property 'vertices_count' must be greater than 0")
 		vertices_count = value
+		update_configuration_warnings()
 		queue_regenerate()
 
 ## The length from each corner to the center of the shape.
@@ -305,9 +306,6 @@ func regenerate() -> void:
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
 
 	if is_zero_approx(arc_angle):
-		if not Engine.is_editor_hint():
-			printerr("Unable to draw a shape whoose arc angle is 0º")
-
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = []
 		_decomposed_created_shape = []
@@ -315,8 +313,24 @@ func regenerate() -> void:
 		return
 
 	if vertices_count == 2:
-		shape = BasicGeometry2D.create_shape(maxi(sizes.size(), 2), sizes, offset_transform, arc_start, arc_end, false)
-		shape.resize(shape.size() * 2)
+		var line_count := maxi(sizes.size(), 2)
+		var side_chord_arc_angle := TAU / line_count
+		var line_arc_start := snappedf(arc_start + side_chord_arc_angle / 2, side_chord_arc_angle)
+		var line_arc_end := snappedf(arc_end - side_chord_arc_angle / 2, side_chord_arc_angle)
+
+		if line_arc_start > line_arc_end:
+			_queue_status = _QUEUE_DISPERSE
+			_created_shape = []
+			_decomposed_created_shape = []
+			export()
+			return
+
+		if is_equal_approx(line_arc_start, line_arc_end):
+			shape = PackedVector2Array([BasicGeometry2D._circle_point(line_arc_start + offset_rotation) * sizes[((line_arc_start / side_chord_arc_angle) as int) % line_count], offset_position])
+		else:
+			shape = BasicGeometry2D.create_shape(line_count, sizes, offset_transform, line_arc_start, line_arc_end, false)
+			shape.resize(shape.size() * 2)
+
 		for i in shape.size() / 2:
 			var index := shape.size() / 2 - i - 1
 			var point := shape[index]
@@ -453,6 +467,14 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD and draw_shape:
 		warnings.push_back("Unable to draw a ring shape that is closed as a chord when the arc angle is less than or equal to 180º")
+
+	if vertices_count == 2 and not is_zero_approx(arc_angle):
+		var line_count := maxi(sizes.size(), 2)
+		var side_chord_arc_angle := TAU / line_count
+		var line_arc_start := snappedf(arc_start + side_chord_arc_angle / 2, side_chord_arc_angle)
+		var line_arc_end := snappedf(arc_end - side_chord_arc_angle / 2, side_chord_arc_angle)
+		if line_arc_start > line_arc_end:
+			warnings.push_back("The arc of the shape covers an area where no lines are, so nothing will be created")
 
 	for i in export_targets.size():
 		var path := export_targets[i]
