@@ -1,5 +1,5 @@
 @tool
-extends Node2D
+extends RefCounted
 
 const Plugin := preload("res://addons/simplified_shape_creation/plugin.gd")
 
@@ -9,37 +9,44 @@ var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius,
 var _plugin : Plugin
 var _undo_redo_manager : EditorUndoRedoManager
 var _shape : Node2D =  null
-var _origin         := Vector2.ZERO
 var size := 1.0
 
 var _being_dragged := false
 var _old_position := Vector2.ZERO
 
+var position := Vector2.ZERO:
+	set(value):
+		position = value
+		_plugin.update_overlays()
+
+func is_being_dragged() -> bool: return _plugin._pressed_handler == self
+
+func get_global_transform() -> Transform2D: return  _shape.get_viewport_transform() * _shape.global_transform * _shape.offset_transform.rotated_local(-_shape.offset_transform.get_rotation())
+
+func to_local(point : Vector2) -> Vector2:
+	var transform := get_global_transform()
+	point -= transform.origin
+
+	return transform.affine_inverse().basis_xform(point)
+
+func to_global(point : Vector2) -> Vector2:
+	var transform := get_global_transform()
+	return transform.basis_xform(point) + transform.origin
 
 func _init(plugin : Plugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
 	_plugin = plugin
 	_shape = plugin._current_object
 	_undo_redo_manager = undo_redo_manager
 	size = handler_size
-	z_as_relative = false
-	z_index = RenderingServer.CANVAS_ITEM_Z_MAX
-
-
-func _ready() -> void:
-	assert(Engine.is_editor_hint())
-
-	maintain_editor_scale()
-	maintain_position()
 
 func mouse_press(point : Vector2) -> bool:
 	const extra_margin := 2.0
-	if (point - global_position).length_squared() <= ((size + extra_margin) / get_viewport_transform().get_scale().x) ** 2:
+	if (point - to_global(position)).length_squared() <= (size + extra_margin) ** 2:
 		_old_position = position
 		_being_dragged = true
 		if _old_position == Vector2.ZERO:
 			_old_position = Vector2.RIGHT
 		_mouse_pressed()
-		modulate = Color.LIME_GREEN
 		return true
 	return false
 
@@ -49,12 +56,17 @@ func mouse_release() -> bool:
 		_being_dragged = false
 		suppress_from_parent_call = true
 		_mouse_released()
-		modulate = Color.WHITE
 		return true
 	return false
 
+func mouse_dragged(mouse_position: Vector2) -> void:
+	position = to_local(mouse_position)
+	if always_clamp or Input.is_key_pressed(KEY_SHIFT):
+		_clamp_position()
+	_mouse_dragged(mouse_position)
+	_update_properties()
+
 func version_change() -> void:
-	maintain_editor_scale()
 	maintain_position()
 
 func _from_parent_properties() -> void:
@@ -69,44 +81,15 @@ func _mouse_pressed() -> void:
 func _mouse_released() -> void:
 	printerr("'_mouse_released' is abstract")
 
-func _draw() -> void:
-	const margin := 1
+func _mouse_dragged(position: Vector2) -> void:
+	pass
 
-	var shape := BasicGeometry2D.create_shape(5, [size])
-	draw_colored_polygon(shape, Color.WHITE)
-	draw_polyline(shape, Color.BLACK, margin, true)
-	draw_line(shape[-1], shape[0], Color.BLACK, margin, true)
-
-var previous_editor_scale := 1.0
-func _process(_delta) -> void:
-	var editor_scale := get_viewport_transform().get_scale().x
-	if not is_equal_approx(editor_scale, previous_editor_scale):
-		maintain_editor_scale()
-		previous_editor_scale = editor_scale
-
-	if _plugin._pressed_handler != null:
-		maintain_position()
-
-	if not _being_dragged:
-		return
-
-	global_position = get_global_mouse_position()
-	if always_clamp or Input.is_key_pressed(KEY_SHIFT):
-		_clamp_position()
-	_update_properties()
-	
 func maintain_position() -> void:
 	if suppress_from_parent_call:
 		suppress_from_parent_call = false
 		return
 
-	_origin = Vector2.ZERO
-	if not _shape is CollisionShape2D:
-		_origin = _shape.offset_position
 	_from_parent_properties()
-
-func maintain_editor_scale() -> void:
-	global_transform = Transform2D(0, Vector2.ONE / get_viewport_transform().get_scale().x, 0, global_position)
 
 func _clamp_position() -> void:
 	if _shift_clamps.size() == 0:
@@ -128,20 +111,20 @@ func _clamp_position() -> void:
 	position = best_position
 
 func clamp_straight_line() -> Vector2:
-	var allowed_line := _old_position - _origin
+	var allowed_line := _old_position
 	var inverse_line := Vector2(-allowed_line.y, allowed_line.x)
-	var a :=            BasicGeometry2D._find_intersection(position, inverse_line, _origin, allowed_line)
+	var a :=            BasicGeometry2D._find_intersection(position, inverse_line, Vector2.ZERO, allowed_line)
 	return position + inverse_line * a
 
 func clamp_circle_radius() -> Vector2:
-	var radius := (_old_position - _origin).length()
-	return _origin + (position - _origin).normalized() * radius
+	var radius := _old_position.length()
+	return position.normalized() * radius
 
 func clamp_compass_lines() -> Vector2:
-	var functional_position := position - _origin
+	var functional_position := position
 	var angle := atan2(functional_position.y, functional_position.x)
 	var multiplier := floor((angle + TAU / 16) / (TAU / 8))
 
 	angle = multiplier * TAU / 8
 	var slope := Vector2(cos(angle), sin(angle))
-	return Geometry2D.get_closest_point_to_segment_uncapped(position, _origin, _origin + slope)
+	return Geometry2D.get_closest_point_to_segment_uncapped(position, Vector2.ZERO, slope)

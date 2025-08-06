@@ -46,6 +46,7 @@ func _is_handled_node(object : Object) -> bool:
 	) and object.get_class() != "EditorDebuggerRemoteObject"
 
 func _edit(object : Object) -> void:
+	update_overlays()
 	if object == null:
 		remove_handlers()
 		_current_object = null
@@ -62,6 +63,8 @@ func _edit(object : Object) -> void:
 		get_undo_redo().history_changed.connect(_on_version_change)
 
 func create_handlers() -> void:
+	assert(_current_object != null)
+
 	_size_handler_count = _current_object.sizes.size()
 	for i in _size_handler_count:
 		_handlers.append(SizeRotationHandler.new(self, get_undo_redo(), i))
@@ -69,13 +72,9 @@ func create_handlers() -> void:
 		_handlers.append(ScaleSizeHandler.new(self, get_undo_redo()))
 
 	for handler in _handlers:
-		_current_object.add_child(handler, false, INTERNAL_MODE_FRONT)
+		handler.maintain_position()
 
 func remove_handlers() -> void:
-	for handler in _handlers:
-		if _current_object != null:
-			_current_object.remove_child(handler)
-		handler.queue_free()
 	_handlers.clear()
 
 func _forward_canvas_gui_input(event) -> bool:
@@ -87,21 +86,11 @@ func _forward_canvas_gui_input(event) -> bool:
 			if not _select_mode_button_selected():
 				return false
 
-			var viewport := EditorInterface.get_editor_viewport_2d()
-			var transform := viewport.get_final_transform()
-			var size := viewport.size
-			var lower_bound := -transform.get_origin()
-			lower_bound = Vector2(lower_bound.x / transform.get_scale().x, lower_bound.y / transform.get_scale().y)
-			var upper_bound := lower_bound + Vector2(size.x / transform.get_scale().x, size.y / transform.get_scale().y)
-
-			var mouse_position := viewport.get_mouse_position()
-			if not (lower_bound.x <= mouse_position.x and mouse_position.x <= upper_bound.x and
-				lower_bound.y <= mouse_position.y and mouse_position.y <= upper_bound.y):
-				return false
 			for handler in _handlers:
-				var intercepts := handler.mouse_press(mouse_position)
+				var intercepts := handler.mouse_press(event.position)
 				if intercepts:
 					_pressed_handler = handler
+					update_overlays()
 					return true
 			return false
 		else:
@@ -109,9 +98,31 @@ func _forward_canvas_gui_input(event) -> bool:
 				return false
 			var result := _pressed_handler.mouse_release()
 			_pressed_handler = null
+			update_overlays()
 			return result
 
+	elif event is InputEventMouseMotion:
+		if _pressed_handler == null:
+			return false
+
+		_pressed_handler.mouse_dragged(event.position)
+		for handler in _handlers:
+			if handler != _pressed_handler:
+				handler.maintain_position()
+		update_overlays()
+
+
 	return false
+
+func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
+	for handler in _handlers:
+		const margin := 1.0
+
+		var shape := BasicGeometry2D.create_shape(5, [handler.size], Transform2D(0, handler.to_global(handler.position)))
+		var color := Color.LIME_GREEN if _pressed_handler == handler else Color.WHITE
+		viewport_control.draw_colored_polygon(shape, color)
+		viewport_control.draw_polyline(shape, Color.BLACK, margin, true)
+		viewport_control.draw_line(shape[-1], shape[0], Color.BLACK, margin, true)
 
 var _select_mode_button : Button = null
 func _select_mode_button_selected() -> bool:

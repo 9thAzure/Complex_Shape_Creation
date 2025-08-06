@@ -6,11 +6,11 @@ var _old_max_size := -1.0
 var _old_rotation := 0.0
 var _was_flipped := false
 
-func _ready() -> void:
+func _init(plugin : EditorPlugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
+	super(plugin, undo_redo_manager, handler_size)
 	_shift_clamps = [clamp_straight_line]
 	always_clamp = true
 	_old_rotation = _shape.offset_rotation
-	super()
 
 func get_max_size() -> float:
 	var max_size := -0.0
@@ -20,10 +20,10 @@ func get_max_size() -> float:
 	return max_size
 
 func _from_parent_properties() -> void:
-	position = _shape.offset_position + Vector2(1, -1) * get_max_size()
+	position = Vector2(1, -1) * get_max_size()
 
 func _update_properties() -> void:
-	var new_size := (clamp_straight_line() - _origin).x
+	var new_size := clamp_straight_line().x
 	_shape.offset_rotation = _old_rotation + (0 if new_size >= 0 != _was_flipped else (-PI if _was_flipped else PI))
 	var scale := absf(new_size / _old_max_size)
 	for i in _old_sizes.size():
@@ -33,7 +33,7 @@ func _mouse_pressed() -> void:
 	_old_sizes = _shape.sizes.duplicate()
 	_old_max_size = get_max_size()
 	_old_rotation = _shape.offset_rotation
-	_was_flipped = position.x < _origin.x
+	_was_flipped = position.x < 0
 
 func _mouse_released() -> void:
 	_undo_redo_manager.create_action("Scale sizes")
