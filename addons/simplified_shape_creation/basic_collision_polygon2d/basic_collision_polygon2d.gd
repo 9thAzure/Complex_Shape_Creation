@@ -182,6 +182,10 @@ var _owner_id := -1
 
 var _basic_polygon_instance : BasicPolygon2D
 
+func get_created_shape() -> PackedVector2Array: return _created_shape
+func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomposed_created_shape
+func get_created_shape_type() -> BasicPolygon2D.ShapeType: return _basic_polygon_instance.get_created_shape_type()
+
 func _init() -> void:
 	_basic_polygon_instance = BasicPolygon2D.new()
 	_basic_polygon_instance.draw_shape = false

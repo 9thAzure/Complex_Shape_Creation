@@ -35,6 +35,7 @@ func _on_version_change() -> void:
 
 	for handler in _handlers:
 		handler.version_change()
+	update_overlays()
 
 func _handles(object : Object) -> bool:
 	return _is_handled_node(object)
@@ -114,7 +115,28 @@ func _forward_canvas_gui_input(event) -> bool:
 
 	return false
 
+func to_canvas(points : PackedVector2Array)	-> PackedVector2Array:
+	points = points.duplicate()
+	var transform := _current_object.get_viewport_transform() * _current_object.get_global_transform()
+	for i in points.size():
+		points[i] = transform.basis_xform(points[i]) + transform.origin
+	return points
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
+	var outline_color := Color(0.925, 0.38, 0.216)
+	var line_width := 3.5
+	match _current_object.get_created_shape_type():
+		BasicPolygon2D.ShapeType.POLYGON:
+			var shape : PackedVector2Array = to_canvas(_current_object.get_created_shape())
+			viewport_control.draw_polyline(shape, outline_color, line_width)
+			viewport_control.draw_line(shape[-1], shape[0], outline_color, line_width)
+
+		BasicPolygon2D.ShapeType.POLYLINE:
+			viewport_control.draw_polyline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
+
+		BasicPolygon2D.ShapeType.MULTILINE:
+			viewport_control.draw_multiline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
+
 	for handler in _handlers:
 		const margin := 1.0
 
