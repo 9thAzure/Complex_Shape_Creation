@@ -8,10 +8,11 @@ var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius,
 
 var _plugin : Plugin
 var _undo_redo_manager : EditorUndoRedoManager
-var _shape : Node2D =  null
 var size := 1.0
 
-var _being_dragged := false
+func shape() -> Node2D:
+	return _plugin._current_object
+
 var _old_position := Vector2.ZERO
 
 var position := Vector2.ZERO:
@@ -19,9 +20,7 @@ var position := Vector2.ZERO:
 		position = value
 		_plugin.update_overlays()
 
-func is_being_dragged() -> bool: return _plugin._pressed_handler == self
-
-func get_global_transform() -> Transform2D: return  _shape.get_viewport_transform() * _shape.global_transform * _shape.offset_transform.rotated_local(-_shape.offset_transform.get_rotation())
+func get_global_transform() -> Transform2D: return  shape().get_viewport_transform() * shape().global_transform * shape().offset_transform.rotated_local(-shape().offset_transform.get_rotation())
 
 func to_local(point : Vector2) -> Vector2:
 	var transform := get_global_transform()
@@ -35,7 +34,6 @@ func to_global(point : Vector2) -> Vector2:
 
 func _init(plugin : Plugin, undo_redo_manager : EditorUndoRedoManager, handler_size := 9.0) -> void:
 	_plugin = plugin
-	_shape = plugin._current_object
 	_undo_redo_manager = undo_redo_manager
 	size = handler_size
 
@@ -43,7 +41,6 @@ func mouse_press(point : Vector2) -> bool:
 	const extra_margin := 2.0
 	if (point - to_global(position)).length_squared() <= (size + extra_margin) ** 2:
 		_old_position = position
-		_being_dragged = true
 		if _old_position == Vector2.ZERO:
 			_old_position = Vector2.RIGHT
 		_mouse_pressed()
@@ -52,8 +49,7 @@ func mouse_press(point : Vector2) -> bool:
 
 var suppress_from_parent_call := false
 func mouse_release() -> bool:
-	if _being_dragged:
-		_being_dragged = false
+	if _plugin._pressed_handler == self:
 		suppress_from_parent_call = true
 		_mouse_released()
 		return true
