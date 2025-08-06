@@ -95,37 +95,6 @@ var round_arc_ends : bool = false:
 	get: return _basic_polygon_instance.round_arc_ends
 	set(value): _basic_polygon_instance.round_arc_ends = value
 
-var _created_shape : PackedVector2Array:
-	get: return _basic_polygon_instance._created_shape
-	set(value): _basic_polygon_instance._created_shape = value
-
-var _decomposed_created_shape : Array[PackedVector2Array]:
-	get: return _basic_polygon_instance._decomposed_created_shape
-	set(value): _basic_polygon_instance._decomposed_created_shape = value
-
-var _collision_shapes : Array[Shape2D] = []:
-	set(value):
-		assert(value != null)
-
-		for shape in _collision_shapes:
-			shape.changed.disconnect(queue_redraw)
-
-		_collision_shapes = value
-		_basic_polygon_instance._queue_status = BasicPolygon2D._UNQUEUED
-
-		queue_redraw()
-		for shape in _collision_shapes:
-			shape.changed.connect(queue_redraw)
-
-		if _collision_object_parent == null:
-			return
-
-		_collision_object_parent.shape_owner_clear_shapes(_owner_id)
-		for shape in value:
-			_collision_object_parent.shape_owner_add_shape(_owner_id, shape)
-
-		_update_shape_owner()
-
 @export_subgroup("Offset Transform", "offset")
 
 @export
@@ -159,6 +128,38 @@ var offset_skew := 0.0:
 var offset_transform := Transform2D.IDENTITY:
 	get: return _basic_polygon_instance.offset_transform
 	set(value): _basic_polygon_instance.offset_transform = value
+
+var _created_shape : PackedVector2Array:
+	get: return _basic_polygon_instance._created_shape
+	set(value): _basic_polygon_instance._created_shape = value
+
+var _decomposed_created_shape : Array[PackedVector2Array]:
+	get: return _basic_polygon_instance._decomposed_created_shape
+	set(value): _basic_polygon_instance._decomposed_created_shape = value
+
+var _collision_shapes : Array[Shape2D] = []:
+	set(value):
+		assert(value != null)
+
+		for shape in _collision_shapes:
+			shape.changed.disconnect(queue_redraw)
+
+		_collision_shapes = value
+		_basic_polygon_instance._queue_status = BasicPolygon2D._UNQUEUED
+
+		queue_redraw()
+		for shape in _collision_shapes:
+			shape.changed.connect(queue_redraw)
+
+		if _collision_object_parent == null:
+			return
+
+		_collision_object_parent.shape_owner_clear_shapes(_owner_id)
+		for shape in value:
+			_collision_object_parent.shape_owner_add_shape(_owner_id, shape)
+
+		_update_shape_owner()
+
 
 func _get_property_list() -> Array[Dictionary]:
 	return [{
