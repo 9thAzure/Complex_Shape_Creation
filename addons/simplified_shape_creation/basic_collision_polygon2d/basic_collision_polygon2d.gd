@@ -161,7 +161,8 @@ var _collision_shapes : Array[Shape2D] = []:
 		_update_shape_owner()
 
 # PackedFloat64Arrays don't play well with reverts when exported in Godot 4.2, so this is required
-func _property_can_revert(property: StringName) -> bool: return property == &"sizes" and sizes != PackedFloat64Array([10.0])
+# Do not check that property is not default value, it causes it to always be revertable for whatever reason.
+func _property_can_revert(property: StringName) -> bool: return property == &"sizes"
 func _property_get_revert(_property: StringName) -> Variant: return PackedFloat64Array([10.0])
 
 func _get_property_list() -> Array[Dictionary]:
