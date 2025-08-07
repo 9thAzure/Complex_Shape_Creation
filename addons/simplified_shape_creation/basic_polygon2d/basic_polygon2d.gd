@@ -20,15 +20,15 @@ var vertices_count : int = 1:
 
 ## The length from each corner to the center of the shape.
 #@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
-var size : float = 10:
-	get:
-		return sizes[0]
-	set(value):
-		sizes[0] = value
-		queue_regenerate()
+#var size : float = 10:
+#	get:
+#		return sizes[0]
+#	set(value):
+#		sizes[0] = value
+#		queue_regenerate()
 
 @export
-var sizes : PackedFloat64Array = PackedFloat64Array([10]):
+var sizes : PackedFloat64Array = PackedFloat64Array([10.0]):
 	set(value):
 		if value.size() == 0:
 			return
@@ -150,10 +150,10 @@ var offset_rotation : float = 0:
 
 ## @deprecated
 ## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
-func apply_transformation(rotation : float, scale : float) -> void:
-	assert(scale > 0, "param 'scale' should be positive.")
-	offset_rotation += rotation
-	size *= scale
+#func apply_transformation(rotation : float, scale : float) -> void:
+	#assert(scale > 0, "param 'scale' should be positive.")
+	#offset_rotation += rotation
+	#size *= scale
 
 @export
 var offset_scale := Vector2.ONE:
@@ -246,6 +246,10 @@ var _decomposed_created_shape : Array[PackedVector2Array] = []:
 			_queue_status = _UNQUEUED
 			queue_export()
 		queue_redraw()
+
+# PackedFloat64Arrays don't play well with reverts when exported in Godot 4.2, so this is required
+func _property_can_revert(property: StringName) -> bool: return property == &"sizes" and sizes != PackedFloat64Array([10.0])
+func _property_get_revert(_property: StringName) -> Variant: return PackedFloat64Array([10.0])
 
 func is_exporting() -> bool:
 	var in_editor := Engine.is_editor_hint()

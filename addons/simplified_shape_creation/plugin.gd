@@ -27,6 +27,10 @@ func _on_version_change() -> void:
 	if _current_object == null:
 		return
 
+	if not _is_handled_node(_current_object):
+		EditorInterface.edit_node(_current_object)
+		return
+
 	var _new_size_handler_count = _current_object.sizes.size()
 	if _new_size_handler_count != _size_handler_count:
 		_size_handler_count = _new_size_handler_count
@@ -123,19 +127,24 @@ func to_canvas(points : PackedVector2Array)	-> PackedVector2Array:
 	return points
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
-	var outline_color := Color(0.925, 0.38, 0.216)
-	var line_width := 3.5
-	match _current_object.get_created_shape_type():
-		BasicPolygon2D.ShapeType.POLYGON:
-			var shape : PackedVector2Array = to_canvas(_current_object.get_created_shape())
-			viewport_control.draw_polyline(shape, outline_color, line_width)
-			viewport_control.draw_line(shape[-1], shape[0], outline_color, line_width)
+	var instance : BasicPolygon2D = _current_object if _current_object is BasicPolygon2D else _current_object._basic_polygon_instance
+	if instance._queue_status == BasicPolygon2D._QUEUE_REGENERATE:
+		instance.regenerate()
 
-		BasicPolygon2D.ShapeType.POLYLINE:
-			viewport_control.draw_polyline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
+	if _current_object.get_created_shape().size() > 0 and _current_object.get_created_shape_type() == BasicPolygon2D.ShapeType.POLYGON:
+		var outline_color := Color(0.925, 0.38, 0.216)
+		var line_width := 3.5
+		match _current_object.get_created_shape_type():
+			BasicPolygon2D.ShapeType.POLYGON:
+				var shape : PackedVector2Array = to_canvas(_current_object.get_created_shape())
+				viewport_control.draw_polyline(shape, outline_color, line_width)
+				viewport_control.draw_line(shape[-1], shape[0], outline_color, line_width)
 
-		BasicPolygon2D.ShapeType.MULTILINE:
-			viewport_control.draw_multiline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
+			BasicPolygon2D.ShapeType.POLYLINE:
+				viewport_control.draw_polyline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
+
+			BasicPolygon2D.ShapeType.MULTILINE:
+				viewport_control.draw_multiline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
 
 	for handler in _handlers:
 		const margin := 1.0
