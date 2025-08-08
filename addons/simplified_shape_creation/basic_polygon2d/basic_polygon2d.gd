@@ -8,72 +8,30 @@ extends Node2D
 ## A node that draws a regular shape, using methods like [method CanvasItem.draw_colored_polygon] and [method CanvasItem.draw_circle]. 
 ## If more complex features are needed, use [RegularPolygon2D].
 
-
+@export_group("Generation")
 ## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
 @export_range(1, 1000)
 var vertices_count : int = 1:
 	set(value):
 		assert(value > 0, "property 'vertices_count' must be greater than 0")
 		vertices_count = value
-		queue_regenerate()
-
-## The length from each corner to the center of the shape.
-#@export_range(0.000001, 10, 0.001, "or_greater", "hide_slider")
-var size : float = 10:
-	get:
-		return sizes[0]
-	set(value):
-		sizes[0] = value
+		update_configuration_warnings()
 		queue_regenerate()
 
 @export
-var sizes : PackedFloat64Array = PackedFloat64Array([10]):
+var sizes : PackedFloat64Array = PackedFloat64Array([10.0]):
 	set(value):
 		if value.size() == 0:
 			return
 
 		for i in value.size():
 			if value[i] < 0.001:
-				value[i] = 0.001 if i >= sizes.size() else sizes[i]
+				value[i] = 10 if i >= sizes.size() else sizes[i]
 
 
 		sizes = value
 		queue_regenerate()
 
-## The offset rotation of the shape, in degrees.
-var offset_rotation_degrees : float = 0:
-	set(value):
-		offset_rotation = deg_to_rad(value)
-	get:
-		return rad_to_deg(offset_rotation)
-
-## The offset rotation of the shape, in radians.
-@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
-var offset_rotation : float = 0:
-	set(value):
-		offset_rotation = value
-		queue_regenerate()
-
-## Transforms [member CollisionShape2D.shape], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
-func apply_transformation(rotation : float, scale : float) -> void:
-	assert(scale > 0, "param 'scale' should be positive.")
-	offset_rotation += rotation
-	size *= scale
-
-## see [member offset]
-## @deprecated
-@export
-var offset_position := Vector2.ZERO:
-	set(value):
-		offset = value
-	get:
-		return offset
-
-## The offset position of the shape.
-var offset : Vector2 = Vector2.ZERO:
-	set(value):
-		offset = value
-		queue_regenerate()
 
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:
@@ -151,6 +109,56 @@ var round_arc_ends : bool = false:
 		round_arc_ends = value
 		queue_regenerate()
 
+@export_subgroup("Offset tranform", "offset")
+
+@export
+var offset_position := Vector2.ZERO:
+	set(value):
+		offset_position = value
+		queue_regenerate()
+
+## @deprecated
+## The offset position of the shape.
+var offset : Vector2 = Vector2.ZERO:
+	set(value):
+		printerr("don't use")
+		offset = value
+		queue_regenerate()
+
+## The offset rotation of the shape, in degrees.
+var offset_rotation_degrees : float = 0:
+	set(value):
+		offset_rotation = deg_to_rad(value)
+	get:
+		return rad_to_deg(offset_rotation)
+
+## The offset rotation of the shape, in radians.
+@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
+var offset_rotation : float = 0:
+	set(value):
+		offset_rotation = value
+		queue_regenerate()
+
+@export
+var offset_scale := Vector2.ONE:
+	set(value):
+		offset_scale = value
+		queue_regenerate()
+
+@export_range(-89.9, 89.9, 0.1, "radians")
+var offset_skew := 0.0:
+	set(value):
+		offset_skew = value
+		queue_regenerate()
+
+var offset_transform := Transform2D.IDENTITY:
+	get: return Transform2D(offset_rotation, offset_scale, offset_skew, offset_position)
+	set(value):
+		offset_rotation = value.get_rotation()
+		offset_position = value.get_origin()
+		offset_skew = value.get_skew()
+		offset_scale = value.get_scale()
+
 @export_group("Drawing")
 
 @export
@@ -223,6 +231,10 @@ var _decomposed_created_shape : Array[PackedVector2Array] = []:
 			queue_export()
 		queue_redraw()
 
+# PackedFloat64Arrays don't play well with reverts when exported in Godot 4.2, so this is required
+func _property_can_revert(property: StringName) -> bool: return property == &"sizes"
+func _property_get_revert(_property: StringName) -> Variant: return PackedFloat64Array([10.0])
+
 func is_exporting() -> bool:
 	var in_editor := Engine.is_editor_hint()
 	return in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0
@@ -245,7 +257,7 @@ const _UNQUEUED         := 0
 const _QUEUE_DISPERSE   := 1
 const _QUEUE_REGENERATE := 2
 
-var _queue_status : int = _UNQUEUED
+var _queue_status : int = _QUEUE_REGENERATE
 
 func _enter_tree() -> void:
 	if _queue_status == _QUEUE_REGENERATE:
@@ -282,9 +294,6 @@ func regenerate() -> void:
 	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
 
 	if is_zero_approx(arc_angle):
-		if not Engine.is_editor_hint():
-			printerr("Unable to draw a shape whoose arc angle is 0º")
-
 		_queue_status = _QUEUE_DISPERSE
 		_created_shape = []
 		_decomposed_created_shape = []
@@ -292,8 +301,24 @@ func regenerate() -> void:
 		return
 
 	if vertices_count == 2:
-		shape = BasicGeometry2D.create_shape(maxi(sizes.size(), 2), sizes, offset_rotation, offset_position, arc_start, arc_end, false)
-		shape.resize(shape.size() * 2)
+		var line_count := maxi(sizes.size(), 2)
+		var side_chord_arc_angle := TAU / line_count
+		var line_arc_start := snappedf(arc_start + side_chord_arc_angle / 2, side_chord_arc_angle)
+		var line_arc_end := snappedf(arc_end - side_chord_arc_angle / 2, side_chord_arc_angle)
+
+		if line_arc_start > line_arc_end:
+			_queue_status = _QUEUE_DISPERSE
+			_created_shape = []
+			_decomposed_created_shape = []
+			export()
+			return
+
+		if is_equal_approx(line_arc_start, line_arc_end):
+			shape = PackedVector2Array([BasicGeometry2D._circle_point(line_arc_start + offset_rotation) * sizes[((line_arc_start / side_chord_arc_angle) as int) % line_count], offset_position])
+		else:
+			shape = BasicGeometry2D.create_shape(line_count, sizes, offset_transform, line_arc_start, line_arc_end, false)
+			shape.resize(shape.size() * 2)
+
 		for i in shape.size() / 2:
 			var index := shape.size() / 2 - i - 1
 			var point := shape[index]
@@ -307,7 +332,7 @@ func regenerate() -> void:
 		return
 
 	var add_central_point := closing_method == ClosingMethod.SLICE or closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1)
-	shape = BasicGeometry2D.create_shape(vertices_count, sizes, offset_rotation, offset_position, arc_start, arc_end, add_central_point)
+	shape = BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, arc_start, arc_end, add_central_point)
 
 	if rounded_corners:
 		if not uses_arc:
@@ -329,7 +354,7 @@ func regenerate() -> void:
 			var inner_arc_start := arc_start - arc_change / 2
 			var inner_arc_end := arc_end + arc_change / 2
 			if inner_arc_start < inner_arc_end:
-				var inner_ring := BasicGeometry2D.create_shape(vertices_count, sizes, offset_rotation, offset_position, inner_arc_start, inner_arc_end)
+				var inner_ring := BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, inner_arc_start, inner_arc_end)
 				if is_equal_approx(inner_arc_end - inner_arc_start, TAU):
 					inner_ring.resize(inner_ring.size() + 2)
 					inner_ring[-2] = inner_ring[0]
@@ -428,8 +453,16 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if is_equal_approx(arc_start, arc_end):
 		warnings.push_back("The arc of the shape is 0º, so nothing will be created")
 
-	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD and draw_shape:
-		warnings.push_back("Unable to draw a ring shape that is closed as a chord when the arc angle is less than or equal to 180º")
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
+		warnings.push_back("A ring shape polygon that is closed as a chord with an arc angle less than or equal to 180º will not be a valid shape for the purposes of drawing and the like.")
+
+	if vertices_count == 2 and not is_zero_approx(arc_angle):
+		var line_count := maxi(sizes.size(), 2)
+		var side_chord_arc_angle := TAU / line_count
+		var line_arc_start := snappedf(arc_start + side_chord_arc_angle / 2, side_chord_arc_angle)
+		var line_arc_end := snappedf(arc_end - side_chord_arc_angle / 2, side_chord_arc_angle)
+		if line_arc_start > line_arc_end:
+			warnings.push_back("The arc of the shape covers an area where no lines are, so nothing will be created")
 
 	for i in export_targets.size():
 		var path := export_targets[i]
@@ -482,12 +515,10 @@ func _draw() -> void:
 	if not draw_shape:
 		return
 
-	if is_zero_approx(arc_angle):
+	if is_zero_approx(arc_angle) or is_zero_approx(_created_shape.size()):
 		return
 
 	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
-		if not Engine.is_editor_hint():
-			printerr("Unable to draw a ring shape that is closed as a chord when the arc angle is less than or equal to 180º")
 		return
 
 	match get_created_shape_type():
@@ -512,27 +543,3 @@ func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color
 		self.color = color
 	if offset_position != Vector2.ZERO:
 		self.offset = offset_position
-
-#static var _circle := get_shape_vertices(32)
-
-### Returns a [PackedVector2Array] with the points for the shape with the specified [param vertices_count].
-### [br][br]If [param vertices_count] is [code]1[/code], a value of [code]32[/code] is used instead.
-#static func get_shape_vertices(vertices_count : int, size : float = 1, offset_rotation : float = 0.0, offset_position : Vector2 = Vector2.ZERO) -> PackedVector2Array:
-#	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
-#	assert(size > 0, "param 'size' must be positive.")
-#
-#	if vertices_count == 1:
-#		return _circle * Transform2D(-offset_rotation, Vector2.ONE * size, 0, offset_position)
-#
-#	var points := PackedVector2Array()
-#	points.resize(vertices_count)
-#	var rotation_spacing := TAU / vertices_count
-#	var current_rotation := -rotation_spacing / 2 + offset_rotation
-#	for i in vertices_count:
-#		points[i] = Vector2(-sin(current_rotation), cos(current_rotation)) * size + offset_position
-#		current_rotation += rotation_spacing
-#
-#	return points
-#
-#static func _get_vertices(rotation : float, size : float = 1, offset : Vector2 = Vector2.ZERO) -> Vector2:
-#	return Vector2(-sin(rotation), cos(rotation)) * size + offset

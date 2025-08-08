@@ -27,6 +27,10 @@ func _on_version_change() -> void:
 	if _current_object == null:
 		return
 
+	if not _is_handled_node(_current_object):
+		EditorInterface.edit_node(_current_object)
+		return
+
 	var _new_size_handler_count = _current_object.sizes.size()
 	if _new_size_handler_count != _size_handler_count:
 		_size_handler_count = _new_size_handler_count
@@ -35,6 +39,7 @@ func _on_version_change() -> void:
 
 	for handler in _handlers:
 		handler.version_change()
+	update_overlays()
 
 func _handles(object : Object) -> bool:
 	return _is_handled_node(object)
@@ -46,6 +51,7 @@ func _is_handled_node(object : Object) -> bool:
 	) and object.get_class() != "EditorDebuggerRemoteObject"
 
 func _edit(object : Object) -> void:
+	update_overlays()
 	if object == null:
 		remove_handlers()
 		_current_object = null
@@ -62,19 +68,18 @@ func _edit(object : Object) -> void:
 		get_undo_redo().history_changed.connect(_on_version_change)
 
 func create_handlers() -> void:
+	assert(_current_object != null)
+
 	_size_handler_count = _current_object.sizes.size()
-	for i in _current_object.sizes.size():
+	for i in _size_handler_count:
 		_handlers.append(SizeRotationHandler.new(self, get_undo_redo(), i))
-	_handlers.append(ScaleSizeHandler.new(self, get_undo_redo()))
+	if _size_handler_count > 1:
+		_handlers.append(ScaleSizeHandler.new(self, get_undo_redo()))
 
 	for handler in _handlers:
-		_current_object.add_child(handler, false, INTERNAL_MODE_FRONT)
+		handler.maintain_position()
 
 func remove_handlers() -> void:
-	for handler in _handlers:
-		if _current_object != null:
-			_current_object.remove_child(handler)
-		handler.queue_free()
 	_handlers.clear()
 
 func _forward_canvas_gui_input(event) -> bool:
@@ -86,21 +91,11 @@ func _forward_canvas_gui_input(event) -> bool:
 			if not _select_mode_button_selected():
 				return false
 
-			var viewport := EditorInterface.get_editor_viewport_2d()
-			var transform := viewport.get_final_transform()
-			var size := viewport.size
-			var lower_bound := -transform.get_origin()
-			lower_bound = Vector2(lower_bound.x / transform.get_scale().x, lower_bound.y / transform.get_scale().y)
-			var upper_bound := lower_bound + Vector2(size.x / transform.get_scale().x, size.y / transform.get_scale().y)
-
-			var mouse_position := viewport.get_mouse_position()
-			if not (lower_bound.x <= mouse_position.x and mouse_position.x <= upper_bound.x and
-				lower_bound.y <= mouse_position.y and mouse_position.y <= upper_bound.y):
-				return false
 			for handler in _handlers:
-				var intercepts := handler.mouse_press(mouse_position)
+				var intercepts := handler.mouse_press(event.position)
 				if intercepts:
 					_pressed_handler = handler
+					update_overlays()
 					return true
 			return false
 		else:
@@ -108,9 +103,57 @@ func _forward_canvas_gui_input(event) -> bool:
 				return false
 			var result := _pressed_handler.mouse_release()
 			_pressed_handler = null
+			update_overlays()
 			return result
 
+	elif event is InputEventMouseMotion:
+		if _pressed_handler == null:
+			return false
+
+		_pressed_handler.mouse_dragged(event.position)
+		for handler in _handlers:
+			if handler != _pressed_handler:
+				handler.maintain_position()
+		update_overlays()
+
+
 	return false
+
+func to_canvas(points : PackedVector2Array)	-> PackedVector2Array:
+	points = points.duplicate()
+	var transform := _current_object.get_viewport_transform() * _current_object.get_global_transform()
+	for i in points.size():
+		points[i] = transform.basis_xform(points[i]) + transform.origin
+	return points
+
+func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
+	var instance : BasicPolygon2D = _current_object if _current_object is BasicPolygon2D else _current_object._basic_polygon_instance
+	if instance._queue_status == BasicPolygon2D._QUEUE_REGENERATE:
+		instance.regenerate()
+
+	if _current_object.get_created_shape().size() > 0 and _current_object.get_created_shape_type() == BasicPolygon2D.ShapeType.POLYGON:
+		var outline_color := Color(0.925, 0.38, 0.216)
+		var line_width := 3.5
+		match _current_object.get_created_shape_type():
+			BasicPolygon2D.ShapeType.POLYGON:
+				var shape : PackedVector2Array = to_canvas(_current_object.get_created_shape())
+				viewport_control.draw_polyline(shape, outline_color, line_width)
+				viewport_control.draw_line(shape[-1], shape[0], outline_color, line_width)
+
+			BasicPolygon2D.ShapeType.POLYLINE:
+				viewport_control.draw_polyline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
+
+			BasicPolygon2D.ShapeType.MULTILINE:
+				viewport_control.draw_multiline(to_canvas(_current_object.get_created_shape()), outline_color, line_width)
+
+	for handler in _handlers:
+		const margin := 1.0
+
+		var shape := BasicGeometry2D.create_shape(5, [handler.size], Transform2D(0, handler.to_global(handler.position)))
+		var color := Color.LIME_GREEN if _pressed_handler == handler else Color.WHITE
+		viewport_control.draw_colored_polygon(shape, color)
+		viewport_control.draw_polyline(shape, Color.BLACK, margin, true)
+		viewport_control.draw_line(shape[-1], shape[0], Color.BLACK, margin, true)
 
 var _select_mode_button : Button = null
 func _select_mode_button_selected() -> bool:

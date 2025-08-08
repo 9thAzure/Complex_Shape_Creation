@@ -30,7 +30,7 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
-static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_rotation := 0.0, offset_position := Vector2.ZERO,
+static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_transform = Transform2D.IDENTITY,
 	arc_start := 0.0, arc_end := TAU, add_central_point := true) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(sizes.size() != 0, "param 'sizes' must have at least one element")
@@ -54,21 +54,24 @@ static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_
 	points.resize(true_vertices_count + (1 if add_central_point else 0))
 	for i in true_vertices_count:
 		var index := i + starting_vertex_index
-		points[i] = _circle_point(index * arc_angle + offset_rotation) * sizes[index % sizes.size()] + offset_position
+		points[i] = _circle_point(index * arc_angle) * sizes[index % sizes.size()]
 
 	if not is_equal_approx(starting_vertex_index, arc_start / arc_angle):
-		var slope1 := _circle_point(arc_start + offset_rotation)
-		var scaler := _find_intersection(offset_position, slope1, points[0], points[1] - points[0])
-		points[0] = offset_position + slope1 * scaler
+		var slope1 := _circle_point(arc_start)
+		var scaler := _find_intersection(Vector2.ZERO, slope1, points[0], points[1] - points[0])
+		points[0] = slope1 * scaler
 
 	if not is_equal_approx(ending_vertex_index, arc_end / arc_angle) and not is_full_arc:
 		var last_i := true_vertices_count - 1
-		var slope1 := _circle_point(arc_end + offset_rotation)
-		var scaler := _find_intersection(offset_position, slope1, points[last_i], points[last_i - 1] - points[last_i])
-		points[last_i] = offset_position + slope1 * scaler
+		var slope1 := _circle_point(arc_end)
+		var scaler := _find_intersection(Vector2.ZERO, slope1, points[last_i], points[last_i - 1] - points[last_i])
+		points[last_i] = slope1 * scaler
 
 	if add_central_point:
-		points[-1] = offset_position
+		points[-1] = Vector2.ZERO
+
+	for i in points.size():
+		points[i] = offset_transform.basis_xform(points[i]) + offset_transform.get_origin()
 
 	return points
 
@@ -190,106 +193,6 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 
 static func _quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
-
-## Transforms [param points], rotating it by [param rotation] radians and scaling it by a factor of [param scaler].
-## [br][br][param is_ringed_shape] indicates the shape forms a ringed shape.
-## [param points_per_corner] indicates the shape has rounded corners and how many points form each rounded corner.
-## [param scale_width] toggles scaling the width formed by the ring.
-## [param scale_corner_size] toggles scaling the size of the rounded corners.
-## [br][br][b]Note[/b]: The method does not check if the transformation would result in a different shape then its properties would suggest,
-## such as shrinking a ring shape to the point it is no longer ringed or having a corner size larger than the a side length.
-static func apply_transformation(points : PackedVector2Array, rotation : float, scaler : float, is_ringed_shape := false, points_per_corner := 1, scale_width := true, scale_corner_size := true) -> void:
-	assert(points.size() >= 3, "param 'points' does not represent a proper shape.")
-	assert(scaler > 0, "param 'scaler' should be positive.")
-	assert(points_per_corner > 0, "param 'points_per_corner' should be positive.")
-	var size := points.size()
-	var has_rounded_corners := points_per_corner != 1
-	
-	var transform := Transform2D(-rotation, Vector2.ONE * scaler, 0, Vector2.ZERO)
-	for i in size:
-		points[i] *= transform
-
-	scale_corner_size = scale_corner_size or not has_rounded_corners
-	scale_width = scale_width or not is_ringed_shape
-	if scale_corner_size and scale_width or is_equal_approx(scaler, 1):
-		return
-
-	var delta := 1 - (1 / scaler)
-	var previous_outer_point := points[-1]
-	var previous_inner_point := points[0]
-	var complete_shape_arc := false
-	if is_ringed_shape and points[-1].is_equal_approx(points[size / 2]):
-		assert(points[0].is_equal_approx(points[size / 2 - 1]), "expected two pairs of points to be on top of each other, forming an identical line used to draw a ringed shape")
-		complete_shape_arc = true
-		previous_outer_point = points[size / 2 - 2]
-		previous_inner_point = points[size / 2 + 1]
-
-	var iterations_count := size / points_per_corner / (2 if is_ringed_shape else 1)
-	for i in iterations_count:
-		var index := i * points_per_corner
-		var outer_point := Vector2.ZERO
-		var inner_point := Vector2.ZERO
-		
-		if not has_rounded_corners:
-			if scale_width:
-				continue
-
-			outer_point = points[index]
-			inner_point = points[-index - 1]
-			points[-index - 1] = inner_point.lerp(outer_point, delta)
-			continue
-
-		var first_point1 := points[index]
-		var last_point1 := points[index + points_per_corner - 1]
-		var first_slope1 := first_point1 - previous_outer_point
-		var last_slope1 := last_point1 - points[index + points_per_corner - size]
-		var a := _find_intersection(first_point1, first_slope1, last_point1, last_slope1)
-		outer_point = first_point1 + first_slope1 * a
-		previous_outer_point = last_point1
-		if not scale_corner_size:
-			for i2 in points_per_corner:
-				points[index + i2] = points[index + i2].lerp(outer_point, delta)
-
-		if not is_ringed_shape:
-			continue
-
-		if scale_corner_size:
-			if scale_width:
-				continue
-			
-			if not complete_shape_arc and (i == 0 or i + 1 == iterations_count):
-				var offset = i / (iterations_count - 1) * (points_per_corner - 1)
-				outer_point = points[index + points_per_corner - 1 - offset]
-				inner_point = points[-index - points_per_corner + offset]
-				var slope := (outer_point - inner_point) * delta
-				for i2 in points_per_corner:
-					points[-index - i2 - 1] = points[-index - i2 - 1] + slope
-				continue
-			
-			for i2 in points_per_corner:
-				points[-index - i2 - 1] = points[-index - i2 - 1].lerp(points[index + i2], delta)	
-			continue
-
-		if not scale_width:
-			for i2 in points_per_corner:
-				points[-index - i2 - 1] = points[-index - i2 - 1].lerp(outer_point, delta)
-				pass
-			continue
-		
-		var first_point2 := points[-index - 1]
-		var last_point2 := points[-index - points_per_corner]
-		var first_slope2 := first_point2 - previous_inner_point
-		var last_slope2 := last_point2 - points[-index - points_per_corner - 1 + size]
-		var b := _find_intersection(first_point2, first_slope2, last_point2, last_slope2)
-		inner_point = first_point2 + first_slope2 * b
-		previous_inner_point = last_point2
-		for i2 in points_per_corner:
-			points[-index - i2 - 1] = points[-index - i2 - 1].lerp(inner_point, delta)
-
-	if complete_shape_arc:
-		var offsetting_slope := (points[size / 2 - 2] - points[0]) / 4194304 # 2^22
-		points[size / 2 - 1] = points[0] + offsetting_slope
-		points[size / 2] = points[-1] + offsetting_slope
 
 ## sub Singleton that designates how much each method expands the array.
 class SizeIncrease:

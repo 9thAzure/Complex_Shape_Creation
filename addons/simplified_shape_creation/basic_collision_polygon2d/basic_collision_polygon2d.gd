@@ -40,23 +40,7 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10]):
 	get: return _basic_polygon_instance.sizes
 	set(value): _basic_polygon_instance.sizes = value
 
-## The offset rotation of the shape, in degrees.
-var offset_rotation_degrees : float = 0:
-	set(value):
-		offset_rotation = deg_to_rad(value)
-	get:
-		return rad_to_deg(offset_rotation)
 
-## The offset rotation of the shape, in radians.
-@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
-var offset_rotation : float = 0:
-	get: return _basic_polygon_instance.offset_rotation
-	set(value): _basic_polygon_instance.offset_rotation = value
-
-@export
-var offset_position := Vector2.ZERO:
-	get: return _basic_polygon_instance.offset_position
-	set(value): _basic_polygon_instance.offset_position = value
 
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:
@@ -111,6 +95,40 @@ var round_arc_ends : bool = false:
 	get: return _basic_polygon_instance.round_arc_ends
 	set(value): _basic_polygon_instance.round_arc_ends = value
 
+@export_subgroup("Offset Transform", "offset")
+
+@export
+var offset_position := Vector2.ZERO:
+	get: return _basic_polygon_instance.offset_position
+	set(value): _basic_polygon_instance.offset_position = value
+
+## The offset rotation of the shape, in degrees.
+var offset_rotation_degrees : float = 0:
+	set(value):
+		offset_rotation = deg_to_rad(value)
+	get:
+		return rad_to_deg(offset_rotation)
+
+## The offset rotation of the shape, in radians.
+@export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
+var offset_rotation : float = 0:
+	get: return _basic_polygon_instance.offset_rotation
+	set(value): _basic_polygon_instance.offset_rotation = value
+
+@export
+var offset_scale := Vector2.ONE:
+	get: return _basic_polygon_instance.offset_scale
+	set(value): _basic_polygon_instance.offset_scale = value
+
+@export_range(-89.9, 89.9, 0.1, "radians")
+var offset_skew := 0.0:
+	get: return _basic_polygon_instance.offset_skew
+	set(value): _basic_polygon_instance.offset_skew = value
+
+var offset_transform := Transform2D.IDENTITY:
+	get: return _basic_polygon_instance.offset_transform
+	set(value): _basic_polygon_instance.offset_transform = value
+
 var _created_shape : PackedVector2Array:
 	get: return _basic_polygon_instance._created_shape
 	set(value): _basic_polygon_instance._created_shape = value
@@ -142,6 +160,10 @@ var _collision_shapes : Array[Shape2D] = []:
 
 		_update_shape_owner()
 
+# PackedFloat64Arrays don't play well with reverts when exported in Godot 4.2, so this is required
+func _property_can_revert(property: StringName) -> bool: return property == &"sizes"
+func _property_get_revert(_property: StringName) -> Variant: return PackedFloat64Array([10.0])
+
 func _get_property_list() -> Array[Dictionary]:
 	return [{
 		name = "_decomposed_created_shape",
@@ -164,6 +186,10 @@ var _owner_id := -1
 
 var _basic_polygon_instance : BasicPolygon2D
 
+func get_created_shape() -> PackedVector2Array: return _created_shape
+func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomposed_created_shape
+func get_created_shape_type() -> BasicPolygon2D.ShapeType: return _basic_polygon_instance.get_created_shape_type()
+
 func _init() -> void:
 	_basic_polygon_instance = BasicPolygon2D.new()
 	_basic_polygon_instance.draw_shape = false
@@ -172,6 +198,10 @@ func _init() -> void:
 	add_child(_basic_polygon_instance, false, INTERNAL_MODE_FRONT)
 
 func _on_shape_created(shape : PackedVector2Array, decomposed : Array[PackedVector2Array], type : BasicPolygon2D.ShapeType) -> void:
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == BasicPolygon2D.ClosingMethod.CHORD:
+		_collision_shapes = []
+		return
+
 	match type:
 		BasicPolygon2D.ShapeType.POLYGON:
 			var shapes : Array[Shape2D] = []
