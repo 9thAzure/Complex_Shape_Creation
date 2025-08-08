@@ -469,8 +469,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if is_equal_approx(arc_start, arc_end):
 		warnings.push_back("The arc of the shape is 0º, so nothing will be created")
 
-	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD and draw_shape:
-		warnings.push_back("Unable to draw a ring shape that is closed as a chord when the arc angle is less than or equal to 180º")
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
+		warnings.push_back("A ring shape polygon that is closed as a chord with an arc angle less than or equal to 180º will not be a valid shape for the purposes of drawing and the like.")
 
 	if vertices_count == 2 and not is_zero_approx(arc_angle):
 		var line_count := maxi(sizes.size(), 2)

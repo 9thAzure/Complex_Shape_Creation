@@ -198,6 +198,10 @@ func _init() -> void:
 	add_child(_basic_polygon_instance, false, INTERNAL_MODE_FRONT)
 
 func _on_shape_created(shape : PackedVector2Array, decomposed : Array[PackedVector2Array], type : BasicPolygon2D.ShapeType) -> void:
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == BasicPolygon2D.ClosingMethod.CHORD:
+		_collision_shapes = []
+		return
+
 	match type:
 		BasicPolygon2D.ShapeType.POLYGON:
 			var shapes : Array[Shape2D] = []
