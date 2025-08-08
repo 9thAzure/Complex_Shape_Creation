@@ -273,7 +273,7 @@ const _UNQUEUED         := 0
 const _QUEUE_DISPERSE   := 1
 const _QUEUE_REGENERATE := 2
 
-var _queue_status : int = _UNQUEUED
+var _queue_status : int = _QUEUE_REGENERATE
 
 func _enter_tree() -> void:
 	if _queue_status == _QUEUE_REGENERATE:
