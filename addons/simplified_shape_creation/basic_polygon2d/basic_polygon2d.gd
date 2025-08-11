@@ -3,13 +3,18 @@
 class_name BasicPolygon2D
 extends Node2D
 
-## Node that draws regular shapes.
+## A basic shape creater.
 ##
-## A node that draws a regular shape, using methods like [method CanvasItem.draw_colored_polygon] and [method CanvasItem.draw_circle]. 
-## If more complex features are needed, use [RegularPolygon2D].
+## A node for creating and drawing basic shapes, acting as a simplified wrapper around [BasicGeometry2D].
+## The created shape can be accessed by [method get_created_shape], connecting the [signal shape_created] signal,
+## or by using the [BasicPolygon2D]'s export system with [member export_targets].
+## [br][br]The shape is regenerated and exported whenever any of the shape properties are changed, and exported whenever any
+## of the export properties are changed and [method is_exporting] returns [code]true[/code].
 
 @export_group("Generation")
-## The number of vertices in the regular shape. A value of [code]1[/code] creates a circle, and a value of [code]2[/code] creates a line.
+## The number of vertices in the regular shape.
+## A value of [code]1[/code] creates a 32 vertices shape.
+## A value of [code]2[/code] creates multiple equidistantly spaced lines from the center, one for each value in [member sizes].
 @export_range(1, 1000)
 var vertices_count : int = 1:
 	set(value):
@@ -18,6 +23,9 @@ var vertices_count : int = 1:
 		update_configuration_warnings()
 		queue_regenerate()
 
+## The distance from the center to each vertex, cycling through if there are multiple values.
+## [br][br][b]Note[/b]: The default value is a [PackedFloat64Array] of [code][10.0][/code]. The [code]<unknown>[/code]
+## documented here is a bug with Godot.
 @export
 var sizes : PackedFloat64Array = PackedFloat64Array([10.0]):
 	set(value):
@@ -32,7 +40,8 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10.0]):
 		sizes = value
 		queue_regenerate()
 
-
+## The size of the ring, in proportion from the outer edge to the center. A value of [code]1[/code] creates a normal shape,
+## a value of [code]0[/code] creates a [enum ShapeType].Polyline outline, and a negative value extends the ring outwards proportionally.
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:
 	set(value):
@@ -40,6 +49,7 @@ var ring_ratio : float = 1.0:
 		update_configuration_warnings()
 		queue_regenerate()
 
+## The size of each corner, as the distance along both edges, from the original vertex, to the point where the corner starts and ends.
 @export_range(0.0, 10, 0.001, "or_greater", "hide_slider")
 var corner_size : float = 0.0:
 	set(value):
@@ -48,7 +58,6 @@ var corner_size : float = 0.0:
 		queue_regenerate()
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
-## This only has an effect if [member corner_size] is used.
 @export_range(0, 50)
 var corner_smoothness : int = 0:
 	set(value):
@@ -56,6 +65,7 @@ var corner_smoothness : int = 0:
 		corner_smoothness = value
 		queue_regenerate()
 
+## The starting angle of the arc of the shape that is created, in radians.
 @export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
 var arc_start : float = 0.0:
 	set(value):
@@ -63,6 +73,7 @@ var arc_start : float = 0.0:
 		update_configuration_warnings()
 		queue_regenerate()
 
+## The angle of the arc of the shape that is created, in radians.
 @export_range(0, 360, 0.1, "or_greater", "or_less", "radians")
 var arc_angle : float = TAU:
 	set(value):
@@ -70,32 +81,41 @@ var arc_angle : float = TAU:
 		update_configuration_warnings()
 		queue_regenerate()
 
+## The ending angle of the arc of the shape that is created, in radians.
+## [br][br][b]Note[/b]: This property's value depends on [member arc_start] and [member arc_angle],
+## and setting this property will affect [member arc_angle].
 var arc_end : float = TAU:
 	get: return arc_start + arc_angle
 	set(value): arc_angle = value - arc_start
 
+## The starting angle of the arc of the shape that is created, in degrees.
 var arc_start_degrees : float:
 	get: return rad_to_deg(arc_start)
 	set(value): arc_start = deg_to_rad(value)
 
+## The angle of the arc of the shape that is created, in degrees.
 var arc_angle_degrees : float:
 	get: return rad_to_deg(arc_angle)
 	set(value): arc_angle = deg_to_rad(value)
 
+## The ending angle of the arc of the shape that is created, in degrees.
+## [br][br][b]Note[/b]: This property's value depends on [member arc_start_degrees] and [member arc_angle_degrees],
+## and setting this property will affect [member arc_angle_degrees].
 var arc_end_degrees : float:
 	get: return rad_to_deg(arc_end)
 	set(value): arc_end = deg_to_rad(value)
 
-## Strategies for closing an open shape.
+## Methods for closing an open shape.
 enum ClosingMethod {
 	## Shape is closed with two lines between the ends and the center of the shape.
 	SLICE,
 	## Shape is closed by connected the 2 ends together directly.
 	CHORD,
-	## Shape is left open. This only has an effect for lines, and is otherwise equivalent to [constant ClosingStrategy.CHORD].
+	## Shape is left open. This only has an effect for ring shapes, and is otherwise equivalent to [enum ClosingStrategy].SLICE.
 	ARC,
 }
 
+## The method for closing an open shape. See [enum ClosingMethod]
 @export
 var closing_method : ClosingMethod = ClosingMethod.SLICE:
 	set(value):
@@ -103,6 +123,7 @@ var closing_method : ClosingMethod = ClosingMethod.SLICE:
 		update_configuration_warnings()
 		queue_regenerate()
 
+## Toggles rounding the corners cut out by [member arc_angle].
 @export
 var round_arc_ends : bool = false:
 	set(value):
@@ -111,6 +132,7 @@ var round_arc_ends : bool = false:
 
 @export_subgroup("Offset tranform", "offset")
 
+## The offset postition of the shape
 @export
 var offset_position := Vector2.ZERO:
 	set(value):
@@ -125,13 +147,6 @@ var offset : Vector2 = Vector2.ZERO:
 		offset = value
 		queue_regenerate()
 
-## The offset rotation of the shape, in degrees.
-var offset_rotation_degrees : float = 0:
-	set(value):
-		offset_rotation = deg_to_rad(value)
-	get:
-		return rad_to_deg(offset_rotation)
-
 ## The offset rotation of the shape, in radians.
 @export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
 var offset_rotation : float = 0:
@@ -139,18 +154,28 @@ var offset_rotation : float = 0:
 		offset_rotation = value
 		queue_regenerate()
 
+## The offset rotation of the shape, in degrees.
+var offset_rotation_degrees : float = 0:
+	set(value):
+		offset_rotation = deg_to_rad(value)
+	get:
+		return rad_to_deg(offset_rotation)
+
+## The offset scale of the shape.
 @export
 var offset_scale := Vector2.ONE:
 	set(value):
 		offset_scale = value
 		queue_regenerate()
 
+## The offset skew of the shape
 @export_range(-89.9, 89.9, 0.1, "radians")
 var offset_skew := 0.0:
 	set(value):
 		offset_skew = value
 		queue_regenerate()
 
+## The offset [Transform2D] of the shape.
 var offset_transform := Transform2D.IDENTITY:
 	get: return Transform2D(offset_rotation, offset_scale, offset_skew, offset_position)
 	set(value):
@@ -161,6 +186,7 @@ var offset_transform := Transform2D.IDENTITY:
 
 @export_group("Drawing")
 
+## Toggles drawing the created shape.
 @export
 var draw_shape := true:
 	set(value):
@@ -168,13 +194,14 @@ var draw_shape := true:
 		update_configuration_warnings()
 		queue_redraw()
 
+## The width of the drawn shape, if the created shape is a line. If set to a value of [code]0[/code], two-point thin lines are drawn.
 @export_range(0, 10, 0.001, "or_greater", "hide_slider")
 var line_width : float = 0.0:
 	set(value):
 		line_width = value
 		queue_regenerate()
 
-## The color of the shape.
+## The color of the drawn shape.
 @export
 var color : Color = Color.WHITE:
 	set(value):
@@ -183,7 +210,9 @@ var color : Color = Color.WHITE:
 
 @export_group("Exporting")
 
-@export_flags("Editor:1", "Run Time:2")
+## Toggles the setting of [member export_targets] when exporting the shape with [method export],
+## and whether to do so in editor and/or at runtime. See [enum ExportBehaviour] for exact values to use.
+@export_flags("Editor:1", "Runtime:2")
 var export_behaviour : int = ExportBehaviour.DISABLED:
 	set(value):
 		var was_exporting := is_exporting()
@@ -191,20 +220,30 @@ var export_behaviour : int = ExportBehaviour.DISABLED:
 		if not was_exporting and is_exporting():
 			queue_export()
 
+## When the [BasicPolygon2D] should set the [member export_targets].
 enum ExportBehaviour {
+	## Never export the shape.
 	DISABLED = 0,
+	## Export while in the editor. Useful to preview the shape in other nodes, or if the set properties are serialized.
 	EDITOR = 1,
+	## Export while the game is running.
 	RUN_TIME = 2,
 }
 
+## Toggles setting the [member export_targets] with the decomposed convex hulls of the created shape, instead of the shape itself.
+## If [code]true[/code], the set value will be of type [Array][lb][PackedVector2Array][rb], and type [PackedVector2Array] otherwise.
 @export
 var export_as_decomposed_hulls := false
 
+## Toggles automatically freeing itself after exporting for the first time at runtime.
 @export
 var auto_free := false
 
 @export_group("Exporting", "export")
 
+## The properties to set with the created shape when exporting. See description of [NodePath] for how to reference a (sub) property.
+## [br][br]Requires [method is_exporting] to return [code]true[/code] for these properties to be set.
+## The type of the set value depends on [member export_as_decomposed_hulls].
 @export
 var export_targets : Array[NodePath] = []:
 	set(value):
@@ -213,6 +252,7 @@ var export_targets : Array[NodePath] = []:
 		export_targets = value
 		update_configuration_warnings()
 
+## Emitted when a shape is exported.
 signal shape_created(shape : PackedVector2Array, decomposed_shape : Array[PackedVector2Array], shape_type : ShapeType)
 
 var _created_shape : PackedVector2Array = []:
@@ -235,19 +275,30 @@ var _decomposed_created_shape : Array[PackedVector2Array] = []:
 func _property_can_revert(property: StringName) -> bool: return property == &"sizes"
 func _property_get_revert(_property: StringName) -> Variant: return PackedFloat64Array([10.0])
 
+## Returns [code]true[/code] when [member export_targets] will be set on [method export]. This is the case when
+## [member export_behaviour] has the flag of [enum ExportBehaviour] set which corrosponds to where this [BasicPolygon2D] is running, in editor or at runtime.
+## [br][br][b]Note:[/b] [signal shape_created] is emitted on [method export] regardless of this methods return value.
 func is_exporting() -> bool:
 	var in_editor := Engine.is_editor_hint()
 	return in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0
 
+## Gets the created shape.
 func get_created_shape() -> PackedVector2Array: return _created_shape
+## Gets the created shape, decomposed into convex hulls.
 func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomposed_created_shape
 
+## The type of shape created.
 enum ShapeType {
+	## The shape is a polygon.
 	POLYGON,
+	## The shape is a line, where each point is connected to the previous and next points, leading to interconnected lines.
+	## The first and last points are not connected.
 	POLYLINE,
+	## The shape is a line, where points come in pairs representing individual, potentially unconnected lines.
 	MULTILINE,
 }
 
+## Gets the type of shape created by this [BasicPolygon2D]. See [enum ShapeType].
 func get_created_shape_type() -> ShapeType:
 	if vertices_count == 2: return ShapeType.MULTILINE
 	if is_zero_approx(ring_ratio): return ShapeType.POLYLINE
@@ -266,7 +317,9 @@ func _enter_tree() -> void:
 		_queue_status = _UNQUEUED
 		queue_export()
 
-## A method for consistency across other nodes. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
+## Queue the [BasicPolygon2D] to regenerate and export the shape. Called when the Generation properties are modified.
+## Multiple calls will be converted to a single call. See [method regenerate].
+## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method regenerate] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_regenerate() -> void:
 	if _queue_status >= _QUEUE_REGENERATE:
 		return
@@ -281,7 +334,8 @@ func queue_regenerate() -> void:
 
 	regenerate()
 
-## A method for consistency across other nodes, and does not even regenerate the shape immediately. [b]Equivalent to [method CanvasItem.queue_redraw].[/b]
+## Instantly regenerates the shape, than exports it with [method export].
+## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func regenerate() -> void:
 	_queue_status = _UNQUEUED
 
@@ -420,6 +474,9 @@ func _get_property_list() -> Array[Dictionary]:
 
 	return properties
 
+## Queue the [BasicPolygon2D] to export the shape. Multiple calls will be converted to a single call.
+## The queued call will be removed if [method queue_regenerate], [method regenerate], or [method export] is called.
+## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method export] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_export() -> void:
 	if _queue_status >= _QUEUE_DISPERSE:
 		return
@@ -434,6 +491,9 @@ func queue_export() -> void:
 
 	export()
 
+## Instantly exports the previously credated shape, emitting [signal shape_created],
+## as well as setting the export properties if [method is_exporting] returns [code]true[/code].
+## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func export() -> void:
 	_queue_status = _UNQUEUED
 
