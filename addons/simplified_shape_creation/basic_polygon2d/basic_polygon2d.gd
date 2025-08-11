@@ -355,10 +355,10 @@ func regenerate() -> void:
 		return
 
 	if vertices_count == 2:
-		var line_count := maxi(sizes.size(), 2)
+		var line_count := sizes.size()
 		var side_chord_arc_angle := TAU / line_count
-		var line_arc_start := snappedf(arc_start + side_chord_arc_angle / 2, side_chord_arc_angle)
-		var line_arc_end := snappedf(arc_end - side_chord_arc_angle / 2, side_chord_arc_angle)
+		var line_arc_start := ceilf(arc_start / side_chord_arc_angle) * side_chord_arc_angle
+		var line_arc_end := floorf(arc_end / side_chord_arc_angle) * side_chord_arc_angle
 
 		if line_arc_start > line_arc_end:
 			_queue_status = _QUEUE_DISPERSE
@@ -367,7 +367,9 @@ func regenerate() -> void:
 			export()
 			return
 
-		if is_equal_approx(line_arc_start, line_arc_end):
+		if sizes.size() == 1:
+			shape = PackedVector2Array([BasicGeometry2D._circle_point(line_arc_start + offset_rotation) * sizes[0], offset_position])
+		elif is_equal_approx(line_arc_start, line_arc_end):
 			shape = PackedVector2Array([BasicGeometry2D._circle_point(line_arc_start + offset_rotation) * sizes[((line_arc_start / side_chord_arc_angle) as int) % line_count], offset_position])
 		else:
 			shape = BasicGeometry2D.create_shape(line_count, sizes, offset_transform, line_arc_start, line_arc_end, false)
@@ -519,8 +521,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if vertices_count == 2 and not is_zero_approx(arc_angle):
 		var line_count := maxi(sizes.size(), 2)
 		var side_chord_arc_angle := TAU / line_count
-		var line_arc_start := snappedf(arc_start + side_chord_arc_angle / 2, side_chord_arc_angle)
-		var line_arc_end := snappedf(arc_end - side_chord_arc_angle / 2, side_chord_arc_angle)
+		var line_arc_start := ceilf(arc_start / side_chord_arc_angle) * side_chord_arc_angle
+		var line_arc_end := floorf(arc_end / side_chord_arc_angle) * side_chord_arc_angle
 		if line_arc_start > line_arc_end:
 			warnings.push_back("The arc of the shape covers an area where no lines are, so nothing will be created")
 
