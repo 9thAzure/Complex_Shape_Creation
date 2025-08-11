@@ -199,13 +199,28 @@ var draw_shape := true:
 var line_width : float = 0.0:
 	set(value):
 		line_width = value
-		queue_regenerate()
+		queue_redraw()
 
 ## The color of the drawn shape.
 @export
 var color : Color = Color.WHITE:
 	set(value):
 		color = value
+		queue_redraw()
+
+## Toggles drawing a border around a [enum ShapeType].POLYGON.
+## [br][br]If the shape is a line, this property changes which color property is used; [member color] if [code]false[/code], [member border_color] if [code]true[/code].
+@export
+var draw_borders := false:
+	set(value):
+		draw_borders = value
+		queue_redraw()
+
+## The color of the border of the shape, and for a line shape if [member draw_borders] is [code]true[/code].
+@export
+var border_color := Color.BLACK:
+	set(value):
+		border_color = value
 		queue_redraw()
 
 @export_group("Exporting")
@@ -587,10 +602,27 @@ func _draw() -> void:
 		ShapeType.POLYGON:
 			for hull in _decomposed_created_shape:
 				draw_colored_polygon(hull, color)
+
+			if draw_borders:
+				if ring_ratio < 1 and (is_equal_approx(arc_angle, TAU) or closing_method == ClosingMethod.CHORD):
+					assert(_created_shape.size() % 2 == 0)
+					var border_line := _created_shape.slice(0, _created_shape.size() / 2)
+					draw_polyline(border_line, border_color, line_width)
+
+					for i in border_line.size():
+						border_line[i] = _created_shape[-i - 1]
+					draw_polyline(border_line, border_color, line_width)
+				elif is_zero_approx(line_width):
+					draw_polyline(_created_shape, border_color)
+					draw_line(_created_shape[-1], _created_shape[0], border_color)
+				else:
+					var border_line := _created_shape.duplicate()
+					border_line.push_back(_created_shape[0])
+					draw_polyline(border_line, border_color, line_width)
 		ShapeType.POLYLINE:
-			draw_polyline(_created_shape, color, line_width if line_width > 0 else -1)
+			draw_polyline(_created_shape, border_color if draw_borders else color, line_width if line_width > 0 else -1)
 		ShapeType.MULTILINE:
-			draw_multiline(_created_shape, color, line_width if line_width > 0 else -1)
+			draw_multiline(_created_shape, border_color if draw_borders else color, line_width if line_width > 0 else -1)
 		_:
 			assert(false, "unexpected match case: %s" % get_created_shape_type())
 
