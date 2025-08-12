@@ -227,17 +227,17 @@ var border_color := Color.BLACK:
 @export_group("Exporting")
 
 ## Toggles the setting of [member export_targets] when exporting the shape with [method export],
-## and whether to do so in editor and/or at runtime. See [enum ExportBehaviour] for exact values to use.
+## and whether to do so in editor and/or at runtime. See [enum ExportBehavior] for exact values to use.
 @export_flags("Editor:1", "Runtime:2")
-var export_behaviour : int = ExportBehaviour.DISABLED:
+var export_behavior : int = ExportBehavior.DISABLED:
 	set(value):
 		var was_exporting := is_exporting()
-		export_behaviour = value
+		export_behavior = value
 		if not was_exporting and is_exporting():
 			queue_export()
 
 ## When the [BasicPolygon2D] should set the [member export_targets].
-enum ExportBehaviour {
+enum ExportBehavior {
 	## Never export the shape.
 	DISABLED = 0,
 	## Export while in the editor. Useful to preview the shape in other nodes, or if the set properties are serialized.
@@ -292,11 +292,11 @@ func _property_can_revert(property: StringName) -> bool: return property == &"si
 func _property_get_revert(_property: StringName) -> Variant: return PackedFloat64Array([10.0])
 
 ## Returns [code]true[/code] when [member export_targets] will be set on [method export]. This is the case when
-## [member export_behaviour] has the flag of [enum ExportBehaviour] set which corrosponds to where this [BasicPolygon2D] is running, in editor or at runtime.
+## [member export_behavior] has the flag of [enum ExportBehavior] set which corrosponds to where this [BasicPolygon2D] is running, in editor or at runtime.
 ## [br][br][b]Note:[/b] [signal shape_created] is emitted on [method export] regardless of this methods return value.
 func is_exporting() -> bool:
 	var in_editor := Engine.is_editor_hint()
-	return in_editor and (export_behaviour & ExportBehaviour.EDITOR) > 0 or not in_editor and (export_behaviour & ExportBehaviour.RUN_TIME) > 0
+	return in_editor and (export_behavior & ExportBehavior.EDITOR) > 0 or not in_editor and (export_behavior & ExportBehavior.RUN_TIME) > 0
 
 ## Gets the created shape.
 func get_created_shape() -> PackedVector2Array: return _created_shape
