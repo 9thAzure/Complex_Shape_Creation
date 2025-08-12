@@ -361,7 +361,7 @@ func regenerate() -> void:
 	var is_ring_shape :=  not is_outline and ring_ratio < 1
 	var uses_arc := not is_equal_approx(arc_angle, TAU)
 	var rounded_corners :=        not is_zero_approx(corner_size)
-	var true_corner_detail := corner_detail if corner_detail != 0 else maxi(1, 32 / vertices_count)
+	var true_corner_detail := corner_detail if corner_detail != 0 else maxi(1, 32 / vertices_count if vertices_count > 1 else 1)
 
 	if is_zero_approx(arc_angle):
 		_queue_status = _QUEUE_DISPERSE
