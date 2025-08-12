@@ -611,6 +611,16 @@ func _draw() -> void:
 				elif is_zero_approx(border_width):
 					draw_polyline(_created_shape, border_color)
 					draw_line(_created_shape[-1], _created_shape[0], border_color)
+				elif ring_ratio < 1 and arc_angle < TAU and closing_method == ClosingMethod.SLICE and _created_shape.size() > 3:
+					var split := _created_shape.find(offset_position)
+					assert(split != -1)
+
+					var border_line := _created_shape.slice(0, split + 1)
+					border_line.push_back(border_line[0])
+					draw_polyline(border_line, border_color, border_width)
+					border_line = _created_shape.slice(split)
+					draw_polyline(border_line, border_color, border_width)
+
 				else:
 					var border_line := _created_shape.duplicate()
 					border_line.push_back(_created_shape[0])
