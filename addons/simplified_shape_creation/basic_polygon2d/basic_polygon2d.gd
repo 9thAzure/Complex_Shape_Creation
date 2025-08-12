@@ -317,7 +317,7 @@ enum ShapeType {
 ## Gets the type of shape created by this [BasicPolygon2D]. See [enum ShapeType].
 func get_created_shape_type() -> ShapeType:
 	if vertices_count == 2: return ShapeType.MULTILINE
-	if is_zero_approx(ring_ratio): return ShapeType.POLYLINE
+	if is_zero_approx(ring_ratio) or _created_shape.size() == 2: return ShapeType.POLYLINE
 	return ShapeType.POLYGON
 
 const _UNQUEUED         := 0
@@ -406,7 +406,7 @@ func regenerate() -> void:
 	var add_central_point := closing_method == ClosingMethod.SLICE or closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1)
 	shape = BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, arc_start, arc_end, add_central_point)
 
-	if rounded_corners:
+	if rounded_corners and shape.size() >= 3:
 		if not uses_arc:
 			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 		elif not round_arc_ends or round_arc_ends and closing_method == ClosingMethod.ARC and is_outline:
@@ -452,8 +452,8 @@ func regenerate() -> void:
 		BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
 		BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
 
-	if is_outline:
-		if not uses_arc or closing_method != ClosingMethod.ARC:
+	if is_outline or shape.size() == 2:
+		if (not uses_arc or closing_method != ClosingMethod.ARC) and shape.size() != 2:
 			shape.push_back(shape[0])
 
 		decomposed_shape = [shape]
