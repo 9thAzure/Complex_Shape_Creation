@@ -93,34 +93,34 @@ static func add_ring(shape: PackedVector2Array, length_proportion: float, shape_
 
 ## Modifies [param points] so that the shape it represents has rounded corners. The method uses quadratic Bézier curves for the corners.
 ## [br][br][param corner_size] determines how long each corner is, from the original point to at most half the side length.
-## [param corner_smoothness] determines how many [b]lines[/b] are in each corner.
+## [param corner_detail] determines how many [b]lines[/b] are in each corner.
 ## [br][br][param start_index] & [param length] can be used to specify only part of the shape should be rounded.
 ## [param limit_ending_slopes] determines whether the ending corners should still be limited to half the side length. Does not work if the entire shape is being rounded.
 ## [param original_array_size], when used, indicates that the array has already been resized, so the method should add points into the empty space.
 ## This parameter specifies the part of the array that is currently used.
-static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_smoothness : int,
+static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_detail : int,
 	start_index := 0, length := -1, limit_ending_slopes := true, original_array_size := 0) -> PackedVector2Array:
 	# argument prep 
 	var corner_size_squared := corner_size ** 2
-	var points_per_corner := corner_smoothness + 1
+	var points_per_corner := corner_detail + 1
 	var resize_array := false
 	if original_array_size <= 0:
 		resize_array = true
 		original_array_size = points.size()
 	if length < 0:
 		length = original_array_size - start_index
-	if corner_smoothness == 0:
-		corner_smoothness = 32 / points.size()
+	if corner_detail == 0:
+		corner_detail = 32 / points.size()
 	
 	assert(points.size() >= 3, "param 'points' must have at least 3 points.")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater.")
-	assert(corner_smoothness >= 0, "param 'corner_smoothness' must be 0 or greater.")
+	assert(corner_detail >= 0, "param 'corner_detail' must be 0 or greater.")
 	assert(start_index >= 0, "param 'start_index' must be 0 or greater.")
 	assert(start_index + length <= original_array_size, "sum of param 'start_index' & param 'length' must not be greater than the original size of the array (param 'original_array_size', or if 0, size of param 'points').")
 	assert(limit_ending_slopes || length != original_array_size, "param 'limit_ending_slopes' was set to false, but the entire shape is being rounded so there are no \"ending\" slopes.")
 
 	# resizing and spacing
-	var size_increase := SizeIncrease.add_rounded_corners(length, corner_smoothness)
+	var size_increase := SizeIncrease.add_rounded_corners(length, corner_detail)
 	if resize_array:
 		points.resize(original_array_size + size_increase)
 		for i in (original_array_size - start_index - length):
@@ -178,10 +178,10 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 
 		points[start_index + i * points_per_corner] = starting_point
 		points[start_index + i * points_per_corner + points_per_corner - 1] = ending_point
-		# sub_i is initialized with a value of 1 as a corner_smoothness of 1 has no in-between points.
+		# sub_i is initialized with a value of 1 as a corner_detail of 1 has no in-between points.
 		var sub_i := 1
-		while sub_i < corner_smoothness:
-			var t_value := sub_i / (corner_smoothness as float)
+		while sub_i < corner_detail:
+			var t_value := sub_i / (corner_detail as float)
 			points[start_index + i * points_per_corner + sub_i] = _quadratic_bezier_interpolate(starting_point, current_point, ending_point, t_value)
 			sub_i += 1
 		
@@ -204,8 +204,8 @@ class SizeIncrease:
 
 	## Designates how much [method RegularGeometry2D.add_rounded_corners] expands the array.
 	## [br][br][param length] specifies many points are to be converted into rounded corners.
-	## [param corner_smoothness] specifies how many lines are in each corner.
-	static func add_rounded_corners(length : int, corner_smoothness : int) -> int:
+	## [param corner_detail] specifies how many lines are in each corner.
+	static func add_rounded_corners(length : int, corner_detail : int) -> int:
 		assert(length >= 0, "param 'length' must be positive.")
-		assert(corner_smoothness > 0, "param 'corner_smoothness' must be positive.")
-		return length * (corner_smoothness + 1) - length
+		assert(corner_detail > 0, "param 'corner_detail' must be positive.")
+		return length * (corner_detail + 1) - length

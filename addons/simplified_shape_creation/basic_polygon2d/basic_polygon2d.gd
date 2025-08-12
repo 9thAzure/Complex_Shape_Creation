@@ -59,10 +59,10 @@ var corner_size : float = 0.0:
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 @export_range(0, 50)
-var corner_smoothness : int = 0:
+var corner_detail : int = 0:
 	set(value):
-		assert(value >= 0, "property 'corner_smoothness' must be greater than or equal to 0")
-		corner_smoothness = value
+		assert(value >= 0, "property 'corner_detail' must be greater than or equal to 0")
+		corner_detail = value
 		queue_regenerate()
 
 ## The starting angle of the arc of the shape that is created, in radians.
@@ -360,8 +360,8 @@ func regenerate() -> void:
 	var is_outline := is_zero_approx(ring_ratio)
 	var is_ring_shape :=  not is_outline and ring_ratio < 1
 	var uses_arc := not is_equal_approx(arc_angle, TAU)
-	var rounded_corners := not is_zero_approx(corner_size)
-	var true_corner_smoothness := corner_smoothness if corner_smoothness != 0 else maxi(1, 32 / vertices_count)
+	var rounded_corners :=        not is_zero_approx(corner_size)
+	var true_corner_detail := corner_detail if corner_detail != 0 else maxi(1, 32 / vertices_count)
 
 	if is_zero_approx(arc_angle):
 		_queue_status = _QUEUE_DISPERSE
@@ -408,15 +408,15 @@ func regenerate() -> void:
 
 	if rounded_corners and shape.size() >= 3:
 		if not uses_arc:
-			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_detail)
 		elif not round_arc_ends or round_arc_ends and closing_method == ClosingMethod.ARC and is_outline:
-			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 1, shape.size() - (3 if add_central_point else 2))
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_detail, 1, shape.size() - (3 if add_central_point else 2))
 		elif closing_method == ClosingMethod.SLICE:
-			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_detail, 0, shape.size() - 1)
 		elif closing_method == ClosingMethod.CHORD:
-			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_detail)
 		elif closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1):
-			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, shape.size() - 1)
+			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_detail, 0, shape.size() - 1)
 
 	if is_ring_shape:
 		if not uses_arc or closing_method != ClosingMethod.SLICE:
@@ -443,14 +443,14 @@ func regenerate() -> void:
 						inner_start += 1
 						inner_length -= 2
 
-					BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, inner_start, inner_length, false)
+					BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_detail, inner_start, inner_length, false)
 
 	if rounded_corners and uses_arc and closing_method == ClosingMethod.ARC and round_arc_ends and is_ring_shape:
 		var inner_corner_size := lerpf(corner_size, 0, ring_ratio)
 		var original_size := shape.size()
 
-		BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
-		BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
+		BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_detail, original_size / 2, original_size / 2)
+		BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_detail, 0, original_size / 2, false)
 
 	if is_outline or shape.size() == 2:
 		if (not uses_arc or closing_method != ClosingMethod.ARC) and shape.size() != 2:
