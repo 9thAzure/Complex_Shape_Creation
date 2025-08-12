@@ -426,11 +426,9 @@ func regenerate() -> void:
 			var inner_arc_start := arc_start - arc_change / 2
 			var inner_arc_end := arc_end + arc_change / 2
 			if inner_arc_start < inner_arc_end:
-				var inner_ring := BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, inner_arc_start, inner_arc_end)
+				var inner_ring := BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, inner_arc_start, inner_arc_end, false)
 				if is_equal_approx(inner_arc_end - inner_arc_start, TAU):
-					inner_ring.resize(inner_ring.size() + 2)
-					inner_ring[-2] = inner_ring[0]
-					inner_ring[-1] = offset_position
+					inner_ring.push_back(inner_ring[0])
 
 				shape.resize(shape.size() + inner_ring.size() + 1)
 				shape[-1] = offset_position
@@ -613,6 +611,16 @@ func _draw() -> void:
 				elif is_zero_approx(border_width):
 					draw_polyline(_created_shape, border_color)
 					draw_line(_created_shape[-1], _created_shape[0], border_color)
+				elif ring_ratio < 1 and arc_angle < TAU and closing_method == ClosingMethod.SLICE and _created_shape.size() > 3:
+					var split := _created_shape.find(offset_position)
+					assert(split != -1)
+
+					var border_line := _created_shape.slice(0, split + 1)
+					border_line.push_back(border_line[0])
+					draw_polyline(border_line, border_color, border_width)
+					border_line = _created_shape.slice(split)
+					draw_polyline(border_line, border_color, border_width)
+
 				else:
 					var border_line := _created_shape.duplicate()
 					border_line.push_back(_created_shape[0])
