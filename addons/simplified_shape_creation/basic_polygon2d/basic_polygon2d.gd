@@ -452,7 +452,7 @@ func regenerate() -> void:
 		BasicGeometry2D.add_rounded_corners(shape, inner_corner_size, true_corner_smoothness, original_size / 2, original_size / 2)
 		BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
 
-	if is_outline:
+	if is_outline or shape.size() == 2:
 		if (not uses_arc or closing_method != ClosingMethod.ARC) and shape.size() != 2:
 			shape.push_back(shape[0])
 
@@ -464,8 +464,7 @@ func regenerate() -> void:
 		export()
 		return
 
-	if (absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD or
-		shape.size() == 2):
+	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
 		decomposed_shape = [shape]
 	else:
 		decomposed_shape = Geometry2D.decompose_polygon_in_convex(shape)
