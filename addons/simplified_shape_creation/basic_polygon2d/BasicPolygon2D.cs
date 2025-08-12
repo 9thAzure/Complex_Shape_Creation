@@ -19,6 +19,8 @@ public partial class BasicPolygon2D
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public Node2D Instance { get; }
 
+    public delegate void ShapeCreatedEventHandler(Vector2[] shape, Godot.Collections.Array<Vector2[]> shapeDecomposed, ShapeType shapeType);
+    public event ShapeCreatedEventHandler ShapeCreated;
     /// <summary>
     /// The number of vertices in the regular shape. A value of <c>1</c> creates a circle, and a value of <c>2</c> creates a line.
     /// </summary>
@@ -230,6 +232,7 @@ public partial class BasicPolygon2D
     /// <inheritdoc cref="CanvasItem.QueueRedraw"/>
     public void QueueRedraw() => Instance.QueueRedraw();
 
+
     /// <summary>Creates and wraps a <see cref="BasicPolygon2D"/> around <paramref name="instance"/>.</summary>
     /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>
     /// <exception cref="ArgumentNullException"><paramref name="instance"/> is <see langword="null"/>.</exception>
@@ -242,6 +245,7 @@ public partial class BasicPolygon2D
             throw new ArgumentException($"must have attached script '{GDScriptEquivalentPath}'.", nameof(instance));
 
         Instance = instance;
+        instance.Connect(SignalName.ShapeCreated, Callable.From<Vector2[], Godot.Collections.Array<Vector2[]>, ShapeType>((shape, decomposed, type) => ShapeCreated?.Invoke(shape, decomposed, type)));
     }
     /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="BasicPolygon2D"/>.</summary>
