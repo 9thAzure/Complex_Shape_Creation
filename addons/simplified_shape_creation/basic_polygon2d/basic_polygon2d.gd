@@ -317,7 +317,7 @@ enum ShapeType {
 ## Gets the type of shape created by this [BasicPolygon2D]. See [enum ShapeType].
 func get_created_shape_type() -> ShapeType:
 	if vertices_count == 2: return ShapeType.MULTILINE
-	if is_zero_approx(ring_ratio): return ShapeType.POLYLINE
+	if is_zero_approx(ring_ratio) or _created_shape.size() == 2: return ShapeType.POLYLINE
 	return ShapeType.POLYGON
 
 const _UNQUEUED         := 0
@@ -406,7 +406,7 @@ func regenerate() -> void:
 	var add_central_point := closing_method == ClosingMethod.SLICE or closing_method == ClosingMethod.ARC and is_equal_approx(ring_ratio, 1)
 	shape = BasicGeometry2D.create_shape(vertices_count, sizes, offset_transform, arc_start, arc_end, add_central_point)
 
-	if rounded_corners:
+	if rounded_corners and shape.size() >= 3:
 		if not uses_arc:
 			BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness)
 		elif not round_arc_ends or round_arc_ends and closing_method == ClosingMethod.ARC and is_outline:
@@ -464,7 +464,8 @@ func regenerate() -> void:
 		export()
 		return
 
-	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD:
+	if (absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == ClosingMethod.CHORD or
+		shape.size() == 2):
 		decomposed_shape = [shape]
 	else:
 		decomposed_shape = Geometry2D.decompose_polygon_in_convex(shape)
