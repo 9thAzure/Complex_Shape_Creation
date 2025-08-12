@@ -601,9 +601,6 @@ func _draw() -> void:
 
 	match get_created_shape_type():
 		ShapeType.POLYGON:
-			for hull in _decomposed_created_shape:
-				draw_colored_polygon(hull, color)
-
 			if draw_border:
 				if ring_ratio < 1 and (is_equal_approx(arc_angle, TAU) or closing_method == ClosingMethod.CHORD):
 					assert(_created_shape.size() % 2 == 0)
@@ -620,6 +617,9 @@ func _draw() -> void:
 					var border_line := _created_shape.duplicate()
 					border_line.push_back(_created_shape[0])
 					draw_polyline(border_line, border_color, border_width)
+
+			for hull in _decomposed_created_shape:
+				draw_colored_polygon(hull, color)
 		ShapeType.POLYLINE:
 			draw_polyline(_created_shape, border_color if draw_border else color, border_width if border_width > 0 else -1)
 		ShapeType.MULTILINE:
