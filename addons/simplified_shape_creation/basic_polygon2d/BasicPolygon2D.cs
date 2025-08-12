@@ -29,10 +29,10 @@ public partial class BasicPolygon2D
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
     /// <summary>The length from each corner to the center of the shape.</summary>
-    public float Size
+    public float Sizes
     {
-        get => (float)Instance.Get(PropertyName.Size);
-        set => Instance.Set(PropertyName.Size, value);
+        get => (float)Instance.Get(PropertyName.Sizes);
+        set => Instance.Set(PropertyName.Sizes, value);
     }
     /// <summary>The offset rotation of the shape, in degrees.</summary>
     public float OffsetRotationDegrees
@@ -52,17 +52,11 @@ public partial class BasicPolygon2D
         get => (Color)Instance.Get(PropertyName.Color);
         set => Instance.Set(PropertyName.Color, value);
     }
-    [Obsolete("Property name has been replaced, use 'Offset' instead.", false)]
+    /// <summary>The offset position of the shape.</summary>
     public Vector2 OffsetPosition
     {
         get => (Vector2)Instance.Get(PropertyName.OffsetPosition);
         set => Instance.Set(PropertyName.OffsetPosition, value);
-    }
-    /// <summary>The offset position of the shape.</summary>
-    public Vector2 Offset
-    {
-        get => (Vector2)Instance.Get(PropertyName.Offset);
-        set => Instance.Set(PropertyName.Offset, value);
     }
     /// <summary>Position, relative to the node's parent.</summary>
     public Vector2 Position
