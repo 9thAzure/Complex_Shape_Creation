@@ -15,8 +15,7 @@ public partial class BasicPolygon2D
     public const string GDScriptEquivalentPath = "res://addons/simplified_shape_creation/basic_polygon2d/basic_polygon2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
-    private static readonly Lazy<Node2D> _shared = new(() => GDScriptEquivalent.New().As<Node2D>());
-    
+
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public Node2D Instance { get; }
 
@@ -123,6 +122,12 @@ public partial class BasicPolygon2D
     {
         get => Instance.Get(PropertyName.OffsetSkew).AsSingle();
         set => Instance.Set(PropertyName.OffsetSkew, value);
+    }
+
+    public Transform2D OffsetTransform
+    {
+        get => Instance.Get(PropertyName.OffsetTransform).AsTransform2D();
+        set => Instance.Set(PropertyName.OffsetTransform, value);
     }
 
     public bool DrawShape
@@ -236,7 +241,6 @@ public partial class BasicPolygon2D
         if (GDScriptEquivalent != instance.GetScript().As<GDScript>())
             throw new ArgumentException($"must have attached script '{GDScriptEquivalentPath}'.", nameof(instance));
 
-        SceneTree test = new();
         Instance = instance;
     }
     /// <inheritdoc cref="New"/>
