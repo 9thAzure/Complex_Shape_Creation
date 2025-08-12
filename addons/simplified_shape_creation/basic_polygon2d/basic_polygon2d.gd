@@ -453,7 +453,7 @@ func regenerate() -> void:
 		BasicGeometry2D.add_rounded_corners(shape, corner_size, true_corner_smoothness, 0, original_size / 2, false)
 
 	if is_outline:
-		if not uses_arc or closing_method != ClosingMethod.ARC:
+		if (not uses_arc or closing_method != ClosingMethod.ARC) and shape.size() != 2:
 			shape.push_back(shape[0])
 
 		decomposed_shape = [shape]
