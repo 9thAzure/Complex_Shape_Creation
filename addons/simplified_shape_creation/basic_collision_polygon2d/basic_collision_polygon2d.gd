@@ -74,9 +74,9 @@ var corner_size : float = 0.0:
 
 ## How many lines make up each corner. A value of [code]0[/code] will use a value of [code]32[/code] divided by [member vertices_count].
 @export_range(0, 50)
-var corner_smoothness : int = 0:
-	get: return _basic_polygon_instance.corner_smoothness
-	set(value): _basic_polygon_instance.corner_smoothness = value
+var corner_detail : int = 0:
+	get: return _basic_polygon_instance.corner_detail
+	set(value): _basic_polygon_instance.corner_detail = value
 
 ## The starting angle of the arc of the shape that is created, in radians.
 @export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
