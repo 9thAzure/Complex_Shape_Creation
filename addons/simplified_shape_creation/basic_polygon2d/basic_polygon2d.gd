@@ -108,7 +108,7 @@ var arc_end_degrees : float:
 ## Methods for closing an open shape.
 enum ClosingMethod {
 	## Shape is closed with two lines between the ends and the center of the shape.
-	SLICE,
+	SLICE = 0,
 	## Shape is closed by connected the 2 ends together directly.
 	CHORD,
 	## Shape is left open. This only has an effect for ring shapes, and is otherwise equivalent to [enum ClosingStrategy].SLICE.
@@ -306,7 +306,7 @@ func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomp
 ## The type of shape created.
 enum ShapeType {
 	## The shape is a polygon.
-	POLYGON,
+	POLYGON = 0,
 	## The shape is a line, where each point is connected to the previous and next points, leading to interconnected lines.
 	## The first and last points are not connected.
 	POLYLINE,

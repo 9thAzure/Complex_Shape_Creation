@@ -29,34 +29,153 @@ public partial class BasicPolygon2D
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
     /// <summary>The length from each corner to the center of the shape.</summary>
-    public float Sizes
+    public double[] Sizes
     {
-        get => (float)Instance.Get(PropertyName.Sizes);
+        get => Instance.Get(PropertyName.Sizes).AsFloat64Array();
         set => Instance.Set(PropertyName.Sizes, value);
+    }
+    public float RingRatio
+    {
+        get => Instance.Get(PropertyName.RingRatio).AsSingle();
+        set => Instance.Set(PropertyName.RingRatio, value);
+    }
+
+    public int CornerDetail
+    {
+        get => Instance.Get(PropertyName.CornerDetail).AsInt32();
+        set => Instance.Set(PropertyName.CornerDetail, value);
+    }
+
+    public float ArcStart
+    {
+        get => Instance.Get(PropertyName.ArcStart).AsSingle();
+        set => Instance.Set(PropertyName.ArcStart, value);
+    }
+
+    public float ArcAngle
+    {
+        get => Instance.Get(PropertyName.ArcAngle).AsSingle();
+        set => Instance.Set(PropertyName.ArcAngle, value);
+    }
+
+    public float ArcEnd
+    {
+        get => Instance.Get(PropertyName.ArcEnd).AsSingle();
+        set => Instance.Set(PropertyName.ArcEnd, value);
+    }
+
+    public float ArcStartDegrees
+    {
+        get => Instance.Get(PropertyName.ArcStartDegrees).AsSingle();
+        set => Instance.Set(PropertyName.ArcStartDegrees, value);
+    }
+
+    public float ArcAngleDegrees
+    {
+        get => Instance.Get(PropertyName.ArcAngleDegrees).AsSingle();
+        set => Instance.Set(PropertyName.ArcAngleDegrees, value);
+    }
+
+    public float ArcEndDegrees
+    {
+        get => Instance.Get(PropertyName.ArcEndDegrees).AsSingle();
+        set => Instance.Set(PropertyName.ArcEndDegrees, value);
+    }
+
+    public ClosingMethod ClosingMethod
+    {
+        get => Instance.Get(PropertyName.ClosingMethod).As<ClosingMethod>();
+        set => Instance.Set(PropertyName.ClosingMethod, (int)value);
+    }
+
+    public bool RoundArcEnds
+    {
+        get => Instance.Get(PropertyName.RoundArcEnds).AsBool();
+        set => Instance.Set(PropertyName.RoundArcEnds, value);
+    }
+
+    /// <summary>The offset position of the shape.</summary>
+    public Vector2 OffsetPosition
+    {
+        get => Instance.Get(PropertyName.OffsetPosition).AsVector2();
+        set => Instance.Set(PropertyName.OffsetPosition, value);
     }
     /// <summary>The offset rotation of the shape, in degrees.</summary>
     public float OffsetRotationDegrees
     {
-        get => (float)Instance.Get(PropertyName.OffsetRotationDegrees);
+        get => Instance.Get(PropertyName.OffsetRotationDegrees).AsSingle();
         set => Instance.Set(PropertyName.OffsetRotationDegrees, value);
     }
     /// <summary>The offset rotation of the shape, in radians.</summary>
     public float OffsetRotation
     {
-        get => (float)Instance.Get(PropertyName.OffsetRotation);
+        get => Instance.Get(PropertyName.OffsetRotation).AsSingle();
         set => Instance.Set(PropertyName.OffsetRotation, value);
+    }
+
+    public Vector2 OffsetScale
+    {
+        get => Instance.Get(PropertyName.OffsetScale).AsVector2();
+        set => Instance.Set(PropertyName.OffsetScale, value);
+    }
+
+    public float OffsetSkew
+    {
+        get => Instance.Get(PropertyName.OffsetSkew).AsSingle();
+        set => Instance.Set(PropertyName.OffsetSkew, value);
+    }
+
+    public bool DrawShape
+    {
+        get => Instance.Get(PropertyName.DrawShape).AsBool();
+        set => Instance.Set(PropertyName.DrawShape, value);
+    }
+
+    public bool DrawBorder
+    {
+        get => Instance.Get(PropertyName.DrawBorder).AsBool();
+        set => Instance.Set(PropertyName.DrawBorder, value);
+    }
+
+    public float BorderWidth
+    {
+        get => Instance.Get(PropertyName.BorderWidth).AsSingle();
+        set => Instance.Set(PropertyName.BorderWidth, value);
     }
     /// <summary>The color of the shape.</summary>
     public Color Color
     {
-        get => (Color)Instance.Get(PropertyName.Color);
+        get => Instance.Get(PropertyName.Color).AsColor();
         set => Instance.Set(PropertyName.Color, value);
     }
-    /// <summary>The offset position of the shape.</summary>
-    public Vector2 OffsetPosition
+    public Color BorderColor
     {
-        get => (Vector2)Instance.Get(PropertyName.OffsetPosition);
-        set => Instance.Set(PropertyName.OffsetPosition, value);
+        get => Instance.Get(PropertyName.BorderColor).AsColor();
+        set => Instance.Set(PropertyName.BorderColor, value);
+    }
+
+    public ExportBehavior ExportBehavior
+    {
+        get => Instance.Get(PropertyName.ExportBehavior).As<ExportBehavior>();
+        set => Instance.Set(PropertyName.ExportBehavior, (int)value);
+    }
+
+    public bool ExportAsDecomposedHulls
+    {
+        get => Instance.Get(PropertyName.ExportAsDecomposedHulls).AsBool();
+        set => Instance.Set(PropertyName.ExportAsDecomposedHulls, value);
+    }
+
+    public bool AutoFree
+    {
+        get => Instance.Get(PropertyName.AutoFree).AsBool();
+        set => Instance.Set(PropertyName.AutoFree, value);
+    }
+
+    public Godot.Collections.Array<NodePath> ExportTargets
+    {
+        get => Instance.Get(PropertyName.ExportTargets).AsGodotArray<NodePath>();
+        set => Instance.Set(PropertyName.ExportTargets, value);
     }
     /// <summary>Position, relative to the node's parent.</summary>
     public Vector2 Position
@@ -83,14 +202,25 @@ public partial class BasicPolygon2D
         set => Instance.Scale = value;
     }
 
-    /// <summary>
-    /// Transforms <see cref="BasicPolygon2D"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
-    /// </summary>
-    /// <remarks>Unlike other methods, this simply affects <see cref="OffsetRotation"/> and <see cref="Size"/>, regenerating the shape </remarks>
-    /// <param name="rotation">The amount to rotate the shape in radians.</param>
-    /// <param name="scale">The factor to scale the shape.</param>
-    public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
-    public void ApplyTransformation(float rotation, float scale) => Instance.Call(MethodName.ApplyTransformation, rotation, scale);
+    public Vector2[] CreatedShape => Instance.Call(MethodName.GetCreatedShape).AsVector2Array();
+    public Godot.Collections.Array<Vector2[]> CreatedShapeDecomposed => Instance.Call(MethodName.GetCreatedShapeDecomposed).AsGodotArray<Vector2[]>();
+    public ShapeType CreatedShapeType => Instance.Call(MethodName.GetCreatedShapeType).As<ShapeType>();
+
+    public bool CanExport() => Instance.Call(MethodName.CanExport).AsBool();
+
+    public void QueueRegenerate() => Instance.Call(MethodName.QueueRegenerate);
+    public void Regenerate() => Instance.Call(MethodName.Regenerate);
+    public void QueueExport() => Instance.Call(MethodName.QueueExport);
+    public void Export() => Instance.Call(MethodName.Export);
+
+    // /// <summary>
+    // /// Transforms <see cref="BasicPolygon2D"/>, rotating it by <paramref name="rotation"/> radians and scaling it by a factor of <paramref name="scale"/>.
+    // /// </summary>
+    // /// <remarks>Unlike other methods, this simply affects <see cref="OffsetRotation"/> and <see cref="Size"/>, regenerating the shape </remarks>
+    // /// <param name="rotation">The amount to rotate the shape in radians.</param>
+    // /// <param name="scale">The factor to scale the shape.</param>
+    // public void ApplyTransformation(float rotation, float scale, bool scale_width = true, bool scale_corner_size = true) => Instance.Call(MethodName.ApplyTransformation, rotation, scale, scale_width, scale_corner_size);
+    // public void ApplyTransformation(float rotation, float scale) => Instance.Call(MethodName.ApplyTransformation, rotation, scale);
 
     /// <inheritdoc cref="CanvasItem.QueueRedraw"/>
     public void QueueRedraw() => Instance.QueueRedraw();
@@ -106,6 +236,7 @@ public partial class BasicPolygon2D
         if (GDScriptEquivalent != instance.GetScript().As<GDScript>())
             throw new ArgumentException($"must have attached script '{GDScriptEquivalentPath}'.", nameof(instance));
 
+        SceneTree test = new();
         Instance = instance;
     }
     /// <inheritdoc cref="New"/>
@@ -126,13 +257,13 @@ public partial class BasicPolygon2D
         return GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition).As<Node2D>();
     }
 
-    /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="verticesCount"/>.</summary>
-    /// <param name="verticesCount">The number of vertices in the shape. If it is <c>1</c>, a value of <c>32</c> is used.</param>
-    /// <param name="size">The distance each corner vertices is from the center.</param>
-    /// <param name="offsetRotation">The rotation applied to the shape.</param>
-    /// <param name="offsetPosition">The center of the shape.</param>
-    public static Vector2[] GetShapeVertices(int verticesCount, float size = 1, float offsetRotation = 0, Vector2 offsetPosition = default)
-    => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
+    // /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="verticesCount"/>.</summary>
+    // /// <param name="verticesCount">The number of vertices in the shape. If it is <c>1</c>, a value of <c>32</c> is used.</param>
+    // /// <param name="size">The distance each corner vertices is from the center.</param>
+    // /// <param name="offsetRotation">The rotation applied to the shape.</param>
+    // /// <param name="offsetPosition">The center of the shape.</param>
+    // public static Vector2[] GetShapeVertices(int verticesCount, float size = 1, float offsetRotation = 0, Vector2 offsetPosition = default)
+    // => _shared.Value.Call(MethodName.GetShapeVertices, verticesCount, size, offsetRotation, offsetPosition).As<Vector2[]>();
 
     public static implicit operator Node2D(BasicPolygon2D instance) => instance.Instance;
     public static explicit operator BasicPolygon2D(Node2D instance) => new(instance);
