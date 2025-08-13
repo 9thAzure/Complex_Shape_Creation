@@ -184,4 +184,7 @@ public class BasicCollisionPolygon2D
     }
 
     public BasicCollisionPolygon2D() : this(GDScriptEquivalent.New().As<Node2D>()) {}
+
+    public static implicit operator Node2D(BasicCollisionPolygon2D node) => node.Instance;
+    public static explicit operator BasicCollisionPolygon2D(Node2D node) => new(node);
 }
