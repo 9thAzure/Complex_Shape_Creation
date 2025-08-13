@@ -41,6 +41,12 @@ public partial class BasicPolygon2D
         set => Instance.Set(PropertyName.RingRatio, value);
     }
 
+    public float CornerSize
+    {
+        get => Instance.Get(PropertyName.CornerSize).AsSingle();
+        set => Instance.Set(PropertyName.CornerSize, value);
+    }
+
     public int CornerDetail
     {
         get => Instance.Get(PropertyName.CornerDetail).AsInt32();

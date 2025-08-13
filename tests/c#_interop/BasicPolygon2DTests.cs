@@ -11,12 +11,12 @@ using Shouldly;
 namespace SimplifiedShapeCreation.Tests;
 
 [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
-public class SimplePolygon2DTests : TestClass
+public class BasicPolygon2DTests : TestClass
 {
     // readonly GDLog _log = new GDLog(nameof(SimplePolygon2D));
     readonly BasicPolygon2D _polygon = new();
     private Node _root;
-    public SimplePolygon2DTests(Node testScene) : base(testScene)
+    public BasicPolygon2DTests(Node testScene) : base(testScene)
     {
         _root = testScene;
         _root.AddChild(_polygon);

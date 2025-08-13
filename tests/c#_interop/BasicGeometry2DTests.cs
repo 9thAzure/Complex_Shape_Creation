@@ -4,9 +4,9 @@ using Shouldly;
 
 namespace SimplifiedShapeCreation.Tests;
 
-public class SimpleGeometry2DTests : TestClass
+public class BasicGeometry2DTests : TestClass
 {
-    public SimpleGeometry2DTests(Node testScene) : base(testScene)
+    public BasicGeometry2DTests(Node testScene) : base(testScene)
     {
     }
 
