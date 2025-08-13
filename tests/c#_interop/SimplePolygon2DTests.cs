@@ -1,73 +1,208 @@
-// using Chickensoft.GoDotCollections;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Chickensoft.GoDotLog;
 using Chickensoft.GoDotTest;
 using Godot;
+using Godot.Collections;
 using SimplifiedShapeCreation;
 using Shouldly;
 
 namespace SimplifiedShapeCreation.Tests;
 
+[SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
 public class SimplePolygon2DTests : TestClass
 {
     // readonly GDLog _log = new GDLog(nameof(SimplePolygon2D));
-    readonly BasicPolygon2D polygon = new();
+    readonly BasicPolygon2D _polygon = new();
+    private Node _root;
     public SimplePolygon2DTests(Node testScene) : base(testScene)
     {
+        _root = testScene;
+        _root.AddChild(_polygon);
     }
 
     [Test]
-    public void VerticesCount_Set3_Returns3()
+    public void Misc_SetMostProperties_GetSameValuesWithoutError()
     {
-        polygon.VerticesCount = 3;
-        
-        polygon.VerticesCount.ShouldBe(3);
+        int verticesCount = 5;
+        double[] sizes = { 10.0, 10.0 };
+        float ringRatio = 0.5f;
+        float cornerSize = 1.0f;
+        int cornerDetail = 1;
+        float arcStart = Mathf.Pi;
+        float arcAngle = Mathf.Pi;
+        ClosingMethod closingMethod = ClosingMethod.Arc;
+        bool roundArcEnds = true;
+        Vector2 offsetPosition = Vector2.One;
+        float offsetRotation = Mathf.Pi;
+        Vector2 offsetScale = Vector2.One * 2;
+        float offsetSkew = Mathf.Pi;
+        bool drawShape = false;
+        bool drawBorder = true;
+        float borderWidth = 1.0f;
+        Color color = Colors.Aqua;
+        Color borderColor = Colors.Aqua;
+        ExportBehavior exportBehavior = ExportBehavior.Editor;
+        bool exportAsHulls = true;
+        bool autoFree = true;
+        Godot.Collections.Array<NodePath> exportTargets = new Array<NodePath>();
+        exportTargets.Add(new NodePath(""));
+
+        _polygon.VerticesCount = verticesCount;
+        _polygon.Sizes = sizes;
+        _polygon.RingRatio = ringRatio;
+        _polygon.CornerSize = cornerSize;
+        _polygon.CornerDetail = cornerDetail;
+        _polygon.ArcStart = arcStart;
+        _polygon.ArcAngle = arcAngle;
+        _polygon.ClosingMethod = closingMethod;
+        _polygon.RoundArcEnds = roundArcEnds;
+        _polygon.OffsetPosition = offsetPosition;
+        _polygon.OffsetRotation = offsetRotation;
+        _polygon.OffsetScale = offsetScale;
+        _polygon.OffsetSkew = offsetSkew;
+        _polygon.DrawShape = drawShape;
+        _polygon.DrawBorder = drawBorder;
+        _polygon.BorderWidth = borderWidth;
+        _polygon.Color = color;
+        _polygon.BorderColor = borderColor;
+        _polygon.ExportBehavior = exportBehavior;
+        _polygon.ExportAsDecomposedHulls = exportAsHulls;
+        _polygon.AutoFree = autoFree;
+        _polygon.ExportTargets = exportTargets;
+
+        this.ShouldSatisfyAllConditions(
+            () => _polygon.VerticesCount.ShouldBe(verticesCount),
+            () => _polygon.RingRatio.ShouldBe(ringRatio),
+            () => _polygon.CornerSize.ShouldBe(cornerSize),
+            () => _polygon.CornerDetail.ShouldBe(cornerDetail),
+            () => _polygon.ArcStart.ShouldBe(arcStart),
+            () => _polygon.ArcAngle.ShouldBe(arcAngle),
+            () => _polygon.ClosingMethod.ShouldBe(closingMethod),
+            () => _polygon.RoundArcEnds.ShouldBe(roundArcEnds),
+            () => _polygon.OffsetPosition.ShouldBe(offsetPosition),
+            () => _polygon.OffsetRotation.ShouldBe(offsetRotation),
+            () => _polygon.OffsetScale.ShouldBe(offsetScale),
+            () => _polygon.OffsetSkew.ShouldBe(offsetSkew),
+            () => _polygon.DrawShape.ShouldBe(drawShape),
+            () => _polygon.DrawBorder.ShouldBe(drawBorder),
+            () => _polygon.BorderWidth.ShouldBe(borderWidth),
+            () => _polygon.Color.ShouldBe(color),
+            () => _polygon.BorderColor.ShouldBe(borderColor),
+            () => _polygon.ExportBehavior.ShouldBe(exportBehavior),
+            () => _polygon.ExportAsDecomposedHulls.ShouldBe(exportAsHulls),
+            () => _polygon.AutoFree.ShouldBe(autoFree),
+            () => _polygon.ExportTargets.Count.ShouldBe(exportTargets.Count)
+        );
     }
 
     [Test]
-    public void Size_Set8_Returns8()
+    public void Misc_SetChangingProperties_GetExpectedValues()
     {
-        polygon.Size = 8;
+        Transform2D offsetTransform = new Transform2D(2, 2, 2, 2, 2, 2);
 
-        polygon.Size.ShouldBe(8);
+        _polygon.ShouldSatisfyAllConditions(
+            p => (p.ArcStartDegrees = 180).ShouldBe(180),
+            p => (p.ArcAngleDegrees = 180).ShouldBe(180),
+            p => {p.ArcEndDegrees = 540; p.ShouldSatisfyAllConditions(() => p.ArcEndDegrees.ShouldBe(540), () => p.ArcAngleDegrees.ShouldBe(360));},
+            p => {p.ArcEnd = Mathf.Tau; p.ShouldSatisfyAllConditions(() => p.ArcEnd.ShouldBe(Mathf.Tau), () => p.ArcAngle.ShouldBe(Mathf.Pi));},
+            p => (p.OffsetTransform = offsetTransform).ShouldBe(offsetTransform)
+        );
     }
 
     [Test]
-    public void OffsetRotationDegrees_Set45_Returns45()
+    public void CreatedShapeType_SetAsPolyline_GetPolylineShapeType()
     {
-        polygon.OffsetRotationDegrees = 45;
+        _polygon.RingRatio = 0;
 
-        polygon.OffsetRotationDegrees.ShouldBe(45);
+        _polygon.Regenerate(); // shouldn't be necessary but oh well.
+
+        _polygon.CreatedShapeType.ShouldBe(ShapeType.Polyline);
     }
 
     [Test]
-    public void OffsetRotation_Set2_Returns2()
+    public void Regenerate_Called_CreatesShape()
     {
-        polygon.OffsetRotation = 2;
+        _polygon.Regenerate();
 
-        polygon.OffsetRotation.ShouldBe(2);
+        _polygon.ShouldSatisfyAllConditions(
+            p => p.CreatedShape.ShouldNotBeEmpty(),
+            p => p.CreatedShapeDecomposed.ShouldNotBeEmpty()
+        );
     }
 
     [Test]
-    public void Color_SetRed_ReturnsRed()
+    public void CanExport_SetShapeToExport_ReturnsTrue()
     {
-        polygon.Color = Colors.Red;
+        _polygon.ExportBehavior = ExportBehavior.Runtime | ExportBehavior.Editor;
 
-        polygon.Color.ShouldBe(Colors.Red);
+        _polygon.CanExport().ShouldBeTrue();
+    }
+
+    private BasicPolygon2D.ShapeCreatedEventHandler _used_handler;
+
+    [Cleanup]
+    public void CleanUp_Lambdas()
+    {
+        if (_used_handler is not null)
+        {
+            _polygon.ShapeCreated -= _used_handler;
+        }
+
+        _used_handler = null;
+    }
+
+    public async Task CheckForExport()
+    {
+        bool capture = false;
+
+        _used_handler = (_, _, _) => capture = true;
+        _polygon.ShapeCreated += _used_handler;
+
+        await _polygon.Instance.ToSignal(_polygon.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
+        await _polygon.Instance.ToSignal(_polygon.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
+
+        capture.ShouldBeTrue();
     }
 
     [Test]
-    public void OffsetPosition_SetOne_ReturnsOne()
+    public async Task ShapeCreated_CauseSignalActivation_RaiseEvent()
     {
-        polygon.OffsetPosition = Vector2.One;
-        
-        polygon.OffsetPosition.ShouldBe(Vector2.One);
+        _polygon.VerticesCount = 4;
+
+        var task = CheckForExport();
+        await task;
+        task.Exception.ShouldBeNull();
     }
 
     [Test]
-    public void GetShapeVertices_DiamondShape_Returns4LengthArray()
+    public async Task QueueRegenerate_Called_RaiseEvent()
     {
-        var array = BasicPolygon2D.GetShapeVertices(4, 1, Mathf.DegToRad(45));
+        _polygon.QueueRegenerate();
 
-        array.Length.ShouldBe(4);
+        var task = CheckForExport();
+        await task;
+        task.Exception.ShouldBeNull();
+    }
+
+    [Test]
+    public async Task QueueExport_Called_RaiseEvent()
+    {
+        _polygon.QueueExport();
+
+        var task = CheckForExport();
+        await task;
+        task.Exception.ShouldBeNull();
+    }
+
+    [Test]
+    public async Task Export_Called_RaiseEvent()
+    {
+        var task = CheckForExport();
+        _polygon.Export();
+
+        await task;
+        task.Exception.ShouldBeNull();
     }
 }
