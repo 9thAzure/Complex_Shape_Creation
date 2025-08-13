@@ -188,7 +188,7 @@ public partial class BasicPolygon2D
     public Godot.Collections.Array<NodePath> ExportTargets
     {
         get => Instance.Get(PropertyName.ExportTargets).AsGodotArray<NodePath>();
-        set => Instance.Set(PropertyName.ExportTargets, value);
+        set => Instance.Call(MethodName.SetExportTargets, value);
     }
     /// <summary>Position, relative to the node's parent.</summary>
     public Vector2 Position

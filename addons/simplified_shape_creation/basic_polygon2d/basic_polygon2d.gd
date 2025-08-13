@@ -268,6 +268,20 @@ var export_targets : Array[NodePath] = []:
 		export_targets = value
 		update_configuration_warnings()
 
+# for the purposes of c# interop, which cannot set typed arrays as of Godot v4.2 as the type isn't stored when interopping.
+func _set_export_targets(array : Array) -> void:
+	if array.is_same_typed(export_targets):
+		export_targets = array
+	if array.is_empty():
+		export_targets = []
+
+	var targets : Array[NodePath] = []
+	for value in array:
+		assert(typeof(value) == TYPE_NODE_PATH or typeof(value) == TYPE_STRING, "cannot convert %s from %s into a NodePath" % [value, array])
+		targets.push_back(value as NodePath)
+
+	export_targets = targets
+
 ## Emitted when a shape is exported.
 signal shape_created(shape : PackedVector2Array, decomposed_shape : Array[PackedVector2Array], shape_type : ShapeType)
 

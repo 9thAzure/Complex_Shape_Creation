@@ -30,6 +30,7 @@ public static class MethodName
     public static readonly StringName GetBasicPolygon = new("get_basic_polygon");
     public static readonly StringName GetShape = new("get_shape");
     public static readonly StringName ShapeCount = new("shape_count");
+    public static readonly StringName SetExportTargets = new("_set_export_targets");
     public static readonly StringName SetPointAngle = new("set_point_angle");
     public static readonly StringName GetStarVertices = new("get_star_vertices");
     public static readonly StringName WidenPolyline = new("_widen_polyline_result");
