@@ -257,8 +257,8 @@ public partial class BasicPolygon2D
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="BasicPolygon2D"/>.</summary>
     /// <remarks>See also: <seealso cref="New"/>.</remarks>
     public BasicPolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
+    : this(BasicPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition))
     {
-        Instance = BasicPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition);
     }
     /// <inheritdoc cref="GetShapeVertices"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>

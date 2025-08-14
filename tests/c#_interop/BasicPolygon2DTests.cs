@@ -14,12 +14,32 @@ namespace SimplifiedShapeCreation.Tests;
 public class BasicPolygon2DTests : TestClass
 {
     // readonly GDLog _log = new GDLog(nameof(SimplePolygon2D));
-    readonly BasicPolygon2D _polygon = new();
+    private BasicPolygon2D _polygon;
     private Node _root;
     public BasicPolygon2DTests(Node testScene) : base(testScene)
     {
         _root = testScene;
+    }
+
+    [Setup]
+    public void Setup()
+    {
+        _polygon = new();
         _root.AddChild(_polygon);
+    }
+
+    [Cleanup]
+    public void CleanUp_Lambdas()
+    {
+        if (_used_handler is not null)
+        {
+            _polygon.ShapeCreated -= _used_handler;
+        }
+
+        _used_handler = null;
+
+        _polygon.Instance.QueueFree();
+        _root.RemoveChild(_polygon);
     }
 
     [Test]
@@ -142,46 +162,46 @@ public class BasicPolygon2DTests : TestClass
 
     private BasicPolygon2D.ShapeCreatedEventHandler _used_handler;
 
-    [Cleanup]
-    public void CleanUp_Lambdas()
-    {
-        if (_used_handler is not null)
-        {
-            _polygon.ShapeCreated -= _used_handler;
-        }
-
-        _used_handler = null;
-    }
-
-    public async Task CheckForExport()
+    public async Task<bool> CheckForExport()
     {
         bool capture = false;
 
-        _used_handler = (_, _, _) => capture = true;
+        _used_handler = (_, _, _) =>
+        {
+            capture = true;
+        };
         _polygon.ShapeCreated += _used_handler;
 
-        await _polygon.Instance.ToSignal(_polygon.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
-        await _polygon.Instance.ToSignal(_polygon.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
+        for (int i = 0; i < 4; i++)
+        {
+            await _polygon.Instance.ToSignal(_polygon.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
+        }
 
-        capture.ShouldBeTrue();
+        _polygon.ShapeCreated -= _used_handler;
+        _used_handler = null;
+
+        return capture;
     }
 
     [Test]
     public async Task ShapeCreated_CauseSignalActivation_RaiseEvent()
     {
+        var task = CheckForExport();
+
         _polygon.VerticesCount = 4;
 
-        var task = CheckForExport();
         await task;
         task.Exception.ShouldBeNull();
+        task.Result.ShouldBeTrue();
     }
 
     [Test]
     public async Task QueueRegenerate_Called_RaiseEvent()
     {
+        var task = CheckForExport();
+
         _polygon.QueueRegenerate();
 
-        var task = CheckForExport();
         await task;
         task.Exception.ShouldBeNull();
     }
@@ -189,9 +209,10 @@ public class BasicPolygon2DTests : TestClass
     [Test]
     public async Task QueueExport_Called_RaiseEvent()
     {
+        var task = CheckForExport();
+
         _polygon.QueueExport();
 
-        var task = CheckForExport();
         await task;
         task.Exception.ShouldBeNull();
     }
@@ -200,9 +221,16 @@ public class BasicPolygon2DTests : TestClass
     public async Task Export_Called_RaiseEvent()
     {
         var task = CheckForExport();
+
         _polygon.Export();
 
         await task;
         task.Exception.ShouldBeNull();
+    }
+
+    [Test]
+    public void DummyTest()
+    {
+        // Gets previous async tests to complete fully.
     }
 }
