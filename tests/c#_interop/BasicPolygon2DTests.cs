@@ -15,7 +15,7 @@ public class BasicPolygon2DTests : TestClass
 {
     // readonly GDLog _log = new GDLog(nameof(SimplePolygon2D));
     private BasicPolygon2D _polygon;
-    private Node _root;
+    private readonly Node _root;
     public BasicPolygon2DTests(Node testScene) : base(testScene)
     {
         _root = testScene;
@@ -29,7 +29,7 @@ public class BasicPolygon2DTests : TestClass
     }
 
     [Cleanup]
-    public void CleanUp_Lambdas()
+    public void CleanUp()
     {
         if (_used_handler is not null)
         {
@@ -92,7 +92,7 @@ public class BasicPolygon2DTests : TestClass
         _polygon.AutoFree = autoFree;
         _polygon.ExportTargets = exportTargets;
 
-        this.ShouldSatisfyAllConditions(
+        _polygon.ShouldSatisfyAllConditions(
             () => _polygon.VerticesCount.ShouldBe(verticesCount),
             () => _polygon.RingRatio.ShouldBe(ringRatio),
             () => _polygon.CornerSize.ShouldBe(cornerSize),
@@ -136,7 +136,7 @@ public class BasicPolygon2DTests : TestClass
     {
         _polygon.RingRatio = 0;
 
-        _polygon.Regenerate(); // shouldn't be necessary but oh well.
+        _polygon.Regenerate();
 
         _polygon.CreatedShapeType.ShouldBe(ShapeType.Polyline);
     }
