@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using SimplifiedShapeCreation.MemberNames;
 
 namespace SimplifiedShapeCreation;
 
@@ -193,4 +192,42 @@ public class BasicCollisionPolygon2D
 
     public static implicit operator Node2D(BasicCollisionPolygon2D node) => node.Instance;
     public static explicit operator BasicCollisionPolygon2D(Node2D node) => new(node);
+
+    public class PropertyName : Node2D.PropertyName
+    {
+        public static readonly StringName Disabled = new("disabled");
+        public static readonly StringName OneWayCollision = new("one_way_collision");
+        public static readonly StringName OneWayCollisionMargin = new("one_way_collision_margin");
+        public static readonly StringName VerticesCount = new("vertices_count");
+        public static readonly StringName Sizes = new("sizes");
+        public static readonly StringName OffsetRotationDegrees = new("offset_rotation_degrees");
+        public static readonly StringName OffsetRotation = new("offset_rotation");
+        public static readonly StringName OffsetScale = new("offset_scale");
+        public static readonly StringName OffsetSkew = new("offset_skew");
+        public static readonly StringName OffsetTransform = new("offset_transform");
+        public static readonly StringName OffsetPosition = new("offset_position");
+        public static readonly StringName RingRatio = new("ring_ratio");
+        public static readonly StringName ArcStart = new("arc_start");
+        public static readonly StringName ArcAngle = new("arc_angle");
+        public static readonly StringName ArcEnd = new("arc_end");
+        public static readonly StringName ArcStartDegrees = new("arc_start_degrees");
+        public static readonly StringName ArcAngleDegrees = new("arc_angle_degrees");
+        public static readonly StringName ArcEndDegrees = new("arc_end_degrees");
+        public static readonly StringName CornerSize = new("corner_size");
+        public static readonly StringName CornerDetail = new("corner_detail");
+        public static readonly StringName ClosingMethod = new("closing_method");
+        public static readonly StringName RoundArcEnds = new("round_arc_ends");
+    }
+
+    public class MethodName : Node2D.MethodName
+    {
+        public static readonly StringName GetCreatedShape = new("get_created_shape");
+        public static readonly StringName GetCreatedShapeDecomposed = new("get_created_shape_decomposed");
+        public static readonly StringName GetCreatedShapeType = new("get_created_shape_type");
+        public static readonly StringName GetBasicPolygon = new("get_basic_polygon");
+        public static readonly StringName GetShape = new("get_shape");
+        public static readonly StringName ShapeCount = new("shape_count");
+    }
+
+    public class SignalName : Node2D.SignalName {}
 }

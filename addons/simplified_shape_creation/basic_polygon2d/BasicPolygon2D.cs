@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using Godot;
-using SimplifiedShapeCreation.MemberNames;
 
 namespace SimplifiedShapeCreation;
 
@@ -281,4 +280,53 @@ public partial class BasicPolygon2D
 
     public static implicit operator Node2D(BasicPolygon2D instance) => instance.Instance;
     public static explicit operator BasicPolygon2D(Node2D instance) => new(instance);
+
+    public class PropertyName : Node2D.PropertyName
+    {
+        public static readonly StringName VerticesCount = new("vertices_count");
+        public static readonly StringName Sizes = new("sizes");
+        public static readonly StringName OffsetRotationDegrees = new("offset_rotation_degrees");
+        public static readonly StringName OffsetRotation = new("offset_rotation");
+        public static readonly StringName OffsetScale = new("offset_scale");
+        public static readonly StringName OffsetSkew = new("offset_skew");
+        public static readonly StringName OffsetTransform = new("offset_transform");
+        public static readonly StringName Color = new("color");
+        public static readonly StringName OffsetPosition = new("offset_position");
+        public static readonly StringName RingRatio = new("ring_ratio");
+        public static readonly StringName ArcStart = new("arc_start");
+        public static readonly StringName ArcAngle = new("arc_angle");
+        public static readonly StringName ArcEnd = new("arc_end");
+        public static readonly StringName ArcStartDegrees = new("arc_start_degrees");
+        public static readonly StringName ArcAngleDegrees = new("arc_angle_degrees");
+        public static readonly StringName ArcEndDegrees = new("arc_end_degrees");
+        public static readonly StringName CornerSize = new("corner_size");
+        public static readonly StringName CornerDetail = new("corner_detail");
+        public static readonly StringName ClosingMethod = new("closing_method");
+        public static readonly StringName RoundArcEnds = new("round_arc_ends");
+        public static readonly StringName DrawShape = new("draw_shape");
+        public static readonly StringName DrawBorder = new("draw_border");
+        public static readonly StringName BorderWidth = new("border_width");
+        public static readonly StringName BorderColor = new("border_color");
+        public static readonly StringName ExportBehavior = new("export_behavior");
+        public static readonly StringName ExportAsDecomposedHulls = new("export_as_decomposed_hulls");
+        public static readonly StringName AutoFree = new("auto_free");
+        public static readonly StringName ExportTargets = new("export_targets");
+    }
+    public class MethodName : Node2D.MethodName
+    {
+        public static readonly StringName QueueRegenerate = new("queue_regenerate");
+        public static readonly StringName Regenerate = new("regenerate");
+        public static readonly StringName QueueExport = new("queue_export");
+        public static readonly StringName Export = new("export");
+        public static readonly StringName CanExport = new("is_exporting");
+        public static readonly StringName SetExportTargets = new("_set_export_targets");
+        public static readonly StringName GetCreatedShape = new("get_created_shape");
+        public static readonly StringName GetCreatedShapeDecomposed = new("get_created_shape_decomposed");
+        public static readonly StringName GetCreatedShapeType = new("get_created_shape_type");
+    }
+
+    public class SignalName : Node2D.SignalName
+    {
+        public static readonly StringName ShapeCreated = new("shape_created");
+    }
 }
