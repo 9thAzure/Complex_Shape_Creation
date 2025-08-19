@@ -9,7 +9,7 @@ extends Node2D
 ## The created shape can be accessed by [method get_created_shape], connecting the [signal shape_exported] signal,
 ## or by using the [BasicPolygon2D]'s export system with [member export_targets].
 ## [br][br]The shape is regenerated and exported whenever any of the shape properties are changed, and exported whenever any
-## of the export properties are changed and [method is_exporting] returns [code]true[/code].
+## of the export properties are changed and [method can_export] returns [code]true[/code].
 
 @export_group("Generation")
 ## The number of vertices in the regular shape.
@@ -231,9 +231,9 @@ var border_color := Color.BLACK:
 @export_flags("Editor:1", "Runtime:2")
 var export_behavior : int = ExportBehavior.DISABLED:
 	set(value):
-		var was_exporting := is_exporting()
+		var was_exporting := can_export()
 		export_behavior = value
-		if not was_exporting and is_exporting():
+		if not was_exporting and can_export():
 			queue_export()
 
 ## When the [BasicPolygon2D] should set the [member export_targets].
@@ -258,7 +258,7 @@ var auto_free := false
 @export_group("Exporting", "export")
 
 ## The properties to set with the created shape when exporting. See description of [NodePath] for how to reference a (sub) property.
-## [br][br]Requires [method is_exporting] to return [code]true[/code] for these properties to be set.
+## [br][br]Requires [method can_export] to return [code]true[/code] for these properties to be set.
 ## The type of the set value depends on [member export_as_decomposed_hulls].
 @export
 var export_targets : Array[NodePath] = []:
@@ -308,7 +308,7 @@ func _property_get_revert(_property: StringName) -> Variant: return PackedFloat6
 ## Returns [code]true[/code] when [member export_targets] will be set on [method export]. This is the case when
 ## [member export_behavior] has the flag of [enum ExportBehavior] set which corrosponds to where this [BasicPolygon2D] is running, in editor or at runtime.
 ## [br][br][b]Note:[/b] [signal shape_exported] is emitted on [method export] regardless of this methods return value.
-func is_exporting() -> bool:
+func can_export() -> bool:
 	var in_editor := Engine.is_editor_hint()
 	return in_editor and (export_behavior & ExportBehavior.EDITOR) > 0 or not in_editor and (export_behavior & ExportBehavior.RUN_TIME) > 0
 
@@ -524,13 +524,13 @@ func queue_export() -> void:
 	export()
 
 ## Instantly exports the previously created shape, emitting [signal shape_exported],
-## as well as setting the export properties if [method is_exporting] returns [code]true[/code].
+## as well as setting the export properties if [method can_export] returns [code]true[/code].
 ## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func export() -> void:
 	_queue_status = _UNQUEUED
 
 	shape_exported.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
-	if is_exporting():
+	if can_export():
 		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
 		for path in export_targets:
 			var node := self if path.get_name_count() == 0 else get_node(NodePath(String(path.get_concatenated_names())))

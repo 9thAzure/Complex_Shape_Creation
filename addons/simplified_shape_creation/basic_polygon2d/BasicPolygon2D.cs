@@ -432,7 +432,7 @@ public class BasicPolygon2D
         public static readonly StringName Regenerate = new("regenerate");
         public static readonly StringName QueueExport = new("queue_export");
         public static readonly StringName Export = new("export");
-        public static readonly StringName CanExport = new("is_exporting");
+        public static readonly StringName CanExport = new("can_export");
         public static readonly StringName SetExportTargets = new("_set_export_targets");
         public static readonly StringName GetCreatedShape = new("get_created_shape");
         public static readonly StringName GetCreatedShapeDecomposed = new("get_created_shape_decomposed");
