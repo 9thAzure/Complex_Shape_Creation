@@ -232,10 +232,10 @@ func _init() -> void:
 	_basic_polygon_instance = BasicPolygon2D.new()
 	_basic_polygon_instance.draw_shape = false
 	_basic_polygon_instance.export_behavior = BasicPolygon2D.ExportBehavior.EDITOR | BasicPolygon2D.ExportBehavior.RUN_TIME
-	_basic_polygon_instance.shape_created.connect(_on_shape_created)
+	_basic_polygon_instance.shape_exported.connect(_on_shape_exported)
 	add_child(_basic_polygon_instance, false, INTERNAL_MODE_FRONT)
 
-func _on_shape_created(shape : PackedVector2Array, decomposed : Array[PackedVector2Array], type : BasicPolygon2D.ShapeType) -> void:
+func _on_shape_exported(shape : PackedVector2Array, decomposed : Array[PackedVector2Array], type : BasicPolygon2D.ShapeType) -> void:
 	if absf(arc_angle) <= PI and ring_ratio < 1 and ring_ratio > 0 and closing_method == BasicPolygon2D.ClosingMethod.CHORD:
 		_collision_shapes = []
 		return

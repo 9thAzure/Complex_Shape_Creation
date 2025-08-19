@@ -6,7 +6,7 @@ extends Node2D
 ## A basic shape creater.
 ##
 ## A node for creating and drawing basic shapes, acting as a simplified wrapper around [BasicGeometry2D].
-## The created shape can be accessed by [method get_created_shape], connecting the [signal shape_created] signal,
+## The created shape can be accessed by [method get_created_shape], connecting the [signal shape_exported] signal,
 ## or by using the [BasicPolygon2D]'s export system with [member export_targets].
 ## [br][br]The shape is regenerated and exported whenever any of the shape properties are changed, and exported whenever any
 ## of the export properties are changed and [method is_exporting] returns [code]true[/code].
@@ -283,7 +283,7 @@ func _set_export_targets(array : Array) -> void:
 	export_targets = targets
 
 ## Emitted when a shape is exported.
-signal shape_created(shape : PackedVector2Array, decomposed_shape : Array[PackedVector2Array], shape_type : ShapeType)
+signal shape_exported(shape : PackedVector2Array, decomposed_shape : Array[PackedVector2Array], shape_type : ShapeType)
 
 var _created_shape : PackedVector2Array = []:
 	set(value):
@@ -307,7 +307,7 @@ func _property_get_revert(_property: StringName) -> Variant: return PackedFloat6
 
 ## Returns [code]true[/code] when [member export_targets] will be set on [method export]. This is the case when
 ## [member export_behavior] has the flag of [enum ExportBehavior] set which corrosponds to where this [BasicPolygon2D] is running, in editor or at runtime.
-## [br][br][b]Note:[/b] [signal shape_created] is emitted on [method export] regardless of this methods return value.
+## [br][br][b]Note:[/b] [signal shape_exported] is emitted on [method export] regardless of this methods return value.
 func is_exporting() -> bool:
 	var in_editor := Engine.is_editor_hint()
 	return in_editor and (export_behavior & ExportBehavior.EDITOR) > 0 or not in_editor and (export_behavior & ExportBehavior.RUN_TIME) > 0
@@ -523,13 +523,13 @@ func queue_export() -> void:
 
 	export()
 
-## Instantly exports the previously created shape, emitting [signal shape_created],
+## Instantly exports the previously created shape, emitting [signal shape_exported],
 ## as well as setting the export properties if [method is_exporting] returns [code]true[/code].
 ## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func export() -> void:
 	_queue_status = _UNQUEUED
 
-	shape_created.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
+	shape_exported.emit(_created_shape, _decomposed_created_shape, get_created_shape_type())
 	if is_exporting():
 		var exported_objects : Variant = _decomposed_created_shape if export_as_decomposed_hulls else _created_shape
 		for path in export_targets:

@@ -4,5 +4,5 @@ namespace SimplifiedShapeCreation.MemberNames;
 
 public static class SignalName
 {
-    public static readonly StringName ShapeCreated = new("shape_created");
+    public static readonly StringName ShapeExported = new("shape_exported");
 }

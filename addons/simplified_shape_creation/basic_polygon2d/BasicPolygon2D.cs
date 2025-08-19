@@ -5,7 +5,7 @@ namespace SimplifiedShapeCreation;
 
 /// <summary>
 /// A node for creating and drawing basic shapes, acting as a simplified wrapper around <see cref="BasicGeometry2D"/>.
-/// The created shape can be accessed by <see cref="CreatedShape"/>, connecting the <see cref="ShapeCreated"/> signal,
+/// The created shape can be accessed by <see cref="CreatedShape"/>, connecting the <see cref="ShapeExported"/> signal,
 /// or by using the <see cref="BasicPolygon2D"/>'s export system with <see cref="ExportTargets"/>.
 /// <br/><br/>The shape is regenerated and exported whenever any of the shape properties are changed, and exported whenever any
 /// of the export properties are changed and <see cref="CanExport"/> returns <see langword="true"/>.
@@ -26,9 +26,9 @@ public class BasicPolygon2D
     public Node2D Instance { get; }
 
     /// <summary>Emitted when a shape is exported.</summary>
-    public delegate void ShapeCreatedEventHandler(Vector2[] shape, Godot.Collections.Array<Vector2[]> shapeDecomposed, ShapeType shapeType);
-    /// <inheritdoc cref="ShapeCreatedEventHandler"/>
-    public event ShapeCreatedEventHandler ShapeCreated;
+    public delegate void ShapeExportedEventHandler(Vector2[] shape, Godot.Collections.Array<Vector2[]> shapeDecomposed, ShapeType shapeType);
+    /// <inheritdoc cref="ShapeExportedEventHandler"/>
+    public event ShapeExportedEventHandler ShapeExported;
 
     /// <summary>
     /// The number of vertices in the regular shape.
@@ -310,7 +310,7 @@ public class BasicPolygon2D
     /// <remarks>
     /// This is the case when <see cref="ExportBehavior"/> has the flag of <see cref="global::SimplifiedShapeCreation.ExportBehavior"/>
     /// set which corresponds to whether this <see cref="BasicPolygon2D"/>  is running in editor or at runtime.
-    /// <br/><br/><see cref="ShapeCreated"/> is emiited on <see cref="Export"/> regardless of this method's return value.
+    /// <br/><br/><see cref="ShapeExported"/> is emiited on <see cref="Export"/> regardless of this method's return value.
     /// </remarks>
     /// <returns>
     /// Returns <see langword="true"/> <see cref="ExportTargets"/> will be set on <see cref="Export"/>.
@@ -342,7 +342,7 @@ public class BasicPolygon2D
     public void QueueExport() => Instance.Call(MethodName.QueueExport);
 
     /// <summary>
-    /// Instantly exports the previously created shape, emitting <see cref="ShapeCreated"/>,
+    /// Instantly exports the previously created shape, emitting <see cref="ShapeExported"/>,
     /// as well as setting the <see cref="ExportTargets"/> if <see cref="CanExport"/> returns <see langword="true"/>.
     /// </summary>
     /// <export>Removes queued <see cref="QueueRegenerate"/> and <see cref="QueueExport"/> calls.</export>
@@ -373,7 +373,7 @@ public class BasicPolygon2D
             throw new ArgumentException($"must have attached script '{GDScriptEquivalentPath}'.", nameof(instance));
 
         Instance = instance;
-        instance.Connect(SignalName.ShapeCreated, Callable.From<Vector2[], Godot.Collections.Array<Vector2[]>, ShapeType>((shape, decomposed, type) => ShapeCreated?.Invoke(shape, decomposed, type)));
+        instance.Connect(SignalName.ShapeExported, Callable.From<Vector2[], Godot.Collections.Array<Vector2[]>, ShapeType>((shape, decomposed, type) => ShapeExported?.Invoke(shape, decomposed, type)));
     }
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="BasicPolygon2D"/>.</summary>
     public BasicPolygon2D()
@@ -442,6 +442,6 @@ public class BasicPolygon2D
     /// <summary>Cached <see cref="StringName"/>s for the signals contained in this class, for fast lookup.</summary>
     public class SignalName : Node2D.SignalName
     {
-        public static readonly StringName ShapeCreated = new("shape_created");
+        public static readonly StringName ShapeExported = new("shape_exported");
     }
 }
