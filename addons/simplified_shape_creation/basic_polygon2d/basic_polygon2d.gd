@@ -650,15 +650,3 @@ func _draw() -> void:
 			draw_multiline(_created_shape, border_color if draw_border else color, border_width if border_width > 0 else -1)
 		_:
 			assert(false, "unexpected match case: %s" % get_created_shape_type())
-
-func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
-	if vertices_count != 1:
-		self.vertices_count = vertices_count
-	if size != 10.0:
-		self.size = size
-	if offset_rotation != 0.0:
-		self.offset_rotation = offset_rotation
-	if color != Color.WHITE:
-		self.color = color
-	if offset_position != Vector2.ZERO:
-		self.offset = offset_position

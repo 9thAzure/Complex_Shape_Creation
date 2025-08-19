@@ -375,21 +375,10 @@ public class BasicPolygon2D
         Instance = instance;
         instance.Connect(SignalName.ShapeCreated, Callable.From<Vector2[], Godot.Collections.Array<Vector2[]>, ShapeType>((shape, decomposed, type) => ShapeCreated?.Invoke(shape, decomposed, type)));
     }
-    /// <inheritdoc cref="New"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> wrapped by a new <see cref="BasicPolygon2D"/>.</summary>
-    /// <remarks>See also: <seealso cref="New"/>.</remarks>
-    public BasicPolygon2D(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
-    : this(BasicPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition))
+    public BasicPolygon2D()
+    : this(GDScriptEquivalent.New().As<Node2D>())
     {
-    }
-    /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
-    /// <param name="verticesCount">The number of vertices in the shape. A <c>1</c> draws a circle, a <c>2</c> draws a line.</param>
-    /// <param name="color">The color of the shape.</param>
-    public static Node2D New(int verticesCount = 1, float size = 10, float offsetRotation = 0, Color? color = default, Vector2 offsetPosition = default)
-    {
-        Debug.Assert(GDScriptEquivalent is not null);
-        color ??= Colors.White;
-        return GDScriptEquivalent.New(verticesCount, size, offsetRotation, color.Value, offsetPosition).As<Node2D>();
     }
 
     // /// <summary>Returns an array of <see cref="Vector2"/>s with the points for the shape with the specified <paramref name="verticesCount"/>.</summary>
