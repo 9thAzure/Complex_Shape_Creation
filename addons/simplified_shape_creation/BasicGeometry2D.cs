@@ -18,8 +18,6 @@ public static class BasicGeometry2D
     private static readonly ScriptLoader Loader = new();
     private class ScriptLoader : Lazy<GodotObject>, IDisposable
     {
-        private static readonly GDScript Script = GD.Load<GDScript>("res://addons/simplified_shape_creation/simple_geometry2d.gd");
-
         public ScriptLoader() : base(Factory, LazyThreadSafetyMode.ExecutionAndPublication)
         {
         }
@@ -30,7 +28,9 @@ public static class BasicGeometry2D
             {
                 tree.Root.TreeExiting += BasicGeometry2D.Dispose;
             }
-            return Script.New(true).AsGodotObject();
+
+            var gdScript = GD.Load<GDScript>("res://addons/simplified_shape_creation/basic_geometry2d.gd");
+            return gdScript.New(true).AsGodotObject();
         }
 
         ~ScriptLoader()
@@ -74,18 +74,17 @@ public static class BasicGeometry2D
     /// </summary>
     /// <param name="verticesCount">The number of points on the base shape. If it is a value of <c>1</c>, a value of <c>32</c> is used instead.</param>
     /// <param name="sizes">Determines the length of each point from the center of the base shape, being repeatedly iterated through to get the length for each corner.</param>
-    /// <param name="offsetRotation">The amount in radians to rotate the shape.</param>
-    /// <param name="offsetPosition">The amount to shift the shape.</param>
+    /// <param name="offsetTransform">The offset transform of the created shape.</param>
     /// <param name="arcStart">The starting angle of the arc out of the base shape that is cut out and returned, in radians.</param>
     /// <param name="arcEnd">The ending angle of the arc out of the base shape that is cut out and returned, in radians.</param>
     /// <param name="addCentralPoint">If <c>true</c>, adds a center point to the shape. It is automatically false if the arc of the shape is a complete circle.</param>
     /// <returns>A <see cref="T:Vector2[]"/> describing the shape specified by the parameters.</returns>
-    public static Vector2[] CreateShape(int verticesCount, double[] sizes, double offsetRotation = 0d,
-        Vector2 offsetPosition = default, double arcStart = 0d, double arcEnd = Math.Tau, bool addCentralPoint = true)
+    public static Vector2[] CreateShape(int verticesCount, double[] sizes, Transform2D? offsetTransform = null,
+        double arcStart = 0d, double arcEnd = Math.Tau, bool addCentralPoint = true)
     {
         Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
         Debug.Assert(Loader.Value.HasMethod(MethodName.CreateShape));
-        return Loader.Value.Call(MethodName.CreateShape, verticesCount, sizes, offsetRotation, offsetPosition,
+        return Loader.Value.Call(MethodName.CreateShape, verticesCount, sizes, offsetTransform ?? Transform2D.Identity,
             arcStart, arcEnd, addCentralPoint).AsVector2Array();
     }
 
@@ -110,12 +109,12 @@ public static class BasicGeometry2D
     /// <remarks>The method uses quadratic Bézier curves to place the points on the rounded corner.</remarks>
     /// <param name="shape">The base shape.</param>
     /// <param name="cornerSize">The distance along the edge where the smoothed corner will start from.</param>
-    /// <param name="cornerSmoothness">How many lines are in each corner.</param>
+    /// <param name="cornerDetail">How many lines are in each corner.</param>
     /// <returns>A <see cref="T:Vector2[]"/>, representing the shape of <paramref name="shape"/> with rounded corners.</returns>
-    public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerSmoothness)
+    public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerDetail)
     {
         Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
         Debug.Assert(Loader.Value.HasMethod(MethodName.AddRoundedCorners));
-        return Loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerSmoothness).AsVector2Array();
+        return Loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerDetail).AsVector2Array();
     }
 }

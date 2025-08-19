@@ -343,11 +343,11 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 	return warnings
 
-## Get the number of [Shape2D]s that this [BasicCollisionPolygon2D] is providing.
+## Gets the number of [Shape2D]s that this [BasicCollisionPolygon2D] is providing.
 func shape_count() -> int: return _collision_shapes.size()
 
-## Get the [Shape2D] at the given index. The number of [Shape2D]s is provided by [method shape_count].
+## Gets the [Shape2D] at the given index. The number of [Shape2D]s is provided by [method shape_count].
 func get_shape(index : int) -> Shape2D: return _collision_shapes[index]
 
-## Get the underlying [BasicPolygon2D] instance that generates the shapes this [BasicCollisionPolygon2D] provides.
+## Gets the underlying [BasicPolygon2D] instance that generates the shapes this [BasicCollisionPolygon2D] provides.
 func get_basic_polygon() -> BasicPolygon2D: return _basic_polygon_instance

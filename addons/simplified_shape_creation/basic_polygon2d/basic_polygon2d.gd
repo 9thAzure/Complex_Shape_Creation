@@ -108,14 +108,14 @@ var arc_end_degrees : float:
 ## Methods for closing an open shape.
 enum ClosingMethod {
 	## Shape is closed with two lines between the ends and the center of the shape.
-	SLICE,
+	SLICE = 0,
 	## Shape is closed by connected the 2 ends together directly.
 	CHORD,
 	## Shape is left open. This only has an effect for ring shapes, and is otherwise equivalent to [enum ClosingStrategy].SLICE.
 	ARC,
 }
 
-## The method for closing an open shape. See [enum ClosingMethod]
+## The method for closing an open shape. See [enum ClosingMethod].
 @export
 var closing_method : ClosingMethod = ClosingMethod.SLICE:
 	set(value):
@@ -268,6 +268,20 @@ var export_targets : Array[NodePath] = []:
 		export_targets = value
 		update_configuration_warnings()
 
+# for the purposes of c# interop, which cannot set typed arrays as of Godot v4.2 as the type isn't stored when interopping.
+func _set_export_targets(array : Array) -> void:
+	if array.is_same_typed(export_targets):
+		export_targets = array
+	if array.is_empty():
+		export_targets = []
+
+	var targets : Array[NodePath] = []
+	for value in array:
+		assert(typeof(value) == TYPE_NODE_PATH or typeof(value) == TYPE_STRING, "cannot convert %s from %s into a NodePath" % [value, array])
+		targets.push_back(value as NodePath)
+
+	export_targets = targets
+
 ## Emitted when a shape is exported.
 signal shape_created(shape : PackedVector2Array, decomposed_shape : Array[PackedVector2Array], shape_type : ShapeType)
 
@@ -299,14 +313,16 @@ func is_exporting() -> bool:
 	return in_editor and (export_behavior & ExportBehavior.EDITOR) > 0 or not in_editor and (export_behavior & ExportBehavior.RUN_TIME) > 0
 
 ## Gets the created shape.
+## [br][br][b]Note[/b]: The returned value is [b]Not[/b] a copy, and modifications to it will persist for all future consumers until the shape is regenerated.
 func get_created_shape() -> PackedVector2Array: return _created_shape
 ## Gets the created shape, decomposed into convex hulls.
+## [br][br][b]Note[/b]: The returned value is [b]Not[/b] a copy, and modifications to it will persist for all future consumers until the shape is regenerated.
 func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomposed_created_shape
 
 ## The type of shape created.
 enum ShapeType {
 	## The shape is a polygon.
-	POLYGON,
+	POLYGON = 0,
 	## The shape is a line, where each point is connected to the previous and next points, leading to interconnected lines.
 	## The first and last points are not connected.
 	POLYLINE,
@@ -335,6 +351,7 @@ func _enter_tree() -> void:
 
 ## Queue the [BasicPolygon2D] to regenerate and export the shape. Called when the Generation properties are modified.
 ## Multiple calls will be converted to a single call. See [method regenerate].
+## Removes queued [method queue_export] calls.
 ## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method regenerate] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_regenerate() -> void:
 	if _queue_status >= _QUEUE_REGENERATE:
@@ -350,7 +367,7 @@ func queue_regenerate() -> void:
 
 	regenerate()
 
-## Instantly regenerates the shape, than exports it with [method export].
+## Instantly regenerates the shape, than [method export]s it.
 ## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func regenerate() -> void:
 	_queue_status = _UNQUEUED
@@ -491,7 +508,6 @@ func _get_property_list() -> Array[Dictionary]:
 	return properties
 
 ## Queue the [BasicPolygon2D] to export the shape. Multiple calls will be converted to a single call.
-## The queued call will be removed if [method queue_regenerate], [method regenerate], or [method export] is called.
 ## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method export] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_export() -> void:
 	if _queue_status >= _QUEUE_DISPERSE:
@@ -507,7 +523,7 @@ func queue_export() -> void:
 
 	export()
 
-## Instantly exports the previously credated shape, emitting [signal shape_created],
+## Instantly exports the previously created shape, emitting [signal shape_created],
 ## as well as setting the export properties if [method is_exporting] returns [code]true[/code].
 ## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func export() -> void:
@@ -634,15 +650,3 @@ func _draw() -> void:
 			draw_multiline(_created_shape, border_color if draw_border else color, border_width if border_width > 0 else -1)
 		_:
 			assert(false, "unexpected match case: %s" % get_created_shape_type())
-
-func _init(vertices_count : int = 1, size := 10.0, offset_rotation := 0.0, color := Color.WHITE, offset_position := Vector2.ZERO):
-	if vertices_count != 1:
-		self.vertices_count = vertices_count
-	if size != 10.0:
-		self.size = size
-	if offset_rotation != 0.0:
-		self.offset_rotation = offset_rotation
-	if color != Color.WHITE:
-		self.color = color
-	if offset_position != Vector2.ZERO:
-		self.offset = offset_position
