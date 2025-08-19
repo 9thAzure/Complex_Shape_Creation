@@ -139,14 +139,6 @@ var offset_position := Vector2.ZERO:
 		offset_position = value
 		queue_regenerate()
 
-## @deprecated
-## The offset position of the shape.
-var offset : Vector2 = Vector2.ZERO:
-	set(value):
-		printerr("don't use")
-		offset = value
-		queue_regenerate()
-
 ## The offset rotation of the shape, in radians.
 @export_range(-360, 360, 0.1, "or_greater", "or_less", "radians")
 var offset_rotation : float = 0:
