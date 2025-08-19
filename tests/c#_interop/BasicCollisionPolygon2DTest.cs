@@ -94,7 +94,7 @@ public class BasicCollisionPolygon2DTest : TestClass
     }
 
     [Test]
-    public void CreatedShape_RegenerateNewShape_ShapeCreated()
+    public void CreatedShape_RegenerateNewShape_ShapeExported()
     {
         _polygon.VerticesCount = 4;
         _polygon.Sizes = new double[] { 10 };

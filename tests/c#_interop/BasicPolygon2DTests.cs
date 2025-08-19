@@ -33,7 +33,7 @@ public class BasicPolygon2DTests : TestClass
     {
         if (_used_handler is not null)
         {
-            _polygon.ShapeCreated -= _used_handler;
+            _polygon.ShapeExported -= _used_handler;
         }
 
         _used_handler = null;
@@ -160,7 +160,7 @@ public class BasicPolygon2DTests : TestClass
         _polygon.CanExport().ShouldBeTrue();
     }
 
-    private BasicPolygon2D.ShapeCreatedEventHandler _used_handler;
+    private BasicPolygon2D.ShapeExportedEventHandler _used_handler;
 
     public async Task<bool> CheckForExport()
     {
@@ -170,21 +170,21 @@ public class BasicPolygon2DTests : TestClass
         {
             capture = true;
         };
-        _polygon.ShapeCreated += _used_handler;
+        _polygon.ShapeExported += _used_handler;
 
         for (int i = 0; i < 4; i++)
         {
             await _polygon.Instance.ToSignal(_polygon.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
         }
 
-        _polygon.ShapeCreated -= _used_handler;
+        _polygon.ShapeExported -= _used_handler;
         _used_handler = null;
 
         return capture;
     }
 
     [Test]
-    public async Task ShapeCreated_CauseSignalActivation_RaiseEvent()
+    public async Task ShapeExported_CauseSignalActivation_RaiseEvent()
     {
         var task = CheckForExport();
 
@@ -229,8 +229,9 @@ public class BasicPolygon2DTests : TestClass
     }
 
     [Test]
-    public void DummyTest()
+    public void AsyncDurationExtender()
     {
-        // Gets previous async tests to complete fully.
+        // Ensures previous async tests to complete fully.
+        System.Threading.Thread.Sleep(1000/60 * 5);
     }
 }
