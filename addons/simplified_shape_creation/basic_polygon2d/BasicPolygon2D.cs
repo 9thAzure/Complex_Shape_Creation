@@ -5,10 +5,18 @@ using Godot;
 namespace SimplifiedShapeCreation;
 
 /// <summary>
-/// A Wrapper for a <see cref="Node2D"/> which contains the script specified in <see cref="BasicPolygon2D.GDScriptEquivalent"/>.
-/// It also provides ways for creating such nodes.
+/// A node for creating and drawing basic shapes, acting as a simplified wrapper around <see cref="BasicGeometry2D"/>.
+/// The created shape can be accessed by <see cref="CreatedShape"/>, connecting the <see cref="ShapeCreated"/> signal,
+/// or by using the <see cref="BasicPolygon2D"/>'s export system with <see cref="ExportTargets"/>.
+/// <br/><br/>The shape is regenerated and exported whenever any of the shape properties are changed, and exported whenever any
+/// of the export properties are changed and <see cref="CanExport"/> returns <see langword="true"/>.
 /// </summary>
-public partial class BasicPolygon2D
+/// <remarks>
+/// This class is a wrapper around an instance of a <see cref="Node2D"/> s with the <see cref="GDScript"/> at
+/// "res://addons/simplified_shape_creation/basic_polygon2d/basic_polygon2d.gd" attached.
+/// The <see cref="Node2D"/> instance can be accessed with <see cref="Instance"/>.
+/// </remarks>
+public class BasicPolygon2D
 {
     /// <summary>The string path to the script this class wraps around.</summary>
     public const string GDScriptEquivalentPath = "res://addons/simplified_shape_creation/basic_polygon2d/basic_polygon2d.gd";
@@ -18,82 +26,119 @@ public partial class BasicPolygon2D
     /// <summary>The <see cref="GDScriptEquivalent"/> instance this class wraps around.</summary>
     public Node2D Instance { get; }
 
+    /// <summary>Emitted when a shape is exported.</summary>
     public delegate void ShapeCreatedEventHandler(Vector2[] shape, Godot.Collections.Array<Vector2[]> shapeDecomposed, ShapeType shapeType);
+    /// <inheritdoc cref="ShapeCreatedEventHandler"/>
     public event ShapeCreatedEventHandler ShapeCreated;
+
     /// <summary>
-    /// The number of vertices in the regular shape. A value of <c>1</c> creates a circle, and a value of <c>2</c> creates a line.
+    /// The number of vertices in the regular shape.
     /// </summary>
+    /// <remarks>
+    /// A value of <c>1</c> creates a 32 vertices shape.
+    /// A value of <c>2</c> creates multiple equidistantly spaced lines from the center, one for each value in <see cref="Sizes"/>.
+    /// </remarks>
     public int VerticesCount
     {
         get => (int)Instance.Get(PropertyName.VerticesCount);
         set => Instance.Set(PropertyName.VerticesCount, value);
     }
-    /// <summary>The length from each corner to the center of the shape.</summary>
+
+    /// <summary>
+    /// The distance from the center to each vertex, cycling through if there are multiple values.
+    /// </summary>
     public double[] Sizes
     {
         get => Instance.Get(PropertyName.Sizes).AsFloat64Array();
         set => Instance.Set(PropertyName.Sizes, value);
     }
+
+    /// <summary>The size of the ring, in proportion from the outer edge to the center.</summary>
+    /// <remarks>
+    /// A value of <c>1</c> creates a normal shape,
+    /// a value of <c>0</c> creates a <see cref="ShapeType.Polyline"/> outline, and a negative value extends the ring outwards proportionally.
+    /// </remarks>
     public float RingRatio
     {
         get => Instance.Get(PropertyName.RingRatio).AsSingle();
         set => Instance.Set(PropertyName.RingRatio, value);
     }
 
+    /// <summary>The size of each corner, as the distance along both edges, from the original vertex, to the point where the corner starts and ends.</summary>
     public float CornerSize
     {
         get => Instance.Get(PropertyName.CornerSize).AsSingle();
         set => Instance.Set(PropertyName.CornerSize, value);
     }
 
+    /// <summary>
+    /// How many lines make up each corner. A value of <c>0</c> will use a value of <c>32</c> divided by <see cref="VerticesCount"/>.
+    /// </summary>
     public int CornerDetail
     {
         get => Instance.Get(PropertyName.CornerDetail).AsInt32();
         set => Instance.Set(PropertyName.CornerDetail, value);
     }
 
+    /// <summary> The starting angle of the arc of the shape that is created, in radians.</summary>
     public float ArcStart
     {
         get => Instance.Get(PropertyName.ArcStart).AsSingle();
         set => Instance.Set(PropertyName.ArcStart, value);
     }
 
+    /// <summary>The angle of the arc of the shape that is created, in radians.</summary>
     public float ArcAngle
     {
         get => Instance.Get(PropertyName.ArcAngle).AsSingle();
         set => Instance.Set(PropertyName.ArcAngle, value);
     }
 
+    /// <summary>The ending angle of the arc of the shape that is created, in radians.</summary>
+    /// <remarks>
+    /// This property's value depends on <see cref="ArcStart"/> and <see cref="ArcEnd"/>,
+    /// and setting this property will affect <see cref="ArcAngle"/>.
+    /// </remarks>
     public float ArcEnd
     {
         get => Instance.Get(PropertyName.ArcEnd).AsSingle();
         set => Instance.Set(PropertyName.ArcEnd, value);
     }
 
+
+    /// <summary>The starting angle of the arc of the shape that is created, in degrees.</summary>
     public float ArcStartDegrees
     {
         get => Instance.Get(PropertyName.ArcStartDegrees).AsSingle();
         set => Instance.Set(PropertyName.ArcStartDegrees, value);
     }
 
+    /// <summary>The angle of the arc of the shape that is created, in degrees.</summary>
     public float ArcAngleDegrees
     {
         get => Instance.Get(PropertyName.ArcAngleDegrees).AsSingle();
         set => Instance.Set(PropertyName.ArcAngleDegrees, value);
     }
 
+    /// <summary>The ending angle of the arc of the shape that is created, in degrees.</summary>
+    /// <remarks>
+    /// This property's value depends on <see cref="ArcStartDegrees"/> and <see cref="ArcEndDegrees"/>,
+    /// and setting this property will affect <see cref="ArcAngleDegrees"/>.
+    /// </remarks>
     public float ArcEndDegrees
     {
         get => Instance.Get(PropertyName.ArcEndDegrees).AsSingle();
         set => Instance.Set(PropertyName.ArcEndDegrees, value);
     }
 
+    /// <summary>The method for closing an open shape. See <see cref="ClosingMethod"/>.</summary>
     public ClosingMethod ClosingMethod
     {
         get => Instance.Get(PropertyName.ClosingMethod).As<ClosingMethod>();
         set => Instance.Set(PropertyName.ClosingMethod, (int)value);
     }
 
+    /// <summary>Toggles rounding the corners cut out by [member arc_angle].</summary>
     public bool RoundArcEnds
     {
         get => Instance.Get(PropertyName.RoundArcEnds).AsBool();
@@ -119,110 +164,188 @@ public partial class BasicPolygon2D
         set => Instance.Set(PropertyName.OffsetRotation, value);
     }
 
+    /// <summary>The offset scale of the shape.</summary>
     public Vector2 OffsetScale
     {
         get => Instance.Get(PropertyName.OffsetScale).AsVector2();
         set => Instance.Set(PropertyName.OffsetScale, value);
     }
 
+    /// <summary>The offset skew of the shape</summary>
     public float OffsetSkew
     {
         get => Instance.Get(PropertyName.OffsetSkew).AsSingle();
         set => Instance.Set(PropertyName.OffsetSkew, value);
     }
 
+    /// <summary>The offset <see cref="Transform2D"/> of the shape.</summary>
     public Transform2D OffsetTransform
     {
         get => Instance.Get(PropertyName.OffsetTransform).AsTransform2D();
         set => Instance.Set(PropertyName.OffsetTransform, value);
     }
 
+    /// <summary>Toggles drawing the created shape.</summary>
     public bool DrawShape
     {
         get => Instance.Get(PropertyName.DrawShape).AsBool();
         set => Instance.Set(PropertyName.DrawShape, value);
     }
 
+    /// <summary>Toggles drawing a border around a <see cref="ShapeType.Polygon"/>.</summary>
+    /// <remarks>
+    /// If the shape is a line, this property changes which color property is used; <see cref="Color"/> if <see langword="false"/>,
+    /// <see cref="BorderColor"/> if <see langword="true"/>.
+    /// </remarks>
     public bool DrawBorder
     {
         get => Instance.Get(PropertyName.DrawBorder).AsBool();
         set => Instance.Set(PropertyName.DrawBorder, value);
     }
 
+    /// <summary>
+    /// The width of the drawn border, if the shape is a <see cref="ShapeType.Polygon"/> and <see cref="DrawBorder"/> is <see langword="true"/>.
+    /// The width of the drawn shape, if the shape is a line. If set to a value of <c>0</c>, two-point thin lines are drawn.
+    /// </summary>
     public float BorderWidth
     {
         get => Instance.Get(PropertyName.BorderWidth).AsSingle();
         set => Instance.Set(PropertyName.BorderWidth, value);
     }
+
     /// <summary>The color of the shape.</summary>
     public Color Color
     {
         get => Instance.Get(PropertyName.Color).AsColor();
         set => Instance.Set(PropertyName.Color, value);
     }
+
+
+    /// <summary>The color of the border of the shape, and for a line shape if <see cref="DrawBorder"/> is <see langword="true"/>.</summary>
     public Color BorderColor
     {
         get => Instance.Get(PropertyName.BorderColor).AsColor();
         set => Instance.Set(PropertyName.BorderColor, value);
     }
 
+    /// <summary>
+    /// Toggles the setting of <see cref="ExportTargets"/> when exporting the shape with <see cref="Export"/>,
+    /// and whether to do so in editor and/or at runtime.
+    /// </summary>
+    /// <seealso cref="ExportBehavior"/>
     public ExportBehavior ExportBehavior
     {
         get => Instance.Get(PropertyName.ExportBehavior).As<ExportBehavior>();
         set => Instance.Set(PropertyName.ExportBehavior, (int)value);
     }
 
+    /// <summary>
+    /// Toggles setting the <see cref="ExportTargets"/> with the decomposed convex hulls of the created shape, instead of the shape itself.
+    /// If <see langword="true"/>, the set value will be of type <see cref="T:Godot.Collections.Array{Vector2[]}"/>, and type <see cref="T:Vector2[]"/> otherwise.
+    /// </summary>
     public bool ExportAsDecomposedHulls
     {
         get => Instance.Get(PropertyName.ExportAsDecomposedHulls).AsBool();
         set => Instance.Set(PropertyName.ExportAsDecomposedHulls, value);
     }
 
+    /// <summary>Toggles automatically freeing itself after exporting for the first time at runtime.</summary>
     public bool AutoFree
     {
         get => Instance.Get(PropertyName.AutoFree).AsBool();
         set => Instance.Set(PropertyName.AutoFree, value);
     }
 
+    /// <summary>
+    /// The properties to set with the created shape when exporting. See description of [NodePath] for how to reference a (sub) property.
+    /// </summary>
+    /// <remarks>
+    /// Requires <see cref="CanExport"/> to return <see langword="true"/> for these properties to be set.
+    /// The type of the set value depends on <see cref="ExportAsDecomposedHulls"/>.
+    /// </remarks>
     public Godot.Collections.Array<NodePath> ExportTargets
     {
         get => Instance.Get(PropertyName.ExportTargets).AsGodotArray<NodePath>();
         set => Instance.Call(MethodName.SetExportTargets, value);
     }
-    /// <summary>Position, relative to the node's parent.</summary>
+
+    /// <inheritdoc cref="Node2D.Position"/>
     public Vector2 Position
     {
         get => Instance.Position; 
         set => Instance.Position = value;
     }
-    /// <summary>Rotation in radians, relative to the node's parent.</summary>
+    /// <inheritdoc cref="Node2D.Rotation"/>
     public float Rotation
     {
         get => Instance.Rotation;
         set => Instance.Rotation = value;
     }
-    /// <summary>Helper property to access <see cref="Node2D.Rotation"/> in degrees instead of radians.</summary>
+    /// <inheritdoc cref="Node2D.RotationDegrees"/>
     public float RotationDegrees
     {
         get => Instance.RotationDegrees;
         set => Instance.RotationDegrees = value;
     }
-    /// <summary>The node's scale. Unscaled value: (1, 1).</summary>
+    /// <inheritdoc cref="Node2D.Scale"/>
     public Vector2 Scale
     {
         get => Instance.Scale;
         set => Instance.Scale = value;
     }
 
+    /// <summary>Gets the created shape.</summary>
+    /// <value>A <b>copy</b> of the created shape</value>
     public Vector2[] CreatedShape => Instance.Call(MethodName.GetCreatedShape).AsVector2Array();
+
+    /// <summary>Gets the created shape, decomposed into convex hulls.</summary>
+    /// <value>A <b>copy</b> of the created shape, decomposed into convex hulls.</value>
     public Godot.Collections.Array<Vector2[]> CreatedShapeDecomposed => Instance.Call(MethodName.GetCreatedShapeDecomposed).AsGodotArray<Vector2[]>();
+
+    /// <summary>Gets the type of shape created by this <see cref="BasicPolygon2D"/>.</summary>
+    /// <value>The <see cref="ShapeType"/> created.</value>
     public ShapeType CreatedShapeType => Instance.Call(MethodName.GetCreatedShapeType).As<ShapeType>();
 
+    /// <summary>Determines whether <see cref="ExportTargets"/> will be set on <see cref="Export"/>.</summary>
+    /// <remarks>
+    /// This is the case when <see cref="ExportBehavior"/> has the flag of <see cref="global::SimplifiedShapeCreation.ExportBehavior"/>
+    /// set which corresponds to whether this <see cref="BasicPolygon2D"/>  is running in editor or at runtime.
+    /// <br/><br/><see cref="ShapeCreated"/> is emiited on <see cref="Export"/> regardless of this method's return value.
+    /// </remarks>
+    /// <returns>
+    /// Returns <see langword="true"/> <see cref="ExportTargets"/> will be set on <see cref="Export"/>.
+    /// </returns>
     public bool CanExport() => Instance.Call(MethodName.CanExport).AsBool();
 
+    /// <summary>
+    /// Queues the <see cref="BasicPolygon2D"/> to <see cref="Regenerate"/> and <see cref="Export"/> the shape.
+    /// Called when the Generation properties are modified. Multiple calls will be converted to a single call.
+    /// </summary>
+    /// <remarks>
+    /// Removes queued <see cref="QueueExport"/> calls.
+    /// <br/><br/>If called while this <see cref="BasicPolygon2D"/> is outside the <see cref="SceneTree"/>, the <see cref="Regenerate"/>
+    /// call will be delayed to when the <see cref="BasicPolygon2D"/> enters the <see cref="SceneTree"/> instead.
+    /// </remarks>
     public void QueueRegenerate() => Instance.Call(MethodName.QueueRegenerate);
+
+    /// <summary>Instantly regenerates the shape, then <see cref="Export"/>s it.</summary>
+    /// <remarks>Removes queued <see cref="QueueRegenerate"/> and <see cref="QueueExport"/> calls.</remarks>
     public void Regenerate() => Instance.Call(MethodName.Regenerate);
+
+    /// <summary>
+    /// Queue the <see cref="BasicPolygon2D"/> to <see cref="Export"/> the shape. Multiple calls will be converted to a single call.
+    /// </summary>
+    /// <remarks>
+    /// If called while this <see cref="BasicPolygon2D"/> is outside the <see cref="SceneTree"/>, the <see cref="Export"/>
+    /// call will be delayed to when the <see cref="BasicPolygon2D"/> enters the <see cref="SceneTree"/> instead.
+    /// </remarks>
     public void QueueExport() => Instance.Call(MethodName.QueueExport);
+
+    /// <summary>
+    /// Instantly exports the previously created shape, emitting <see cref="ShapeCreated"/>,
+    /// as well as setting the <see cref="ExportTargets"/> if <see cref="CanExport"/> returns <see langword="true"/>.
+    /// </summary>
+    /// <export>Removes queued <see cref="QueueRegenerate"/> and <see cref="QueueExport"/> calls.</export>
     public void Export() => Instance.Call(MethodName.Export);
 
     // /// <summary>
@@ -239,9 +362,9 @@ public partial class BasicPolygon2D
 
 
     /// <summary>Creates and wraps a <see cref="BasicPolygon2D"/> around <paramref name="instance"/>.</summary>
-    /// <param name="instance">The instance of <see cref="GDScriptEquivalent"/> to wrap.</param>
+    /// <param name="instance">The node with the <see cref="GDScriptEquivalent"/> attached to wrap.</param>
     /// <exception cref="ArgumentNullException"><paramref name="instance"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="instance"/> isn't a instance of <see cref="GDScriptEquivalent"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="instance"/> does not have the <see cref="GDScriptEquivalent"/> attached.</exception>
     public BasicPolygon2D(Node2D instance)
     {
         if (instance is null)
@@ -259,7 +382,6 @@ public partial class BasicPolygon2D
     : this(BasicPolygon2D.New(verticesCount, size, offsetRotation, color, offsetPosition))
     {
     }
-    /// <inheritdoc cref="GetShapeVertices"/>
     /// <summary>Creates an instance of <see cref="GDScriptEquivalent"/> with the specified parameters.</summary>
     /// <param name="verticesCount">The number of vertices in the shape. A <c>1</c> draws a circle, a <c>2</c> draws a line.</param>
     /// <param name="color">The color of the shape.</param>
@@ -281,6 +403,7 @@ public partial class BasicPolygon2D
     public static implicit operator Node2D(BasicPolygon2D instance) => instance.Instance;
     public static explicit operator BasicPolygon2D(Node2D instance) => new(instance);
 
+    /// <summary>Cached <see cref="StringName"/>s for the properties and fields contained in this class, for fast lookup.</summary>
     public class PropertyName : Node2D.PropertyName
     {
         public static readonly StringName VerticesCount = new("vertices_count");
@@ -312,6 +435,8 @@ public partial class BasicPolygon2D
         public static readonly StringName AutoFree = new("auto_free");
         public static readonly StringName ExportTargets = new("export_targets");
     }
+
+    /// <summary>Cached <see cref="StringName"/>s for the methods contained in this class, for fast lookup.</summary>
     public class MethodName : Node2D.MethodName
     {
         public static readonly StringName QueueRegenerate = new("queue_regenerate");
@@ -325,6 +450,7 @@ public partial class BasicPolygon2D
         public static readonly StringName GetCreatedShapeType = new("get_created_shape_type");
     }
 
+    /// <summary>Cached <see cref="StringName"/>s for the signals contained in this class, for fast lookup.</summary>
     public class SignalName : Node2D.SignalName
     {
         public static readonly StringName ShapeCreated = new("shape_created");

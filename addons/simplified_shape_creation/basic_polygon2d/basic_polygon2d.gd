@@ -115,7 +115,7 @@ enum ClosingMethod {
 	ARC,
 }
 
-## The method for closing an open shape. See [enum ClosingMethod]
+## The method for closing an open shape. See [enum ClosingMethod].
 @export
 var closing_method : ClosingMethod = ClosingMethod.SLICE:
 	set(value):
@@ -313,8 +313,10 @@ func is_exporting() -> bool:
 	return in_editor and (export_behavior & ExportBehavior.EDITOR) > 0 or not in_editor and (export_behavior & ExportBehavior.RUN_TIME) > 0
 
 ## Gets the created shape.
+## [br][br][b]Note[/b]: The returned value is [b]Not[/b] a copy, and modifications to it will persist for all future consumers until the shape is regenerated.
 func get_created_shape() -> PackedVector2Array: return _created_shape
 ## Gets the created shape, decomposed into convex hulls.
+## [br][br][b]Note[/b]: The returned value is [b]Not[/b] a copy, and modifications to it will persist for all future consumers until the shape is regenerated.
 func get_created_shape_decomposed() -> Array[PackedVector2Array]: return _decomposed_created_shape
 
 ## The type of shape created.
@@ -349,6 +351,7 @@ func _enter_tree() -> void:
 
 ## Queue the [BasicPolygon2D] to regenerate and export the shape. Called when the Generation properties are modified.
 ## Multiple calls will be converted to a single call. See [method regenerate].
+## Removes queued [method queue_export] calls.
 ## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method regenerate] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_regenerate() -> void:
 	if _queue_status >= _QUEUE_REGENERATE:
@@ -364,7 +367,7 @@ func queue_regenerate() -> void:
 
 	regenerate()
 
-## Instantly regenerates the shape, than exports it with [method export].
+## Instantly regenerates the shape, than [method export]s it.
 ## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func regenerate() -> void:
 	_queue_status = _UNQUEUED
@@ -505,7 +508,6 @@ func _get_property_list() -> Array[Dictionary]:
 	return properties
 
 ## Queue the [BasicPolygon2D] to export the shape. Multiple calls will be converted to a single call.
-## The queued call will be removed if [method queue_regenerate], [method regenerate], or [method export] is called.
 ## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method export] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_export() -> void:
 	if _queue_status >= _QUEUE_DISPERSE:
@@ -521,7 +523,7 @@ func queue_export() -> void:
 
 	export()
 
-## Instantly exports the previously credated shape, emitting [signal shape_created],
+## Instantly exports the previously created shape, emitting [signal shape_created],
 ## as well as setting the export properties if [method is_exporting] returns [code]true[/code].
 ## Removes queued [method queue_regenerate] and [method queue_export] calls.
 func export() -> void:
