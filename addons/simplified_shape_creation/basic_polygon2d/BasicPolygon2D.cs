@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Godot;
 
 namespace SimplifiedShapeCreation;
@@ -131,14 +130,15 @@ public class BasicPolygon2D
         set => Instance.Set(PropertyName.ArcEndDegrees, value);
     }
 
-    /// <summary>The method for closing an open shape. See <see cref="ClosingMethod"/>.</summary>
+    /// <summary>The method for closing an open shape.</summary>
+    /// <seealso cref="ClosingMethod"/>
     public ClosingMethod ClosingMethod
     {
         get => Instance.Get(PropertyName.ClosingMethod).As<ClosingMethod>();
         set => Instance.Set(PropertyName.ClosingMethod, (int)value);
     }
 
-    /// <summary>Toggles rounding the corners cut out by [member arc_angle].</summary>
+    /// <summary>Toggles rounding the corners cut out by <see cref="ArcAngle"/>.</summary>
     public bool RoundArcEnds
     {
         get => Instance.Get(PropertyName.RoundArcEnds).AsBool();
