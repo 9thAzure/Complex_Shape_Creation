@@ -20,13 +20,13 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor
 
-## Creates and returns a [PackedVector2Array] describing the shape specified by the parameters,
-## and offsetted by [param offset_rotation] and [param offset_position].
+## Creates and returns a [PackedVector2Array] describing the shape specified by the parameters.
 ## [br][br]
 ## [param vertices_count] determines the number of points on the base shape. If a value of [code]1[/code] is used,
 ## A value of [code]32[/code] is used instead.
 ## [param sizes] determines the length of each point from the center of the base shape, being repeatedly iterated through
 ## to get the length for each vertex.
+## [param offset_transform] is the transform applied after creation.
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
@@ -34,13 +34,13 @@ static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_
 	arc_start := 0.0, arc_end := TAU, add_central_point := true) -> PackedVector2Array:
 	return add_shape([], 0, vertices_count, sizes, offset_transform, arc_start, arc_end, add_central_point)
 
-## Creates and returns a [PackedVector2Array] describing the shape specified by the parameters,
-## and offsetted by [param offset_rotation] and [param offset_position].
+## Creates and inserts the shape specified by the parameters into [param points] at [param start] index.
 ## [br][br]
 ## [param vertices_count] determines the number of points on the base shape. If a value of [code]1[/code] is used,
 ## A value of [code]32[/code] is used instead.
 ## [param sizes] determines the length of each point from the center of the base shape, being repeatedly iterated through
 ## to get the length for each vertex.
+## [param offset_transform] is the transform applied after creation.
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
