@@ -94,8 +94,7 @@ These wrapper classes can also be used for creating these nodes.
 > Since static methods still require an instance to access, the `BasicGeometry2D` Singleton must create an object that must be
 > freed before the application ends. By default, the instance is freed when the root `Window` is exiting the `SceneTree` and
 > emits the `TreeExiting` signal. If a custom behaviour needs to be supplied, the default behaviour can be disabled by setting
-> the project setting `basic_shape_creation/dotnet/default_singleton_freeing` to false, then calling `BasicGeometry2D.Dispose`
-> whenever the application is about to close.
+> `BasicGeometry2D.FreeOnWindowExit` to false, then calling `BasicGeometry2D.Dispose` whenever the application is about to close.
 
 #### API Differences
 

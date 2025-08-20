@@ -11,7 +11,8 @@ namespace BasicShapeCreation;
 /// In order to interop with the gdscript equivalent methods, an instance of the <see cref="GDScript"/> has to be created,
 /// as well as be manually freed at the end of application lifetime via <see cref="Dispose"/>.
 /// <br/><br/>If the <see cref="MainLoop"/> is implemented as a <see cref="SceneTree"/>, <see cref="Dispose"/> will
-/// automatically be called when the root <see cref="Window"/> node is exiting the tree.
+/// automatically be called when the root <see cref="Window"/> node is exiting the tree. This behaviour can be disabled
+/// with <see cref="FreeOnWindowExit"/>.
 /// </remarks>
 public static class BasicGeometry2D
 {
@@ -41,13 +42,27 @@ public static class BasicGeometry2D
         [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
         public void Dispose()
         {
-            if (GodotObject.IsInstanceValid(Value))
+            if (BasicGeometry2D.FreeOnWindowExit && GodotObject.IsInstanceValid(Value))
             {
                 Value.Free();
             }
         }
     }
 
+    /// <summary>
+    /// Toggles whether to automatically free the gdscript instance when it is detected that the root <see cref="Window"/>
+    /// is exiting the <see cref="SceneTree"/>.
+    /// </summary>
+    /// <remarks>
+    /// Set this property to <see langword="false"/> if you need to provide your own system to free the instance and prevent
+    /// the auto freeing. Note that the auto freeing does not occur if the <see cref="MainLoop"/> isn't a <see cref="SceneTree"/> anyways,
+    /// so setting this property to <see langword="false"/> is not necessary.
+    /// </remarks>
+    public static bool FreeOnWindowExit { get; set; } = true;
+
+    /// <summary>
+    /// Gets the instance used by this class to access the gdscript methods.
+    /// </summary>
     public static GodotObject Singleton => _loader.Value;
 
     /// <summary>
