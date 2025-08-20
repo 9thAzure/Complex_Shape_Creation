@@ -332,14 +332,10 @@ const _UNQUEUED         := 0
 const _QUEUE_DISPERSE   := 1
 const _QUEUE_REGENERATE := 2
 
-var _queue_status : int = _QUEUE_REGENERATE
+var _queue_status : int = _UNQUEUED
 
-func _enter_tree() -> void:
-	if _queue_status == _QUEUE_REGENERATE:
-		regenerate()
-	if _queue_status == _QUEUE_DISPERSE:
-		_queue_status = _UNQUEUED
-		queue_export()
+func _init() -> void:
+	queue_regenerate()
 
 func _find_tree() -> SceneTree:
 	if is_inside_tree():
@@ -350,7 +346,6 @@ func _find_tree() -> SceneTree:
 ## Queue the [BasicPolygon2D] to regenerate and export the shape. Called when the Generation properties are modified.
 ## Multiple calls will be converted to a single call. See [method regenerate].
 ## Removes queued [method queue_export] calls.
-## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method regenerate] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_regenerate() -> void:
 	if _queue_status >= _QUEUE_REGENERATE:
 		return
@@ -504,16 +499,13 @@ func _get_property_list() -> Array[Dictionary]:
 	return properties
 
 ## Queue the [BasicPolygon2D] to export the shape. Multiple calls will be converted to a single call.
-## [br][br][b]Note[/b]: If called while this [BasicPolygon2D] is outside the [SceneTree], the [method export] call will be delayed to when the [BasicPolygon2D] enters the [SceneTree] instead.
 func queue_export() -> void:
 	if _queue_status >= _QUEUE_DISPERSE:
 		return
 
 	_queue_status = _QUEUE_DISPERSE
-	if not is_inside_tree():
-		return
 
-	await get_tree().process_frame
+	await _find_tree().process_frame
 	if _queue_status != _QUEUE_DISPERSE:
 		return
 
