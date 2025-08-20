@@ -31,7 +31,7 @@ public static class BasicGeometry2D
             }
 
             var gdScript = GD.Load<GDScript>("res://addons/basic_shape_creation/basic_geometry2d.gd");
-            return gdScript.New(true).AsGodotObject();
+            return gdScript.New().AsGodotObject();
         }
 
         ~ScriptLoader()
@@ -50,7 +50,7 @@ public static class BasicGeometry2D
     }
 
     /// <summary>
-    /// Toggles whether to automatically free the gdscript instance when it is detected that the root <see cref="Window"/>
+    /// Toggles whether to automatically free the gdscript <see cref="Instance"/> when it is detected that the root <see cref="Window"/>
     /// is exiting the <see cref="SceneTree"/>.
     /// </summary>
     /// <remarks>
@@ -63,7 +63,7 @@ public static class BasicGeometry2D
     /// <summary>
     /// Gets the instance used by this class to access the gdscript methods.
     /// </summary>
-    public static GodotObject Singleton => _loader.Value;
+    public static GodotObject Instance => _loader.Value;
 
     /// <summary>
     /// <see cref="GodotObject.Free"/>s the gdscript instance this class interops with to call
