@@ -111,7 +111,7 @@ static func add_ring(shape: PackedVector2Array, length_proportion: float, shape_
 ## [br][br][param corner_size] determines how long each corner is, from the original point to at most half the side length.
 ## [param corner_detail] determines how many [b]lines[/b] are in each corner.
 ## [br][br][param start_index] & [param length] can be used to specify only part of the shape should be rounded.
-## [param limit_ending_slopes] determines whether the ending corners should still be limited to half the side length. Does not work if the entire shape is being rounded.
+## [param limit_ending_slopes] determines whether the first and last corner should be limited to half the side distance or not. No effect if the entire shape is being rounded.
 ## [param original_array_size], when used, indicates that the array has already been resized, so the method should add points into the empty space.
 ## This parameter specifies the part of the array that is currently used.
 static func add_rounded_corners(points : PackedVector2Array, corner_size : float, corner_detail : int,

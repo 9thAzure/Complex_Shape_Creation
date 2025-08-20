@@ -145,11 +145,14 @@ public static class BasicGeometry2D
     /// <param name="shape">The base shape.</param>
     /// <param name="cornerSize">The distance along the edge where the smoothed corner will start from.</param>
     /// <param name="cornerDetail">How many lines are in each corner.</param>
+    /// <param name="startIndex">The initial point to round.</param>
+    /// <param name="length">The number of points to round.</param>
+    /// <param name="limitEndingSlopes">Whether the first and last corner should be limited to half the side distance or not. No effect if the entire shape is being rounded.</param>
     /// <returns>A <see cref="T:Vector2[]"/>, representing the shape of <paramref name="shape"/> with rounded corners.</returns>
-    public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerDetail)
+    public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerDetail, int startIndex = 0, int length = -1, bool limitEndingSlopes = true)
     {
         Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
         Debug.Assert(_loader.Value.HasMethod(MethodName.AddRoundedCorners));
-        return _loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerDetail).AsVector2Array();
+        return _loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerDetail, startIndex, length, startIndex).AsVector2Array();
     }
 }
