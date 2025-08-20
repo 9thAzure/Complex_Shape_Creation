@@ -59,17 +59,19 @@ public static class BasicGeometry2D
         _loader.Dispose();
     }
 
-    /// <summary>
-    /// Cached <see cref="StringName"/>s for the methods contained in this class, for fast lookup.
-    /// </summary>
-    [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
-    public static class MethodName
+    /// <inheritdoc cref="GodotObject.MethodName"/>
+    public class MethodName : GodotObject.MethodName
     {
-        public static readonly StringName Dispose = new(nameof(BasicGeometry2D.Dispose));
         public static readonly StringName CreateShape = new("create_shape");
         public static readonly StringName AddRing = new("add_ring");
         public static readonly StringName AddRoundedCorners = new("add_rounded_corners");
     }
+
+    /// <inheritdoc cref="GodotObject.PropertyName"/>
+    public class PropertyName : GodotObject.PropertyName {}
+
+    /// <inheritdoc cref="GodotObject.SignalName"/>
+    public class Signalname : GodotObject.SignalName {}
 
     /// <summary>
     /// Creates and returns a <see cref="T:Vector2[]"/> describing the shape specified by the parameters.
