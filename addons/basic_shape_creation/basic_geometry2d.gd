@@ -136,7 +136,7 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 	assert(limit_ending_slopes || length != original_array_size, "param 'limit_ending_slopes' was set to false, but the entire shape is being rounded so there are no \"ending\" slopes.")
 
 	# resizing and spacing
-	var size_increase := SizeIncrease.add_rounded_corners(length, corner_detail)
+	var size_increase := length * (corner_detail + 1) - length
 	if resize_array:
 		points.resize(original_array_size + size_increase)
 		for i in (original_array_size - start_index - length):
@@ -209,19 +209,3 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 
 static func _quadratic_bezier_interpolate(start : Vector2, control : Vector2, end : Vector2, t : float) -> Vector2:
 	return control + (t - 1) ** 2 * (start - control) + t ** 2 * (end - control)
-
-## sub Singleton that designates how much each method expands the array.
-class SizeIncrease:
-	extends Object
-
-	func _init():
-		push_error("This class is meant to be a singleton, and cannot be instantiated. Freeing self")
-		self.free()
-
-	## Designates how much [method RegularGeometry2D.add_rounded_corners] expands the array.
-	## [br][br][param length] specifies many points are to be converted into rounded corners.
-	## [param corner_detail] specifies how many lines are in each corner.
-	static func add_rounded_corners(length : int, corner_detail : int) -> int:
-		assert(length >= 0, "param 'length' must be positive.")
-		assert(corner_detail > 0, "param 'corner_detail' must be positive.")
-		return length * (corner_detail + 1) - length
