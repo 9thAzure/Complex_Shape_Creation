@@ -76,7 +76,7 @@ Both of these nodes share the same properties for generating the shape. Here are
 
 ### Functions
 
-The functions used for creating the bulk of these shapes are accessible under the [BasicGeometry2D] singleton. 
+The functions used for creating the bulk of these shapes are accessible under the [BasicGeometry2D] static class. 
 All of them return the new shape. If they are passed a shape, that shape is directly modified as well as returned.
 The provided functions are:
 
@@ -87,15 +87,14 @@ The provided functions are:
 
 ### C# API
 
-The provided nodes and the singleton are exposed to C# via wrapper classes in the `BasicShapeCreation` namespace.
+The provided nodes and the functions are exposed to C# via wrapper classes in the `BasicShapeCreation` namespace.
 These wrapper classes can also be used for creating these nodes.
 
 > [!WARNING]
-> Since static methods still require an instance to access, the `BasicGeometry2D` Singleton must create an object that must be
+> Since static methods still require an instance to access, the `BasicGeometry2D` class must create an object that must be
 > freed before the application ends. By default, the instance is freed when the root `Window` is exiting the `SceneTree` and
 > emits the `TreeExiting` signal. If a custom behaviour needs to be supplied, the default behaviour can be disabled by setting
-> the project setting `basic_shape_creation/dotnet/default_singleton_freeing` to false, then calling `BasicGeometry2D.Dispose`
-> whenever the application is about to close.
+> `BasicGeometry2D.FreeOnWindowExit` to false, then calling `BasicGeometry2D.Dispose` whenever the application is about to close.
 
 #### API Differences
 
