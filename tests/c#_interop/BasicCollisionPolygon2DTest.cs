@@ -99,6 +99,8 @@ public class BasicCollisionPolygon2DTest : TestClass
         _polygon.VerticesCount = 4;
         _polygon.Sizes = new double[] { 10 };
 
+        _polygon.BasicPolygon.Regenerate();
+
         _polygon.ShouldSatisfyAllConditions(
             p => p.CreatedShape.ShouldNotBeEmpty(),
             p => p.CreatedShapeDecomposed.ShouldNotBeEmpty(),

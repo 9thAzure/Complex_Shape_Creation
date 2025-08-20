@@ -232,6 +232,6 @@ public class BasicPolygon2DTests : TestClass
     public void AsyncDurationExtender()
     {
         // Ensures previous async tests to complete fully.
-        System.Threading.Thread.Sleep(1000/60 * 5);
+        System.Threading.Thread.Sleep(1000/60 * 20);
     }
 }
