@@ -63,6 +63,7 @@ public static class BasicGeometry2D
     public class MethodName : GodotObject.MethodName
     {
         public static readonly StringName CreateShape = new("create_shape");
+        public static readonly StringName AddShape = new("add_shape");
         public static readonly StringName AddRing = new("add_ring");
         public static readonly StringName AddRoundedCorners = new("add_rounded_corners");
     }
@@ -89,6 +90,21 @@ public static class BasicGeometry2D
         Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
         Debug.Assert(_loader.Value.HasMethod(MethodName.CreateShape));
         return _loader.Value.Call(MethodName.CreateShape, verticesCount, sizes, offsetTransform ?? Transform2D.Identity,
+            arcStart, arcEnd, addCentralPoint).AsVector2Array();
+    }
+
+    /// <inheritdoc cref="CreateShape"/>
+    /// <summary>
+    /// Creates and inserts the shape specified by the parameters into a copy of <paramref name="points"/> at <paramref name="start"/> index.
+    /// </summary>
+    /// <param name="points">The initial array to clone and insert a shape into.</param>
+    /// <param name="start">The index to insert the shape at.</param>
+    public static Vector2[] AddShape(Vector2[] points, int start, int verticesCount, double[] sizes, Transform2D? offsetTransform = null,
+        double arcStart = 0d, double arcEnd = Math.Tau, bool addCentralPoint = true)
+    {
+        Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
+        Debug.Assert(_loader.Value.HasMethod(MethodName.AddShape));
+        return _loader.Value.Call(MethodName.AddShape, points, start, verticesCount, sizes, offsetTransform ?? Transform2D.Identity,
             arcStart, arcEnd, addCentralPoint).AsVector2Array();
     }
 

@@ -20,6 +20,15 @@ public class BasicGeometry2DTests : TestClass
     }
 
     [Test]
+    public void AddShape_SampleCall_ExpectedReturnValue()
+    {
+        Vector2[] result = BasicGeometry2D.AddShape(new Vector2[] { Vector2.Zero, Vector2.Zero }, 1, 4, new[] { 1D });
+
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(6);
+    }
+
+    [Test]
     public void AddRing_SampleCall_ExpectedReturnValue()
     {
         Vector2[] shape = new[] { Vector2.Up, Vector2.Down };
