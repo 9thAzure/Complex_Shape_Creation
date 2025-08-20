@@ -149,7 +149,7 @@ public static class BasicGeometry2D
     /// <param name="length">The number of points to round.</param>
     /// <param name="limitEndingSlopes">Whether the first and last corner should be limited to half the side distance or not. No effect if the entire shape is being rounded.</param>
     /// <returns>A <see cref="T:Vector2[]"/>, representing the shape of <paramref name="shape"/> with rounded corners.</returns>
-    public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerDetail, int startIndex = 0, int length = -1, bool limitEndingSlopes = true)
+    public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerDetail, long startIndex = 0, long length = -1, bool limitEndingSlopes = true)
     {
         Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
         Debug.Assert(_loader.Value.HasMethod(MethodName.AddRoundedCorners));
