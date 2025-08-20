@@ -323,8 +323,6 @@ public class BasicPolygon2D
     /// </summary>
     /// <remarks>
     /// Removes queued <see cref="QueueExport"/> calls.
-    /// <br/><br/>If called while this <see cref="BasicPolygon2D"/> is outside the <see cref="SceneTree"/>, the <see cref="Regenerate"/>
-    /// call will be delayed to when the <see cref="BasicPolygon2D"/> enters the <see cref="SceneTree"/> instead.
     /// </remarks>
     public void QueueRegenerate() => Instance.Call(MethodName.QueueRegenerate);
 
@@ -335,10 +333,6 @@ public class BasicPolygon2D
     /// <summary>
     /// Queue the <see cref="BasicPolygon2D"/> to <see cref="Export"/> the shape. Multiple calls will be converted to a single call.
     /// </summary>
-    /// <remarks>
-    /// If called while this <see cref="BasicPolygon2D"/> is outside the <see cref="SceneTree"/>, the <see cref="Export"/>
-    /// call will be delayed to when the <see cref="BasicPolygon2D"/> enters the <see cref="SceneTree"/> instead.
-    /// </remarks>
     public void QueueExport() => Instance.Call(MethodName.QueueExport);
 
     /// <summary>

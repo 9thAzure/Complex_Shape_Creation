@@ -10,6 +10,8 @@ extends Node2D
 ## or by using the [BasicPolygon2D]'s export system with [member export_targets].
 ## [br][br]The shape is regenerated and exported whenever any of the shape properties are changed, and exported whenever any
 ## of the export properties are changed and [method can_export] returns [code]true[/code].
+## [br][br][b][color=red]Warning[/color][/b]: The method [method queue_regenerate], which the [BasicPolygon2D] uses to regenerate the shape,
+## as well as [method queue_export], relies upon the main loop being a [SceneTree] to function properly.
 
 @export_group("Generation")
 ## The number of vertices in the regular shape.
