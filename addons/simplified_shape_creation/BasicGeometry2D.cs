@@ -15,7 +15,7 @@ namespace SimplifiedShapeCreation;
 /// </remarks>
 public static class BasicGeometry2D
 {
-    private static readonly ScriptLoader Loader = new();
+    private static readonly ScriptLoader _loader = new();
     private class ScriptLoader : Lazy<GodotObject>, IDisposable
     {
         public ScriptLoader() : base(Factory, LazyThreadSafetyMode.ExecutionAndPublication)
@@ -48,26 +48,31 @@ public static class BasicGeometry2D
         }
     }
 
+    public static GodotObject Singleton => _loader.Value;
+
     /// <summary>
     /// <see cref="GodotObject.Free"/>s the gdscript instance this class interops with to call
     /// the other methods, if it hasn't been already.
     /// </summary>
     public static void Dispose()
     {
-        Loader.Dispose();
+        _loader.Dispose();
     }
 
-    /// <summary>
-    /// Cached <see cref="StringName"/>s for the methods contained in this class, for fast lookup.
-    /// </summary>
-    [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
-    public static class MethodName
+    /// <inheritdoc cref="GodotObject.MethodName"/>
+    public class MethodName : GodotObject.MethodName
     {
-        public static readonly StringName Dispose = new(nameof(BasicGeometry2D.Dispose));
         public static readonly StringName CreateShape = new("create_shape");
+        public static readonly StringName AddShape = new("add_shape");
         public static readonly StringName AddRing = new("add_ring");
         public static readonly StringName AddRoundedCorners = new("add_rounded_corners");
     }
+
+    /// <inheritdoc cref="GodotObject.PropertyName"/>
+    public class PropertyName : GodotObject.PropertyName {}
+
+    /// <inheritdoc cref="GodotObject.SignalName"/>
+    public class Signalname : GodotObject.SignalName {}
 
     /// <summary>
     /// Creates and returns a <see cref="T:Vector2[]"/> describing the shape specified by the parameters.
@@ -82,9 +87,24 @@ public static class BasicGeometry2D
     public static Vector2[] CreateShape(int verticesCount, double[] sizes, Transform2D? offsetTransform = null,
         double arcStart = 0d, double arcEnd = Math.Tau, bool addCentralPoint = true)
     {
-        Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
-        Debug.Assert(Loader.Value.HasMethod(MethodName.CreateShape));
-        return Loader.Value.Call(MethodName.CreateShape, verticesCount, sizes, offsetTransform ?? Transform2D.Identity,
+        Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
+        Debug.Assert(_loader.Value.HasMethod(MethodName.CreateShape));
+        return _loader.Value.Call(MethodName.CreateShape, verticesCount, sizes, offsetTransform ?? Transform2D.Identity,
+            arcStart, arcEnd, addCentralPoint).AsVector2Array();
+    }
+
+    /// <inheritdoc cref="CreateShape"/>
+    /// <summary>
+    /// Creates and inserts the shape specified by the parameters into a copy of <paramref name="points"/> at <paramref name="start"/> index.
+    /// </summary>
+    /// <param name="points">The initial array to clone and insert a shape into.</param>
+    /// <param name="start">The index to insert the shape at.</param>
+    public static Vector2[] AddShape(Vector2[] points, int start, int verticesCount, double[] sizes, Transform2D? offsetTransform = null,
+        double arcStart = 0d, double arcEnd = Math.Tau, bool addCentralPoint = true)
+    {
+        Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
+        Debug.Assert(_loader.Value.HasMethod(MethodName.AddShape));
+        return _loader.Value.Call(MethodName.AddShape, points, start, verticesCount, sizes, offsetTransform ?? Transform2D.Identity,
             arcStart, arcEnd, addCentralPoint).AsVector2Array();
     }
 
@@ -98,9 +118,9 @@ public static class BasicGeometry2D
     /// <returns>A <see cref="T:Vector2[]"/>, representing the shape of <paramref name="shape"/> with an added ring.</returns>
     public static Vector2[] AddRing(Vector2[] shape, double lengthProportion, Vector2 shapeCenter = default, bool closeRing = true)
     {
-        Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
-        Debug.Assert(Loader.Value.HasMethod(MethodName.AddRing));
-        return Loader.Value.Call(MethodName.AddRing, shape, lengthProportion, shapeCenter, closeRing).AsVector2Array();
+        Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
+        Debug.Assert(_loader.Value.HasMethod(MethodName.AddRing));
+        return _loader.Value.Call(MethodName.AddRing, shape, lengthProportion, shapeCenter, closeRing).AsVector2Array();
     }
 
     /// <summary>
@@ -113,8 +133,8 @@ public static class BasicGeometry2D
     /// <returns>A <see cref="T:Vector2[]"/>, representing the shape of <paramref name="shape"/> with rounded corners.</returns>
     public static Vector2[] AddRoundedCorners(Vector2[] shape, double cornerSize, long cornerDetail)
     {
-        Debug.Assert(GodotObject.IsInstanceValid(Loader.Value));
-        Debug.Assert(Loader.Value.HasMethod(MethodName.AddRoundedCorners));
-        return Loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerDetail).AsVector2Array();
+        Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
+        Debug.Assert(_loader.Value.HasMethod(MethodName.AddRoundedCorners));
+        return _loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerDetail).AsVector2Array();
     }
 }

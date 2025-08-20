@@ -3,9 +3,9 @@ class_name BasicGeometry2D
 
 ## Holds methods for creating and modifying shapes.
 
-func _init(instantiated_from_cs_singleton : bool):
+func _init(instantiated_from_cs_singleton : bool = false):
 	if !instantiated_from_cs_singleton:
-		printerr("This class is meant to be a singleton, and cannot be instantiated")
+		push_error("This class is meant to be a singleton, and cannot be instantiated. Freeing self.")
 		self.free()
 
 # gets the point on a unit circle for the specified rotation.
@@ -20,17 +20,31 @@ static func _find_intersection(point1 : Vector2, slope1 : Vector2, point2: Vecto
 	assert(devisor != 0, "one or both slopes are 0, or are parallel")
 	return numerator / devisor
 
-## Creates and returns a [PackedVector2Array] describing the shape specified by the parameters,
-## and offsetted by [param offset_rotation] and [param offset_position].
+## Creates and returns a [PackedVector2Array] describing the shape specified by the parameters.
 ## [br][br]
 ## [param vertices_count] determines the number of points on the base shape. If a value of [code]1[/code] is used,
 ## A value of [code]32[/code] is used instead.
 ## [param sizes] determines the length of each point from the center of the base shape, being repeatedly iterated through
 ## to get the length for each vertex.
+## [param offset_transform] is the transform applied after creation.
 ## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
 ## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
 ## if the arc of the shape is a complete circle.
 static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_transform = Transform2D.IDENTITY,
+	arc_start := 0.0, arc_end := TAU, add_central_point := true) -> PackedVector2Array:
+	return add_shape([], 0, vertices_count, sizes, offset_transform, arc_start, arc_end, add_central_point)
+
+## Creates and inserts the shape specified by the parameters into [param points] at [param start] index.
+## [br][br]
+## [param vertices_count] determines the number of points on the base shape. If a value of [code]1[/code] is used,
+## A value of [code]32[/code] is used instead.
+## [param sizes] determines the length of each point from the center of the base shape, being repeatedly iterated through
+## to get the length for each vertex.
+## [param offset_transform] is the transform applied after creation.
+## [param arc_start] and [param arc_end] determine the arc out of that base shape that is cut out and returned, in radians.
+## [param add_central_point] determines whether a central point is added to the shape. It is automatically set to [code]false[/code]
+## if the arc of the shape is a complete circle.
+static func add_shape(points : PackedVector2Array, start : int, vertices_count: int, sizes: PackedFloat64Array, offset_transform = Transform2D.IDENTITY,
 	arc_start := 0.0, arc_end := TAU, add_central_point := true) -> PackedVector2Array:
 	assert(vertices_count >= 1, "param 'vertices_count' must be 1 or greater.")
 	assert(sizes.size() != 0, "param 'sizes' must have at least one element")
@@ -39,7 +53,6 @@ static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_
 	if vertices_count == 1:
 		vertices_count = 32
 
-	var points := PackedVector2Array()
 	var arc_angle := TAU / vertices_count
 
 	var is_full_arc := false
@@ -51,24 +64,30 @@ static func create_shape(vertices_count: int, sizes: PackedFloat64Array, offset_
 	var starting_vertex_index : int = floorf(arc_start / arc_angle)
 	var ending_vertex_index : int = ceilf(arc_end / arc_angle)
 	var true_vertices_count := ending_vertex_index - starting_vertex_index + (1 if not is_full_arc else 0)
-	points.resize(true_vertices_count + (1 if add_central_point else 0))
+	var size_increase := true_vertices_count + (1 if add_central_point else 0)
+	var original_size := points.size()
+	points.resize(points.size() + size_increase)
+	for i in original_size - start:
+		var index := original_size - i - 1
+		points[index + size_increase] = points[index]
+
 	for i in true_vertices_count:
 		var index := i + starting_vertex_index
-		points[i] = _circle_point(index * arc_angle) * sizes[index % sizes.size()]
+		points[start + i] = _circle_point(index * arc_angle) * sizes[index % sizes.size()]
 
 	if not is_equal_approx(starting_vertex_index, arc_start / arc_angle):
 		var slope1 := _circle_point(arc_start)
-		var scaler := _find_intersection(Vector2.ZERO, slope1, points[0], points[1] - points[0])
-		points[0] = slope1 * scaler
+		var scaler := _find_intersection(Vector2.ZERO, slope1, points[start], points[start + 1] - points[start])
+		points[start] = slope1 * scaler
 
 	if not is_equal_approx(ending_vertex_index, arc_end / arc_angle) and not is_full_arc:
-		var last_i := true_vertices_count - 1
+		var last_i := start + true_vertices_count - 1
 		var slope1 := _circle_point(arc_end)
 		var scaler := _find_intersection(Vector2.ZERO, slope1, points[last_i], points[last_i - 1] - points[last_i])
 		points[last_i] = slope1 * scaler
 
 	if add_central_point:
-		points[-1] = Vector2.ZERO
+		points[start + size_increase - 1] = Vector2.ZERO
 
 	for i in points.size():
 		points[i] = offset_transform.basis_xform(points[i]) + offset_transform.get_origin()
@@ -199,7 +218,7 @@ class SizeIncrease:
 	extends Object
 
 	func _init():
-		printerr("This class is meant to be a singleton, and cannot be instantiated")
+		push_error("This class is meant to be a singleton, and cannot be instantiated. Freeing self")
 		self.free()
 
 	## Designates how much [method RegularGeometry2D.add_rounded_corners] expands the array.
