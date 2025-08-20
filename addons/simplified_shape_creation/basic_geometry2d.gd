@@ -3,9 +3,9 @@ class_name BasicGeometry2D
 
 ## Holds methods for creating and modifying shapes.
 
-func _init(instantiated_from_cs_singleton : bool):
+func _init(instantiated_from_cs_singleton : bool = false):
 	if !instantiated_from_cs_singleton:
-		printerr("This class is meant to be a singleton, and cannot be instantiated")
+		push_error("This class is meant to be a singleton, and cannot be instantiated. Freeing self.")
 		self.free()
 
 # gets the point on a unit circle for the specified rotation.
@@ -199,7 +199,7 @@ class SizeIncrease:
 	extends Object
 
 	func _init():
-		printerr("This class is meant to be a singleton, and cannot be instantiated")
+		push_error("This class is meant to be a singleton, and cannot be instantiated. Freeing self")
 		self.free()
 
 	## Designates how much [method RegularGeometry2D.add_rounded_corners] expands the array.
