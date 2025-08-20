@@ -341,6 +341,12 @@ func _enter_tree() -> void:
 		_queue_status = _UNQUEUED
 		queue_export()
 
+func _find_tree() -> SceneTree:
+	if is_inside_tree():
+		return get_tree()
+	assert(Engine.get_main_loop() is SceneTree, "'queue_regenerate' and 'queue_export' functions only work if the current main loop implementation of the engine is a SceneTree")
+	return Engine.get_main_loop() as SceneTree
+
 ## Queue the [BasicPolygon2D] to regenerate and export the shape. Called when the Generation properties are modified.
 ## Multiple calls will be converted to a single call. See [method regenerate].
 ## Removes queued [method queue_export] calls.
@@ -350,10 +356,8 @@ func queue_regenerate() -> void:
 		return
 
 	_queue_status = _QUEUE_REGENERATE
-	if not is_inside_tree():
-		return
 
-	await get_tree().process_frame
+	await _find_tree().process_frame
 	if _queue_status != _QUEUE_REGENERATE:
 		return
 
