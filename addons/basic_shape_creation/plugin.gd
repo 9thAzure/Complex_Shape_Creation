@@ -1,9 +1,9 @@
 @tool
 extends EditorPlugin
 
-const BaseHandler := preload("res://addons/simplified_shape_creation/gui_handlers/base_handler.gd")
-const SizeRotationHandler := preload("res://addons/simplified_shape_creation/gui_handlers/size_rotation_handler.gd")
-const ScaleSizeHandler := preload("res://addons/simplified_shape_creation/gui_handlers/scale_size_handler.gd")
+const BaseHandler := preload("res://addons/basic_shape_creation/gui_handlers/base_handler.gd")
+const SizeRotationHandler := preload("res://addons/basic_shape_creation/gui_handlers/size_rotation_handler.gd")
+const ScaleSizeHandler := preload("res://addons/basic_shape_creation/gui_handlers/scale_size_handler.gd")
 
 var _current_object : Node2D = null
 var _handlers : Array[BaseHandler] = []

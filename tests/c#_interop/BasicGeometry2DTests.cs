@@ -2,7 +2,7 @@ using Chickensoft.GoDotTest;
 using Godot;
 using Shouldly;
 
-namespace SimplifiedShapeCreation.Tests;
+namespace BasicShapeCreation.Tests;
 
 public class BasicGeometry2DTests : TestClass
 {

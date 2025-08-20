@@ -5,10 +5,10 @@ using Chickensoft.GoDotLog;
 using Chickensoft.GoDotTest;
 using Godot;
 using Godot.Collections;
-using SimplifiedShapeCreation;
+using BasicShapeCreation;
 using Shouldly;
 
-namespace SimplifiedShapeCreation.Tests;
+namespace BasicShapeCreation.Tests;
 
 [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
 public class BasicPolygon2DTests : TestClass

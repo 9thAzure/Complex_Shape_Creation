@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y2xtpyb5bwji"
-path="res://.godot/imported/basic_collision_polygon2d.svg-d6bd13baa647521e346d32c5a15b6aed.ctex"
+path="res://.godot/imported/basic_collision_polygon2d.svg-de313fd862ba755cc959ae62969c268c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/simplified_shape_creation/basic_collision_polygon2d/basic_collision_polygon2d.svg"
-dest_files=["res://.godot/imported/basic_collision_polygon2d.svg-d6bd13baa647521e346d32c5a15b6aed.ctex"]
+source_file="res://addons/basic_shape_creation/basic_collision_polygon2d/basic_collision_polygon2d.svg"
+dest_files=["res://.godot/imported/basic_collision_polygon2d.svg-de313fd862ba755cc959ae62969c268c.ctex"]
 
 [params]
 
