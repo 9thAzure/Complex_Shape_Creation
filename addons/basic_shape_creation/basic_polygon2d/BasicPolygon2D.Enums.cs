@@ -1,6 +1,6 @@
 using System;
 
-namespace SimplifiedShapeCreation;
+namespace BasicShapeCreation;
 
 public enum ClosingMethod
 {

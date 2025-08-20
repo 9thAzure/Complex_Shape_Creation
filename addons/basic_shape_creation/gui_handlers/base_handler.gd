@@ -1,7 +1,7 @@
 @tool
 extends RefCounted
 
-const Plugin := preload("res://addons/simplified_shape_creation/plugin.gd")
+const Plugin := preload("res://addons/basic_shape_creation/plugin.gd")
 
 var always_clamp := false
 var _shift_clamps : Array[Callable] = [clamp_straight_line, clamp_circle_radius, clamp_compass_lines]

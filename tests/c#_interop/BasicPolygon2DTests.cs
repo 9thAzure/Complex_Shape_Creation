@@ -5,10 +5,10 @@ using Chickensoft.GoDotLog;
 using Chickensoft.GoDotTest;
 using Godot;
 using Godot.Collections;
-using SimplifiedShapeCreation;
+using BasicShapeCreation;
 using Shouldly;
 
-namespace SimplifiedShapeCreation.Tests;
+namespace BasicShapeCreation.Tests;
 
 [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
 public class BasicPolygon2DTests : TestClass
@@ -232,6 +232,6 @@ public class BasicPolygon2DTests : TestClass
     public void AsyncDurationExtender()
     {
         // Ensures previous async tests to complete fully.
-        System.Threading.Thread.Sleep(1000/60 * 5);
+        System.Threading.Thread.Sleep(1000/60 * 20);
     }
 }

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Godot;
 
-namespace SimplifiedShapeCreation;
+namespace BasicShapeCreation;
 
 /// <summary>Holds methods for creating and modifying shapes.</summary>
 /// <remarks>
@@ -29,7 +29,7 @@ public static class BasicGeometry2D
                 tree.Root.TreeExiting += BasicGeometry2D.Dispose;
             }
 
-            var gdScript = GD.Load<GDScript>("res://addons/simplified_shape_creation/basic_geometry2d.gd");
+            var gdScript = GD.Load<GDScript>("res://addons/basic_shape_creation/basic_geometry2d.gd");
             return gdScript.New(true).AsGodotObject();
         }
 

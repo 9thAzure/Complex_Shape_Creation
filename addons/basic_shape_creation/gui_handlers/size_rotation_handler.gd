@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/simplified_shape_creation/gui_handlers/base_handler.gd"
+extends "res://addons/basic_shape_creation/gui_handlers/base_handler.gd"
 
 var _size_index := -1
 var _old_size : PackedFloat64Array

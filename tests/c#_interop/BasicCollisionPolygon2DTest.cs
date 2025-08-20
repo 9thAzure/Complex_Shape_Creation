@@ -3,7 +3,7 @@ using Chickensoft.GoDotTest;
 using Godot;
 using Shouldly;
 
-namespace SimplifiedShapeCreation.Tests;
+namespace BasicShapeCreation.Tests;
 
 [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
 public class BasicCollisionPolygon2DTest : TestClass
@@ -98,6 +98,8 @@ public class BasicCollisionPolygon2DTest : TestClass
     {
         _polygon.VerticesCount = 4;
         _polygon.Sizes = new double[] { 10 };
+
+        _polygon.BasicPolygon.Regenerate();
 
         _polygon.ShouldSatisfyAllConditions(
             p => p.CreatedShape.ShouldNotBeEmpty(),

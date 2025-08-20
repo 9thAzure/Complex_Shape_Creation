@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/simplified_shape_creation/basic_collision_polygon2d/basic_collision_polygon2d.svg")
+@icon("res://addons/basic_shape_creation/basic_collision_polygon2d/basic_collision_polygon2d.svg")
 extends Node2D
 class_name BasicCollisionPolygon2D
 

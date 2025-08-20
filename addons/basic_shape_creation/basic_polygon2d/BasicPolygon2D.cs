@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace SimplifiedShapeCreation;
+namespace BasicShapeCreation;
 
 /// <summary>
 /// A node for creating and drawing basic shapes, acting as a simplified wrapper around <see cref="BasicGeometry2D"/>.
@@ -12,13 +12,13 @@ namespace SimplifiedShapeCreation;
 /// </summary>
 /// <remarks>
 /// This class is a wrapper around an instance of a <see cref="Node2D"/> s with the <see cref="GDScript"/> at
-/// "res://addons/simplified_shape_creation/basic_polygon2d/basic_polygon2d.gd" attached.
+/// "res://addons/basic_shape_creation/basic_polygon2d/basic_polygon2d.gd" attached.
 /// The <see cref="Node2D"/> instance can be accessed with <see cref="Instance"/>.
 /// </remarks>
 public class BasicPolygon2D
 {
     /// <summary>The string path to the script this class wraps around.</summary>
-    public const string GDScriptEquivalentPath = "res://addons/simplified_shape_creation/basic_polygon2d/basic_polygon2d.gd";
+    public const string GDScriptEquivalentPath = "res://addons/basic_shape_creation/basic_polygon2d/basic_polygon2d.gd";
     /// <summary>The loaded <see cref="GDScript"/> of <see cref="GDScriptEquivalentPath"/>.</summary>
     public static readonly GDScript GDScriptEquivalent = GD.Load<GDScript>(GDScriptEquivalentPath);
 
@@ -308,7 +308,7 @@ public class BasicPolygon2D
 
     /// <summary>Determines whether <see cref="ExportTargets"/> will be set on <see cref="Export"/>.</summary>
     /// <remarks>
-    /// This is the case when <see cref="ExportBehavior"/> has the flag of <see cref="global::SimplifiedShapeCreation.ExportBehavior"/>
+    /// This is the case when <see cref="ExportBehavior"/> has the flag of <see cref="BasicShapeCreation.ExportBehavior"/>
     /// set which corresponds to whether this <see cref="BasicPolygon2D"/>  is running in editor or at runtime.
     /// <br/><br/><see cref="ShapeExported"/> is emiited on <see cref="Export"/> regardless of this method's return value.
     /// </remarks>
