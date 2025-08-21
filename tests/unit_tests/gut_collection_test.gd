@@ -1,7 +1,7 @@
 extends GutTest
 class_name GutCollectionTest
 
-func assert_almost_eq_deep(c1, c2, error_interval):
+func assert_almost_eq_deep(c1, c2, error_interval) -> void:
 	if c1.size() != c2.size():
 		_fail("collections are different sizes (%s vs %s)" % [c1.size(), c2.size()])
 		return
