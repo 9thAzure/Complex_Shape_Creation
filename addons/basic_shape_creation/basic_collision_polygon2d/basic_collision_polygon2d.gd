@@ -43,7 +43,7 @@ var one_way_collision_margin := 1.0:
 
 @export_group("Generation")
 
-## The number of vertices in the regular shape.
+## The number of vertices in the base shape.
 ## A value of [code]1[/code] creates a 32 vertices shape.
 ## A value of [code]2[/code] creates multiple equidistantly spaced lines from the center, one for each value in [member sizes].
 @export_range(1, 1000)

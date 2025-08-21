@@ -14,7 +14,7 @@ extends Node2D
 ## as well as [method queue_export], relies upon the main loop being a [SceneTree] to function properly.
 
 @export_group("Generation")
-## The number of vertices in the regular shape.
+## The number of vertices in the base shape.
 ## A value of [code]1[/code] creates a 32 vertices shape.
 ## A value of [code]2[/code] creates multiple equidistantly spaced lines from the center, one for each value in [member sizes].
 @export_range(1, 1000)
