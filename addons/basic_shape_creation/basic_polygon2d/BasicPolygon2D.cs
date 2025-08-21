@@ -31,7 +31,7 @@ public class BasicPolygon2D
     public event ShapeExportedEventHandler ShapeExported;
 
     /// <summary>
-    /// The number of vertices in the regular shape.
+    /// The number of vertices in the base shape.
     /// </summary>
     /// <remarks>
     /// A value of <c>1</c> creates a 32 vertices shape.
