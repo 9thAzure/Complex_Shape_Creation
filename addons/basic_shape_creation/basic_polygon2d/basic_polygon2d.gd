@@ -47,6 +47,7 @@ var sizes : PackedFloat64Array = PackedFloat64Array([10.0]):
 @export_range(0, 1, 0.001, "or_less")
 var ring_ratio : float = 1.0:
 	set(value):
+		assert(ring_ratio <= 1.0, "property 'ring_ratio' must be 1 or less")
 		ring_ratio = value
 		update_configuration_warnings()
 		queue_regenerate()
@@ -201,6 +202,7 @@ var draw_border := false:
 @export_range(0, 10, 0.001, "or_greater", "hide_slider")
 var border_width : float = 0.0:
 	set(value):
+		assert(value >= 0, "property 'border_width' must be at least 0.")
 		border_width = value
 		queue_redraw()
 
@@ -225,6 +227,7 @@ var border_color := Color.BLACK:
 @export_flags("Editor:1", "Runtime:2")
 var export_behavior : int = ExportBehavior.DISABLED:
 	set(value):
+		assert(value <= 2, "property 'export_behaviour' must have valid flags of 'ExportBehaviour' set.")
 		var was_exporting := can_export()
 		export_behavior = value
 		if not was_exporting and can_export():
