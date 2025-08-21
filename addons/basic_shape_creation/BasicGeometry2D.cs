@@ -153,6 +153,6 @@ public static class BasicGeometry2D
     {
         Debug.Assert(GodotObject.IsInstanceValid(_loader.Value));
         Debug.Assert(_loader.Value.HasMethod(MethodName.AddRoundedCorners));
-        return _loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerDetail, startIndex, length, startIndex).AsVector2Array();
+        return _loader.Value.Call(MethodName.AddRoundedCorners, shape, cornerSize, cornerDetail, startIndex, length, limitEndingSlopes).AsVector2Array();
     }
 }

@@ -127,6 +127,9 @@ static func add_rounded_corners(points : PackedVector2Array, corner_size : float
 	if corner_detail == 0:
 		corner_detail = 32 / points.size()
 	var points_per_corner := corner_detail + 1
+	
+	if not limit_ending_slopes and length == original_array_size:
+		limit_ending_slopes = true
 
 	assert(points.size() >= 3, "param 'points' must have at least 3 points.")
 	assert(corner_size >= 0, "param 'corner_size' must be 0 or greater.")
