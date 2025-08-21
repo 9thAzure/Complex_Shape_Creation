@@ -227,7 +227,6 @@ var border_color := Color.BLACK:
 @export_flags("Editor:1", "Runtime:2")
 var export_behavior : int = ExportBehavior.DISABLED:
 	set(value):
-		assert(value <= 2, "property 'export_behaviour' must have valid flags of 'ExportBehaviour' set.")
 		var was_exporting := can_export()
 		export_behavior = value
 		if not was_exporting and can_export():
