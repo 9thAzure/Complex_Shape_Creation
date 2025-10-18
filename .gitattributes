@@ -5,5 +5,5 @@
 *                                  export-ignore
 
 /addons                           -export-ignore
-/addons/simplified_shape_creation    -export-ignore
-/addons/simplified_shape_creation/** -export-ignore
+/addons/basic_shape_creation    -export-ignore
+/addons/basic_shape_creation/** -export-ignore
